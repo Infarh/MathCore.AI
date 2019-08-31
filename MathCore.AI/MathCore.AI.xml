@@ -4,12 +4,106 @@
         <name>MathCore.AI</name>
     </assembly>
     <members>
+        <member name="T:MathCore.AI.ART1.ClassificationCriteria`1">
+            <summary>Критерий классификации</summary>
+            <typeparam name="T">Тип объектов классификации</typeparam>
+        </member>
+        <member name="F:MathCore.AI.ART1.ClassificationCriteria`1._Criteria">
+            <summary>Функция оценки критерия</summary>
+        </member>
+        <member name="P:MathCore.AI.ART1.ClassificationCriteria`1.Name">
+            <summary>Название критерия</summary>
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriteria`1.#ctor(System.Func{`0,System.Double})">
+            <summary>Инициализация нового критерия классификации</summary>
+            <param name="Criteria">Функция критерия, сопоставляющая объект с числовым значением</param>
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriteria`1.#ctor(System.String,System.Func{`0,System.Double})">
+            <summary>Инициализация нового критерия классификации</summary>
+            <param name="Name">Имя критерия</param>
+            <param name="Criteria">Функция критерия, сопоставляющая объект с числовым значением</param>
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriteria`1.GetFeatureValue(`0)">
+            <summary>Получить числовое значение критерия для оценки</summary>
+            <param name="Item">Оцениваемый объект</param>
+            <returns>Числовое значение оценки для данного критерия</returns>
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriteria`1.Equals(MathCore.AI.ART1.ClassificationCriteria{`0})">
+            <inheritdoc />
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriteria`1.Equals(System.Func{`0,System.Double})">
+            <inheritdoc />
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriteria`1.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriteria`1.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriteria`1.op_Equality(MathCore.AI.ART1.ClassificationCriteria{`0},MathCore.AI.ART1.ClassificationCriteria{`0})">
+            <summary>Оператор равенства двух критериев классификации</summary>
+            <param name="left">Левый сравниваемый критерий классификации</param>
+            <param name="right">Правый сравниваемый критерий классификации</param>
+            <returns>Истина, если критерии равны</returns>
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriteria`1.op_Inequality(MathCore.AI.ART1.ClassificationCriteria{`0},MathCore.AI.ART1.ClassificationCriteria{`0})">
+            <summary>Оператор неравенства двух критериев классификации</summary>
+            <param name="left">Левый сравниваемый критерий классификации</param>
+            <param name="right">Правый сравниваемый критерий классификации</param>
+            <returns>Истина, если критерии неравны</returns>
+        </member>
+        <member name="T:MathCore.AI.ART1.ClassificationCriterias`1">
+            <summary>Система критериев для классификации объектов</summary>
+            <typeparam name="T">Тип объектов классификации</typeparam>
+        </member>
+        <member name="F:MathCore.AI.ART1.ClassificationCriterias`1._Criterias">
+            <summary>Список критериев</summary>
+        </member>
+        <member name="P:MathCore.AI.ART1.ClassificationCriterias`1.Count">
+            <summary>Число критериев в классификации</summary>
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriterias`1.Add(System.String,System.Func{`0,System.Double})">
+            <summary>Добавить критерий классификации</summary>
+            <param name="Name">Имя критерия</param>
+            <param name="Criteria">Функция критерия</param>
+            <exception cref="T:System.ArgumentException">Если критерий с указанным именем уже существует</exception>
+            <exception cref="T:System.ArgumentException">Если критерий с указанной функцией уже существует</exception>
+            <returns>Сформированный критерий классификации</returns>
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriterias`1.Add(System.Func{`0,System.Double})">
+            <summary>Добавить критерий классификации</summary>
+            <param name="Criteria">Функция критерия</param>
+            <exception cref="T:System.ArgumentException">Если критерий с указанной функцией уже существует</exception>
+            <returns>Сформированный критерий классификации</returns>
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriterias`1.GetFeaturesVector(`0)">
+            <summary>Получить вектор оценко классификатора</summary>
+            <param name="Item">Оцениваемый объект</param>
+            <returns>Вектор числовых значений оценок классификатора</returns>
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriterias`1.GetFeatureNames">
+            <summary>Получить вектор имён критериев классификации</summary>
+            <returns>Массив имён классификаторов</returns>
+        </member>
+        <member name="M:MathCore.AI.ART1.ClassificationCriterias`1.GetEnumerator">
+            <inheritdoc />
+        </member>
+        <member name="T:MathCore.AI.ART1.Classificator`1">
+            <summary>Классификатор объектов по алгоритму ART-1</summary>
+            <typeparam name="T">Тип классифицируемых объектов</typeparam>
+        </member>
         <member name="F:MathCore.AI.ART1.Classificator`1._Vigilance">
             <summary>Параметр внимательности (0;1]</summary>
             <remarks>Определяет размер кластера</remarks>
         </member>
         <member name="F:MathCore.AI.ART1.Classificator`1._Beta">
             <summary>Бетта-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</summary>
+        </member>
+        <member name="F:MathCore.AI.ART1.Classificator`1._AddIterationsCount">
+            <summary>Количество иметарций перераспределения образцов по кластерам для операции добавления</summary>
+        </member>
+        <member name="F:MathCore.AI.ART1.Classificator`1._Clusters">
+            <summary>Образованные кластеры</summary>
         </member>
         <member name="P:MathCore.AI.ART1.Classificator`1.Vigilance">
             <summary>Параметр внимательности (0;1]</summary>
@@ -20,6 +114,79 @@
         </member>
         <member name="P:MathCore.AI.ART1.Classificator`1.AddOperationIterationCount">
             <summary>Количество иметарций перераспределения образцов по кластерам для операции добавления</summary>
+        </member>
+        <member name="P:MathCore.AI.ART1.Classificator`1.Criterias">
+            <summary>Критерии классификации</summary>
+        </member>
+        <member name="P:MathCore.AI.ART1.Classificator`1.Clusters">
+            <summary>Сформированные кластеры</summary>
+        </member>
+        <member name="M:MathCore.AI.ART1.Classificator`1.Add(`0)">
+            <summary>Добавить новый объект в классификатор</summary>
+            <param name="Item">Классифицируемый объект</param>
+            <returns>Кластер, в который отнесён добавляемый обект</returns>
+        </member>
+        <member name="M:MathCore.AI.ART1.Classificator`1.Add(System.Collections.Generic.IEnumerable{`0})">
+            <summary>Добавить элементы в классификатор</summary>
+            <param name="Items">Классифицируемые элементы</param>
+            <returns>Словарь классоф элементов</returns>
+        </member>
+        <member name="T:MathCore.AI.ART1.Cluster`1">
+            <summary>Кластер элементов</summary>
+            <typeparam name="T">Тип классифицируемых элементов</typeparam>
+        </member>
+        <member name="F:MathCore.AI.ART1.Cluster`1._FeatureVector">
+            <summary> Вектор признаков</summary>
+        </member>
+        <member name="F:MathCore.AI.ART1.Cluster`1._Classificator">
+            <summary>Функция вычисления вектора признаков кластера для элемента</summary>
+        </member>
+        <member name="F:MathCore.AI.ART1.Cluster`1._FeatureNames">
+            <summary>Имена критериев классификации</summary>
+        </member>
+        <member name="F:MathCore.AI.ART1.Cluster`1._Items">
+            <summary>Элементы кластера</summary>
+        </member>
+        <member name="P:MathCore.AI.ART1.Cluster`1.ItemsCount">
+            <summary>Число элементов в кластере</summary>
+        </member>
+        <member name="M:MathCore.AI.ART1.Cluster`1.#ctor(System.Double[],`0,System.Func{`0,System.Double[]},System.String[])">
+            <summary>Инициализация нового кластера</summary>
+            <param name="FeatureVector">Вектор признаков</param>
+            <param name="Item">Первый элемент кластера</param>
+            <param name="Classificator">Функция вычисления вектора признаков кластера для элемента</param>
+            <param name="FeatureNames">Имена классификаторов</param>
+        </member>
+        <member name="M:MathCore.AI.ART1.Cluster`1.Add(System.Double[],`0)">
+            <summary>Добавление нового элемента в кластер</summary>
+            <param name="Prototype">Вектор признаков прототипа</param>
+            <param name="Item">Добавляемый элемент</param>
+        </member>
+        <member name="M:MathCore.AI.ART1.Cluster`1.Clear">
+            <summary>Очистка кластера от элементов</summary>
+        </member>
+        <member name="M:MathCore.AI.ART1.Cluster`1.Contains(`0)">
+            <summary>Проверка - состоит ли элемент в кластере</summary>
+            <param name="Item">Проверяемый элемент</param>
+            <returns>Истина, если элемент находится в кластере</returns>
+        </member>
+        <member name="M:MathCore.AI.ART1.Cluster`1.Remove(`0)">
+            <summary>Удаление элемента из кластера</summary>
+            <param name="Item">Удаляемый элемент</param>
+            <returns>Истина, если элемент был и удалён из кластера</returns>
+        </member>
+        <member name="M:MathCore.AI.ART1.Cluster`1.SimilarityAndCareTest(System.Double[],System.Double,System.Double)">
+            <summary>Проверка на пренадлежность элемента кластеру</summary>
+            <param name="Prototype">Вектор-прототип</param>
+            <param name="Betta">Бетта-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</param>
+            <param name="Vigilance">Параметр внимательности (0;1]</param>
+            <returns></returns>
+        </member>
+        <member name="M:MathCore.AI.ART1.Cluster`1.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:MathCore.AI.ART1.Cluster`1.GetEnumerator">
+            <inheritdoc />
         </member>
         <member name="T:MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction">
             <summary>Функция активации</summary>

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using MathCore.Annotations;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MathCore.AI.Tests.Service
+// ReSharper disable once CheckNamespace
+namespace Microsoft.VisualStudio.TestTools.UnitTesting
 {
     internal class DoubleCollectionAssertChecker
     {

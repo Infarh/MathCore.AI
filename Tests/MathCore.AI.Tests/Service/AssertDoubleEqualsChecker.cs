@@ -1,7 +1,7 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace MathCore.AI.Tests.Service
+// ReSharper disable once CheckNamespace
+namespace Microsoft.VisualStudio.TestTools.UnitTesting
 {
     internal sealed class AssertDoubleEqualsChecker
     {
