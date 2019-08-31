@@ -1,0 +1,691 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MathCore.AI</name>
+    </assembly>
+    <members>
+        <member name="F:MathCore.AI.ART1.Classificator`1._Vigilance">
+            <summary>Параметр внимательности (0;1]</summary>
+            <remarks>Определяет размер кластера</remarks>
+        </member>
+        <member name="F:MathCore.AI.ART1.Classificator`1._Beta">
+            <summary>Бетта-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</summary>
+        </member>
+        <member name="P:MathCore.AI.ART1.Classificator`1.Vigilance">
+            <summary>Параметр внимательности (0;1]</summary>
+            <remarks>Определяет размер кластера</remarks>
+        </member>
+        <member name="P:MathCore.AI.ART1.Classificator`1.Beta">
+            <summary>Бетта-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</summary>
+        </member>
+        <member name="P:MathCore.AI.ART1.Classificator`1.AddOperationIterationCount">
+            <summary>Количество иметарций перераспределения образцов по кластерам для операции добавления</summary>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction">
+            <summary>Функция активации</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction.Sigmoid">
+            <summary>Сигмоида (логистическая)</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction.Linear">
+            <summary>Линейная функция</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction.Th">
+            <summary>Гиперболический тангенс</summary>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction.Value(System.Double)">
+            <summary>Значение функции активации</summary>
+            <param name="x">Взвешанная сумма входов нейронов</param>
+            <returns>Значение выхода нейрона</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction.DiffValue(System.Double)">
+            <summary>Производная функции активации</summary>
+            <param name="x">Значение на выходе нейрона</param>
+            <returns>Значение производной функции активации</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ActivationFunctions.ComplexActivationFunction.Value(MathCore.Complex)">
+            <summary>Значение функции активации</summary>
+            <param name="x">Взвешанная сумма входов нейронов</param>
+            <returns>Значение выхода нейрона</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ActivationFunctions.ComplexActivationFunction.dValue(MathCore.Complex)">
+            <summary>Производная функции активации</summary>
+            <param name="u">Значение на выходе нейрона</param>
+            <returns>Значение производной функции активации</returns>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ActivationFunctions.DiffSiplifiedActivationFunction">
+            <summary>Активационная функция с упрощённой производной</summary>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ActivationFunctions.DiffSiplifiedActivationFunction.DiffFunc(System.Double)">
+            <summary>Производная функции, выраженая через значение самой функции</summary>
+            <param name="u">Значение функции по которому расчитывается значение производной</param>
+            <returns>Значение производной функции</returns>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ActivationFunctions.Lambda">
+            <summary>Лямда</summary>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ActivationFunctions.Linear">
+            <summary>Линейная</summary>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ActivationFunctions.Sigmoid">
+            <summary>Логистическая функция (Сигмоид)</summary>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ActivationFunctions.Th">
+            <summary>Гиперболический тангенс</summary>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager">
+            <summary>Менеджер слоя</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager._Activations">
+            <summary>Функции активации слоёв</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.InputsCount">
+            <summary>Число входов слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.OutputsCount">
+            <summary>Число выходов слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.Activation">
+            <summary>Активационная функция слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.Offsets">
+            <summary>Смещения слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.OffsetWeights">
+            <summary>Коэффициенты смещений слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.Weights">
+            <summary>Матрица коэффициентов передачи входов слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.LayerIndex">
+            <summary>Индекс слоя</summary>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.#ctor(System.Int32,MathCore.Complex[0:,0:][],MathCore.Complex[][],MathCore.Complex[][],MathCore.Complex[][],MathCore.AI.NeuralNetworks.ActivationFunctions.ComplexActivationFunction[])">
+            <summary>Инициализация нового установщика активационной функции слоя</summary>
+            <param name="LayerIndex">номер слоя</param>
+            <param name="Layers">Матрицы коэффициентов слоёв</param>
+            <param name="Offsets">Смещения слоёв</param>
+            <param name="OffsetWeights">Веса смащений слоёв</param>
+            <param name="Outputs">Выходы слоёв</param>
+            <param name="Activations">Массив всех активационных функций сети</param>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.LayerWeightsInitializer">
+            <summary>Инициализатор весов</summary>
+            <param name="Neuron">Номер нейрона в слое</param>
+            <param name="Input">Номер входа нейрона</param>
+            <returns>Значение веса входа</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.SetWeights(MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.LayerWeightsInitializer)">
+            <summary>Инициализация весов входов нейронов</summary>
+            <param name="Initializer">Функция инициализации весов входов нейронов</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.SetOffsets(MathCore.Complex)">
+            <summary>Установка значений смещений нейронов</summary>
+            <param name="Offset">Требуемое значение смещений для всех нейронов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.SetOffsets(System.Collections.Generic.ICollection{MathCore.Complex})">
+            <summary>Установка значений смещений нейронов</summary>
+            <param name="OffsetValues">Требуемое значение смещений для всех нейронов слоя</param>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.LayerOffsetsInitializer">
+            <summary>Инициализацтор смещений нейронов</summary>
+            <param name="Neuron">Номер нейрона</param>
+            <returns>Значение смещения для указанного нейрона</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.SetOffsets(MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.LayerOffsetsInitializer)">
+            <summary>Установка значений смещений нейронов</summary>
+            <param name="Setter">Инициализацтор смещений</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.SetOffsetWeights(MathCore.Complex)">
+            <summary>Установка требуемого значения весов смещений для нейронов слоя</summary>
+            <param name="Weight">Требуемые значения весов смещений для всех нейронов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.SetOffsetWeights(System.Collections.Generic.ICollection{MathCore.Complex})">
+            <summary>Установка требуемого значения весов смещений для нейронов слоя</summary>
+            <param name="WeightValues">Требуемые значения весов смещений для всех нейронов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.SetOffsetWeights(MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.LayerOffsetsInitializer)">
+            <summary>Установка значений весов смещений нейронов</summary>
+            <param name="Setter">Инициализацтор весов смещений</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.SetOutputs(System.Collections.Generic.ICollection{MathCore.Complex})">
+            <summary>Установка значений выходов слоя</summary>
+            <param name="OutputValues">Требуемые значения выходов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerManager.LoadCSV(System.String,System.Char,System.Int32)">
+            <summary>Загрузка данных весовых коэффициентов слоя из CSV-файла</summary>
+            <param name="FileName">Имя файла данных</param>
+            <param name="Separator">Символ-разделитель данных</param>
+            <param name="HeaderLinesCount">Количество строк заголовков</param>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayersManager">
+            <summary>Менеджер слоёв сети</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayersManager._Activations">
+            <summary>Функции активации слоёв сети</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayersManager._Offsets">
+            <summary>Смещения нейронов</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayersManager._OffsetWeights">
+            <summary>Весовые коэффициенты смещений нейронов</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayersManager._Layers">
+            <summary>Массив матриц коэффициентов передачи сети</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayersManager._Outputs">
+            <summary>Выходы сети</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayersManager.Item(System.Int32)">
+            <summary>Установщие активационной функции указанного слоя</summary>
+            <param name="LayerIndex">Номер слоя функцию которого требуется установить</param>
+            <returns>Установщик активационной функции слоя</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayersManager.#ctor(MathCore.Complex[0:,0:][],MathCore.Complex[][],MathCore.Complex[][],MathCore.Complex[][],MathCore.AI.NeuralNetworks.ActivationFunctions.ComplexActivationFunction[])">
+            <summary>Инициализация нового менеджера активационных функций сети</summary>
+            <param name="Layers">Массив матриц передачи слоёв</param>
+            <param name="Offsets">Массив смещений слоёв</param>
+            <param name="OffsetWeights">Массив весовых коэффициентов смещений слоёв</param>
+            <param name="Outputs">Выходы слоёв сети</param>
+            <param name="Activations">Массив активационных функций сети</param>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron._Layers">
+            <summary>Матрицы коэффициентов передачи слоёв (номер строки - номер нейрона; номер столбца - номер входа нейрона; последний столбец - смещение нейрона)</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron._Offsets">
+            <summary>Массив смещений нейронов в слоях (первый индекс - номер слоя; второй - номер нейрона в слое)</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron._OffsetsWeights">
+            <summary>Массив весовых коэффициентов смещений нейронов в слоях (первый индекс - номер слоя; второй - номер нейрона в слое)</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron._Outputs">
+            <summary>Массив выходов скрытых слоёв</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron._Activations">
+            <summary>Функции активации слоёв</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.Layer">
+            <summary>Слой</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerInput">
+            <summary>Входной слой</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerOutput">
+            <summary>Выходной слой</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.InputsCount">
+            <inheritdoc />
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.OutputsCount">
+            <inheritdoc />
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayersCount">
+            <inheritdoc />
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.HiddentOutputs">
+            <inheritdoc />
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.Item(System.Int32)">
+            <summary>Индекс матриц весовых коэффициентов слоёв</summary>
+            <param name="layer">Номер слоя</param>
+            <returns>Матрица весовых коэффициентов слоёв</returns>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.Offests">
+            <summary>Смещения слоёв</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.OffsetWeights">
+            <summary>Весовые коэффициенты смещений слоёв</summary>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.#ctor(MathCore.Complex[0:,0:][])">
+            <summary>Инициализация новой многослойной нейронной сети</summary>
+            <param name="Layers">Набор матриц коэффициентов передачи слоёв</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.InitializeLayerWeightsMatrix(MathCore.Complex[0:,0:],System.Int32,MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.NetworkCoefficientInitializer)">
+            <summary>Инициализация матрицы весовых коэффициентов слоя</summary>
+            <param name="LayerWeights">Мастрица весовых коэффициентов слоя</param>
+            <param name="LayerIndex">Индекс слоя</param>
+            <param name="Initializer">Функция инициализации весовых коэффициентов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.CreateLayersMatrix(System.Int32,System.Collections.Generic.IEnumerable{System.Int32},MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.NetworkCoefficientInitializer)">
+            <summary>Создать массив матриц передачи слоёв</summary>
+            <param name="InputsCount">Количество входов сети</param>
+            <param name="NeuronsCount">Количество нейронов в слоях</param>
+            <param name="Initialize">Функция инициализации весовых коэффициентов</param>
+            <returns>Массив матриц коэффициентов передачи слоёв сети</returns>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.NetworkCoefficientInitializer">
+            <summary>Инициализатор нейронной связи</summary>
+            <param name="Layer">Номер слоя</param>
+            <param name="Neuron">Номер нейрона в слое</param>
+            <param name="Input">Номер входа нейрона</param>
+            <returns>Коэффициент передачи входа нейрона</returns>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerInitializer">
+            <summary>Инициализатор слоя</summary>
+            <param name="Layer">Менеджер инициализируемого слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.#ctor(System.Int32,System.Collections.Generic.IEnumerable{System.Int32},MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.NetworkCoefficientInitializer)">
+            <summary>Инициализация новой многослойной нейронной сети</summary>
+            <param name="InputsCount">Количество входов сети</param>
+            <param name="NeuronsCount">Количество нейронов в слоях</param>
+            <param name="Initialize">Функция инициализации коэффициентов матриц передачи слоёв</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.#ctor(System.Int32,System.Collections.Generic.IEnumerable{System.Int32},System.Random)">
+            <summary>Инициализация новой многослойной нейронной сети</summary>
+            <param name="InputsCount">Количество входов сети</param>
+            <param name="NeuronsCount">Количество нейронов в слоях</param>
+            <param name="rnd">Генератор случайных чисел для заполнения матриц коэффициентов передачи слоёв</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.#ctor(System.Int32,System.Collections.Generic.IEnumerable{System.Int32},MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.LayerInitializer)">
+            <summary>Инициализация новой многослойной нейронной сети</summary>
+            <param name="InputsCount">Количество входов сети</param>
+            <param name="NeuronsCount">Количество нейронов в слоях</param>
+            <param name="Initializer">Функция инициализации слоёв сети</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.ComplexMultilayerPerceptron.Process(MathCore.Complex[],MathCore.Complex[])">
+            <summary>Обработка данных сетью</summary>
+            <param name="Input">Массив входа</param>
+            <param name="Output">Массив выхода</param>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.Epoch">
+            <summary>Эпоха обучения</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.Epoch.Results">
+            <summary>Результаты обучения за эпоху</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.Epoch.ErrorMax">
+            <summary>Максимальное значение ошибки за эпоху</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.Epoch.ErrorAverage">
+            <summary>Среднее значение ошибки за эпоху</summary>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.Example">
+            <summary>Образец для обучения нейронной сети</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.Example.Input">
+            <summary>Входное воздействие</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.Example.ExpectedOutput">
+            <summary>Ожидаемый результат</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ILayeredNetwork.LayersCount">
+            <summary>Количество слоёв сети</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.ILayeredNetwork.HiddentOutputs">
+            <summary>Массив выходов скрытых слоёв</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.INeuralNetwork.InputsCount">
+            <summary>Число входов сети</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.INeuralNetwork.OutputsCount">
+            <summary>Число выходов сети</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.IComplexNeuralNetwork.InputsCount">
+            <summary>Число входов сети</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.IComplexNeuralNetwork.OutputsCount">
+            <summary>Число выходов сети</summary>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.MultilayerPerceptron">
+            <summary>Многослойная полносвязная нейронная сеть прямого распространения</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron._Layers">
+            <summary>Матрицы коэффициентов передачи слоёв (номер строки - номер нейрона; номер столбца - номер входа нейрона; последний столбец - смещение нейрона)</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron._Offsets">
+            <summary>Массив смещений нейронов в слоях (первый индекс - номер слоя; второй - номер нейрона в слое)</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron._OffsetsWeights">
+            <summary>Массив весовых коэффициентов смещений нейронов в слоях (первый индекс - номер слоя; второй - номер нейрона в слое)</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron._Outputs">
+            <summary>Массив выходов скрытых слоёв</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron._Activations">
+            <summary>Функции активации слоёв</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.Layer">
+            <summary>Слой</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerInput">
+            <summary>Входной слой</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerOutput">
+            <summary>Выходной слой</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.InputsCount">
+            <inheritdoc />
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.OutputsCount">
+            <inheritdoc />
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayersCount">
+            <inheritdoc />
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.HiddentOutputs">
+            <inheritdoc />
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.Item(System.Int32)">
+            <summary>Индекс матриц весовых коэффициентов слоёв</summary>
+            <param name="layer">Номер слоя</param>
+            <returns>Матрица весовых коэффициентов слоёв</returns>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.Offests">
+            <summary>Смещения слоёв</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.OffsetWeights">
+            <summary>Весовые коэффициенты смещений слоёв</summary>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.#ctor(System.Double[0:,0:][])">
+            <summary>Инициализация новой многослойной нейронной сети</summary>
+            <param name="Layers">Набор матриц коэффициентов передачи слоёв</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.InitializeLayerWeightsMatrix(System.Double[0:,0:],System.Int32,MathCore.AI.NeuralNetworks.MultilayerPerceptron.NetworkCoefficientInitializer)">
+            <summary>Инициализация матрицы весовых коэффициентов слоя</summary>
+            <param name="LayerWeights">Мастрица весовых коэффициентов слоя</param>
+            <param name="LayerIndex">Индекс слоя</param>
+            <param name="Initializer">Функция инициализации весовых коэффициентов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.CreateLayersMatrix(System.Int32,System.Collections.Generic.IEnumerable{System.Int32},MathCore.AI.NeuralNetworks.MultilayerPerceptron.NetworkCoefficientInitializer)">
+            <summary>Создать массив матриц передачи слоёв</summary>
+            <param name="InputsCount">Количество входов сети</param>
+            <param name="NeuronsCount">Количество нейронов в слоях</param>
+            <param name="Initialize">Функция инициализации весовых коэффициентов</param>
+            <returns>Массив матриц коэффициентов передачи слоёв сети</returns>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.MultilayerPerceptron.NetworkCoefficientInitializer">
+            <summary>Инициализатор нейронной связи</summary>
+            <param name="Layer">Номер слоя</param>
+            <param name="Neuron">Номер нейрона в слое</param>
+            <param name="Input">Номер входа нейрона</param>
+            <returns>Коэффициент передачи входа нейрона</returns>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerInitializer">
+            <summary>Инициализатор слоя</summary><param name="Layer">Менеджер инициализируемого слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.#ctor(System.Int32,System.Collections.Generic.IEnumerable{System.Int32},MathCore.AI.NeuralNetworks.MultilayerPerceptron.NetworkCoefficientInitializer)">
+            <summary>Инициализация новой многослойной нейронной сети</summary>
+            <param name="InputsCount">Количество входов сети</param>
+            <param name="NeuronsCount">Количество нейронов в слоях</param>
+            <param name="Initialize">Функция инициализации коэффициентов матриц передачи слоёв</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.#ctor(System.Int32,System.Collections.Generic.IEnumerable{System.Int32},System.Random)">
+            <summary>Инициализация новой многослойной нейронной сети</summary>
+            <param name="InputsCount">Количество входов сети</param>
+            <param name="NeuronsCount">Количество нейронов в слоях</param>
+            <param name="rnd">Генератор случайных чисел для заполнения матриц коэффициентов передачи слоёв</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.#ctor(System.Int32,System.Collections.Generic.IEnumerable{System.Int32},MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerInitializer)">
+            <summary>Инициализация новой многослойной нейронной сети</summary>
+            <param name="InputsCount">Количество входов сети</param>
+            <param name="NeuronsCount">Количество нейронов в слоях</param>
+            <param name="Initializer">Функция инициализации слоёв сети</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.Process(System.Double[],System.Double[])">
+            <summary>Обработка данных сетью</summary>
+            <param name="Input">Массив входа</param>
+            <param name="Output">Массив выхода</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.Process(System.Double[],System.Double[],System.Double[0:,0:][],MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction[],System.Double[][],System.Double[][],System.Double[][],System.Double[][])">
+            <summary>Обработка данных сетью</summary>
+            <param name="Input">Массив входа</param>
+            <param name="Output">Массив выхода</param>
+            <param name="Layers">Массив матриц коэффициентов передачи слоёв</param>
+            <param name="Activations">Массив активационных функций слоёв (если функция не задана, используется Сигмоида)</param>
+            <param name="Offsets">Массив векторов смещений</param>
+            <param name="OffsetsWeights">Массив векторов весовых коэффициентов смещений</param>
+            <param name="State">
+            Массив состояний (входов функций активации) слоёв.
+            Может применяться в процессе обущения сети.
+            Достаточно создать массив длиной, равной количеству слоёв с пустыми элементами.
+            </param>
+            <param name="Outputs">Массив векторов выходных значений слоёв</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.ProcessLayer(System.Double[0:,0:],System.Double[],System.Double[],System.Double[],System.Double[],MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction,System.Double[])">
+            <summary>Метод обработки одного слоя</summary>
+            <param name="LayerWeights">Матрица коэффициентов передачи</param>
+            <param name="Offset">Вектор смещений нейронов</param>
+            <param name="OffsetWeight">Вектор весовых коэффициентов</param>
+            <param name="Input">Вектор входного воздействия</param>
+            <param name="Output">Вектор выходных значений неройнов</param>
+            <param name="Activation">Активационная функция слоя (если не задана, то используется Сигмоида)</param>
+            <param name="State">Вектор входа функции активации</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.SaveXmlTo(System.String)">
+            <summary>Сохранить структуру сети в файл XMl</summary>
+            <param name="FileName">Имя файла для сохранения данных</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.SaveXmlTo(System.IO.Stream)">
+            <summary>Сохранить структуру сети в поток в формате XML</summary>
+            <param name="Stream">Поток для сохранения</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.SaveXmlTo(System.IO.TextWriter)">
+            <summary>Сохранить структуру сети в текст в формате XML</summary>
+            <param name="Writer">Объект записи текста</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.SaveXmlTo(System.Xml.XmlWriter)">
+            <summary>Сохранить структуру сети в формате XML</summary>
+            <param name="Writer">Объект записи данных XML</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.WriteLayers(System.Xml.XmlWriter)">
+            <summary>Записать данные слоёв</summary>
+            <param name="Writer">Объект записи данных XML</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.WriteNeurons(System.Xml.XmlWriter,System.Int32)">
+            <summary>Записать данные нейронов слоя</summary>
+            <param name="Writer">Объект записи данных XML</param>
+            <param name="LayerIndex">Индекс слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.WriteNeuron(System.Xml.XmlWriter,System.Int32,System.Int32,System.Double[0:,0:])">
+            <summary>Записать данные нейрона</summary>
+            <param name="Writer">Объект записи данных XML</param>
+            <param name="LayerIndex">Индекс слоя</param>
+            <param name="NeuronIndex">Индекс нейрона</param>
+            <param name="LayerWeights">Матрица весовых коэффициентов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LoadXmlFrom(System.String)">
+            <summary>Чтение данных сети в формате XML из файла</summary>
+            <param name="FileName">Имя файла, созержащего структуру сети в формате XML</param>
+            <returns>Прочитанная из файла нейронная сеть</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LoadFromXml(System.IO.Stream)">
+            <summary>Загрузка данных нейронной сети из потока в формате XML</summary>
+            <param name="Data">Поток данных сети</param>
+            <returns>Прочитанная нейронная сеть</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LoadXmlFrom(System.IO.TextReader)">
+            <summary>Загрузка данных сети из текста в формате XML</summary>
+            <param name="Reader">Источник текстовых данных, хранящий структуру сети в формате XML</param>
+            <returns>Прочитанная нейронная сеть</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LoadXmlFrom(System.Xml.XmlReader)">
+            <summary>Чтение структуры сети из XML</summary>
+            <param name="Reader">Источник XML, хранящий структуру сети</param>
+            <returns>Прочитанная нейронная сеть</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.ReadLayer(System.Xml.XmlReader,System.Collections.Generic.ICollection{System.Double[0:,0:]},System.Collections.Generic.ICollection{System.Collections.Generic.IList{System.Double}},System.Collections.Generic.ICollection{System.Collections.Generic.IList{System.Double}},System.Collections.Generic.ICollection{System.Collections.Generic.IList{System.Double}})">
+            <summary>Чтение данных слоя</summary>
+            <param name="Reader">Источник XML-данных</param>
+            <param name="Weights">Коллекция весовых коэффициентов слоёв</param>
+            <param name="Offsets">Коллекция смещений слоёв</param>
+            <param name="OffsetWeights">Коллекция весовых коэффициентов смещений слоёв</param>
+            <param name="Outputs">Коллекция значений выходов слоёв</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.ActivationFunctionCreator(System.String)">
+            <summary>Метод создания активационной функции на основе её имени</summary>
+            <param name="FunctionTypeName">Имя типа активационной функции</param>
+            <returns>АКтивационная функция с указанным именем</returns>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager">
+            <summary>Менеджер слоя</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager._Activations">
+            <summary>Функции активации слоёв</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.InputsCount">
+            <summary>Число входов слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.OutputsCount">
+            <summary>Число выходов слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.Activation">
+            <summary>Активационная функция слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.Offsets">
+            <summary>Смещения слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.OffsetWeights">
+            <summary>Коэффициенты смещений слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.Weights">
+            <summary>Матрица коэффициентов передачи входов слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.LayerIndex">
+            <summary>Индекс слоя</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.PreviousLayer">
+            <summary>Предыдущий слой</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.NextLayer">
+            <summary>Следующий слой</summary>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.#ctor(System.Int32,System.Double[0:,0:][],System.Double[][],System.Double[][],System.Double[][],MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction[])">
+            <summary>Инициализация нового установщика активационной функции слоя</summary>
+            <param name="LayerIndex">номер слоя</param>
+            <param name="Layers">Матрицы коэффициентов слоёв</param>
+            <param name="Offsets">Смещения слоёв</param>
+            <param name="OffsetWeights">Веса смащений слоёв</param>
+            <param name="Outputs">Выходы слоёв</param>
+            <param name="Activations">Массив всех активационных функций сети</param>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.LayerWeightsInitializer">
+            <summary>Инициализатор весов</summary>
+            <param name="Neuron">Номер нейрона в слое</param>
+            <param name="Input">Номер входа нейрона</param>
+            <returns>Значение веса входа</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.SetWeights(MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.LayerWeightsInitializer)">
+            <summary>Инициализация весов входов нейронов</summary>
+            <param name="Initializer">Функция инициализации весов входов нейронов</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.SetWeightsUniform(System.Double,System.Double)">
+            <summary>Инициализация весовых коэффициентов слоя случайными числами с равномерным распределением</summary>
+            <param name="Sigma">Среднеквадратическое отклонение</param>
+            <param name="Mu">Математическое ожидание</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.SetWeightsNormal(System.Double,System.Double)">
+            <summary>Инициализация весовых коэффициентов слоя случайными числами с нормальным распределением</summary>
+            <param name="Sigma">Среднеквадратическое отклонение</param>
+            <param name="Mu">Математическое ожидание</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.SetOffsets(System.Double)">
+            <summary>Установка значений смещений нейронов</summary>
+            <param name="Offset">Требуемое значение смещений для всех нейронов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.SetOffsets(System.Collections.Generic.ICollection{System.Double})">
+            <summary>Установка значений смещений нейронов</summary>
+            <param name="OffsetValues">Требуемое значение смещений для всех нейронов слоя</param>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.LayerOffsetsInitializer">
+            <summary>Инициализацтор смещений нейронов</summary>
+            <param name="Neuron">Номер нейрона</param>
+            <returns>Значение смещения для указанного нейрона</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.SetOffsets(MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.LayerOffsetsInitializer)">
+            <summary>Установка значений смещений нейронов</summary>
+            <param name="Setter">Инициализацтор смещений</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.SetOffsetWeights(System.Double)">
+            <summary>Установка требуемого значения весов смещений для нейронов слоя</summary>
+            <param name="Weight">Требуемые значения весов смещений для всех нейронов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.SetOffsetWeights(System.Collections.Generic.ICollection{System.Double})">
+            <summary>Установка требуемого значения весов смещений для нейронов слоя</summary>
+            <param name="WeightValues">Требуемые значения весов смещений для всех нейронов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.SetOffsetWeights(MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.LayerOffsetsInitializer)">
+            <summary>Установка значений весов смещений нейронов</summary>
+            <param name="Setter">Инициализацтор весов смещений</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.SetOutputs(System.Collections.Generic.ICollection{System.Double})">
+            <summary>Установка значений выходов слоя</summary>
+            <param name="OutputValues">Требуемые значения выходов слоя</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.LoadCSV(System.String,System.Char,System.Int32)">
+            <summary>Загрузка данных весовых коэффициентов слоя из CSV-файла</summary>
+            <param name="FileName">Имя файла данных</param>
+            <param name="Separator">Символ-разделитель данных</param>
+            <param name="HeaderLinesCount">Количество строк заголовков</param>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayersManager">
+            <summary>Менеджер слоёв сети</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayersManager._Activations">
+            <summary>Функции активации слоёв сети</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayersManager._Offsets">
+            <summary>Смещения нейронов</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayersManager._OffsetWeights">
+            <summary>Весовые коэффициенты смещений нейронов</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayersManager._Layers">
+            <summary>Массив матриц коэффициентов передачи сети</summary>
+        </member>
+        <member name="F:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayersManager._Outputs">
+            <summary>Выходы сети</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayersManager.Item(System.Int32)">
+            <summary>Установщие активационной функции указанного слоя</summary>
+            <param name="LayerIndex">Номер слоя функцию которого требуется установить</param>
+            <returns>Установщик активационной функции слоя</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayersManager.#ctor(System.Double[0:,0:][],System.Double[][],System.Double[][],System.Double[][],MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction[])">
+            <summary>Инициализация нового менеджера активационных функций сети</summary>
+            <param name="Layers">Массив матриц передачи слоёв</param>
+            <param name="Offsets">Массив смещений слоёв</param>
+            <param name="OffsetWeights">Массив весовых коэффициентов смещений слоёв</param>
+            <param name="Outputs">Выходы слоёв сети</param>
+            <param name="Activations">Массив активационных функций сети</param>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.NetworkTeacher.Teach(System.Double[],System.Double[],System.Double[],System.Double,System.Double)">
+            <summary>Обучение сети метдом обратного распространения ошибки</summary>
+            <param name="Input">Массив входа</param>
+            <param name="Output">Массив выхода</param>
+            <param name="Expected">Ожилаемое значение на выходе сети</param>
+            <param name="Rho">Коэффициент скорости обучения (0..1)</param>
+            <param name="InertialFactor">Инерционность процесса обцчения [0..1)</param>
+            <returns>Среднеквадратическая ошибка обучения</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.NeuralNetworkExtensions.Teach(MathCore.AI.NeuralNetworks.NetworkTeacher,System.Double,MathCore.AI.NeuralNetworks.Example[])">
+            <summary>Выполнить обучение нейронной сети (одну эпоху) по заданному набору обучающих примеров</summary>
+            <param name="Teacher">Обучаемая нейронная сеть</param>
+            <param name="Rho">Коэффициент скорости обучения</param>
+            <param name="Examples">Набор обучающих примеро</param>
+            <returns>Результат выполнения обучения за эпоху</returns>
+        </member>
+        <member name="M:MathCore.AI.NeuralNetworks.RecurrentNetwork.Process(System.Double[],System.Double[])">
+            <summary>Обработка данных сетью</summary>
+            <param name="Input">Массив входа</param>
+            <param name="Output">Массив выхода</param>
+        </member>
+        <member name="T:MathCore.AI.NeuralNetworks.TeachResult">
+            <summary>Результат обучения для одного обучающего образца</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.TeachResult.Example">
+            <summary>Образец, на котором прводилось обучение</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.TeachResult.Input">
+            <summary>Входное воздействие</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.TeachResult.Output">
+            <summary>Отклик сети</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.TeachResult.ExpectedOutput">
+            <summary>Желаемый результат</summary>
+        </member>
+        <member name="P:MathCore.AI.NeuralNetworks.TeachResult.Error">
+            <summary>Ошибка отклика</summary>
+        </member>
+    </members>
+</doc>

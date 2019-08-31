@@ -7,7 +7,9 @@ using MathCore.Annotations;
 
 namespace MathCore.AI.ART1
 {
-    public class Classificator<T> : IEnumerable<Clauter<T>>
+    /// <summary>Классификатор объектов по алгоритму ART-1</summary>
+    /// <typeparam name="T">Тип классифицируемых объектов</typeparam>
+    public class Classificator<T> : IEnumerable<Cluster<T>>
         where T : class
     {
         /// <summary>Параметр внимательности (0;1]</summary>
@@ -17,9 +19,11 @@ namespace MathCore.AI.ART1
         /// <summary>Бетта-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</summary>
         private double _Beta = 1;
 
+        /// <summary>Количество иметарций перераспределения образцов по кластерам для операции добавления</summary>
         private int _AddIterationsCount = 50;
 
-        [NotNull] private readonly List<Clauter<T>> _Clusters = new List<Clauter<T>>();
+        /// <summary>Образованные кластеры</summary>
+        [NotNull] private readonly List<Cluster<T>> _Clusters = new List<Cluster<T>>();
 
         /// <summary>Параметр внимательности (0;1]</summary>
         /// <remarks>Определяет размер кластера</remarks>
@@ -59,42 +63,38 @@ namespace MathCore.AI.ART1
             set => _AddIterationsCount = value;
         }
 
+        /// <summary>Критерии классификации</summary>
         [NotNull] public ClassificationCriterias<T> Criterias { get; } = new ClassificationCriterias<T>();
 
-        [NotNull, ItemNotNull] public IReadOnlyCollection<Clauter<T>> Clusters => _Clusters;
+        /// <summary>Сформированные кластеры</summary>
+        [NotNull, ItemNotNull] public IReadOnlyCollection<Cluster<T>> Clusters => _Clusters;
 
+        /// <summary>Добавить новый объект в классификатор</summary>
+        /// <param name="Item">Классифицируемый объект</param>
+        /// <returns>Кластер, в который отнесён добавляемый обект</returns>
         [NotNull]
-        public Clauter<T> Add([NotNull] T Item)
+        public Cluster<T> Add([NotNull] T Item)
         {
             if (Item is null) throw new ArgumentNullException(nameof(Item));
                
 
-            if (_Clusters.Count == 0)
-            {
-                var first_cluster = new Clauter<T>(
-                    Criterias.GetFeaturesVector(Item), 
-                    Item, 
-                    Criterias.GetFeaturesVector, 
-                    Criterias.GetFeatureNames());
-                _Clusters.Add(first_cluster);
-                return first_cluster;
-            }
+            if (_Clusters.Count == 0) return CreateFirstCluster(Item);
 
-            var items = _Clusters
-                .SelectMany(c => c)
-                .AppendFirst(Item)
-                .Select(i => new KeyValuePair<double[], T>(Criterias.GetFeaturesVector(i), i))
-                .ToArray();
+            KeyValuePair<double[], T>[] GetAllItems(T item, IEnumerable<Cluster<T>> clusters, ClassificationCriterias<T> criterias) =>
+                clusters
+                   .SelectMany(c => c)
+                   .AppendFirst(item)
+                   .Select(i => new KeyValuePair<double[], T>(criterias.GetFeaturesVector(i), i))
+                   .ToArray();
 
-            var rho = Vigilance;
-            var betta = Beta;
+            var items = GetAllItems(Item, _Clusters, Criterias);
 
-            var cluster = _Clusters.FirstOrDefault(c => c.SimilarityAndCareTest(items[0].Key, betta, rho));
+            var cluster = _Clusters.FirstOrDefault(c => c.SimilarityAndCareTest(items[0].Key, Beta, Vigilance));
             if (cluster != null)
                 cluster.Add(items[0].Key, Item);
             else
             {
-                cluster = new Clauter<T>(
+                cluster = new Cluster<T>(
                     items[0].Key,
                     Item,
                     Criterias.GetFeaturesVector,
@@ -102,14 +102,21 @@ namespace MathCore.AI.ART1
                 _Clusters.Add(cluster);
             }
 
-            var iteration = _AddIterationsCount;
-            bool repeat;
+            CheckClusters(items, _AddIterationsCount);
+
+            return _Clusters.First(c => c.Contains(Item));
+        }
+
+        private void CheckClusters([NotNull] KeyValuePair<double[], T>[] Items, int MaxIterationCount)
+        {
+            var iteration = MaxIterationCount;
+            bool has_changes;
             do
             {
-                repeat = false;
-                foreach (var (prototype_vector, item) in items)
+                has_changes = false;
+                foreach (var (prototype_vector, item) in Items)
                 {
-                    var new_cluster = _Clusters.FirstOrDefault(c => c.SimilarityAndCareTest(prototype_vector, betta, rho));
+                    var new_cluster = _Clusters.FirstOrDefault(c => c.SimilarityAndCareTest(prototype_vector, Beta, Vigilance));
                     var old_cluster = _Clusters.First(c => c.Contains(item));
 
                     if (new_cluster is null || ReferenceEquals(old_cluster, new_cluster)) continue;
@@ -117,18 +124,30 @@ namespace MathCore.AI.ART1
                     if (old_cluster.ItemsCount == 0)
                         _Clusters.Remove(old_cluster);
                     new_cluster.Add(prototype_vector, item);
-                    repeat = iteration >= 0;
+                    has_changes = true;
                 }
-                if (repeat) iteration--;
-            } while (repeat);
-
-            return _Clusters.First(c => c.Contains(Item));
+            } while (has_changes && iteration >= 0);
         }
 
         [NotNull]
-        public Dictionary<T, Clauter<T>> Add([NotNull] IEnumerable<T> Items)
+        private Cluster<T> CreateFirstCluster(T Item)
         {
-            var result = new Dictionary<T, Clauter<T>>(new LambdaEqualityComparer<T>(ReferenceEquals, x => x.GetHashCode()));
+            var first_cluster = new Cluster<T>(
+                Criterias.GetFeaturesVector(Item),
+                Item,
+                Criterias.GetFeaturesVector,
+                Criterias.GetFeatureNames());
+            _Clusters.Add(first_cluster);
+            return first_cluster;
+        }
+
+        /// <summary>Добавить элементы в классификатор</summary>
+        /// <param name="Items">Классифицируемые элементы</param>
+        /// <returns>Словарь классоф элементов</returns>
+        [NotNull]
+        public Dictionary<T, Cluster<T>> Add([NotNull] IEnumerable<T> Items)
+        {
+            var result = new Dictionary<T, Cluster<T>>(new LambdaEqualityComparer<T>(ReferenceEquals, x => x.GetHashCode()));
             foreach (var item in Items)
                 result.Add(item, Add(item));
             return result;
@@ -137,7 +156,7 @@ namespace MathCore.AI.ART1
 
         #region Implementation of IEnumerable
 
-        public IEnumerator<Clauter<T>> GetEnumerator() => _Clusters.GetEnumerator();
+        public IEnumerator<Cluster<T>> GetEnumerator() => _Clusters.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_Clusters).GetEnumerator();
 

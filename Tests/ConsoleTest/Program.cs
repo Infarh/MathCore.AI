@@ -1,12 +1,13 @@
 ﻿using System;
 
-namespace ConsoleTest
+namespace MathCore.AI
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+
+            Console.ReadLine();
         }
     }
 }
