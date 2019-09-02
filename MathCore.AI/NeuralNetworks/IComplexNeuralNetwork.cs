@@ -2,8 +2,8 @@
 
 namespace MathCore.AI.NeuralNetworks
 {
-    /// <summary>Нейронная сеть</summary>
-    public interface INeuralNetwork
+    /// <summary>Комплексная нейронная сеть</summary>
+    public interface IComplexNeuralNetwork
     {
         /// <summary>Число входов сети</summary>
         int InputsCount { get; }
@@ -14,6 +14,6 @@ namespace MathCore.AI.NeuralNetworks
         /// <summary>Обработать образ</summary>
         /// <param name="Input">Входной образ</param>
         /// <param name="Output">Отклик сети</param>
-        void Process([NotNull] double[] Input, [NotNull] double[] Output);
+        void Process([NotNull] Complex[] Input, [NotNull] Complex[] Output);
     }
 }

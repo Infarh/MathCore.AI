@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using MathCore.Annotations;
 
 namespace MathCore.AI.NeuralNetworks

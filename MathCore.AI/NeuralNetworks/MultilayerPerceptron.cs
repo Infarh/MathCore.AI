@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections;
+﻿using MathCore.AI.NeuralNetworks.ActivationFunctions;
+using MathCore.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
-
-using MathCore.AI.NeuralNetworks.ActivationFunctions;
-using MathCore.Annotations;
 // ReSharper disable UnusedMember.Global
 
 namespace MathCore.AI.NeuralNetworks
@@ -275,7 +274,7 @@ namespace MathCore.AI.NeuralNetworks
                 var prev_layer_output = layer_index == 0                 // Если слой первый, то за выходы "предыдущего слоя"
                     ? Input                                              // принимаем входной вектор
                     : outputs[layer_index - 1];                          // иначе берём массив выходов предыдущего слоя
-                                                                         
+
                 // Определяем вектор входа следующего слоя Xnext         
                 var current_output = layer_index == layers_count - 1     // Если слой последний, то за выходы "следующего слоя"
                     ? Output                                             // Принимаем массив выходного вектора
@@ -284,7 +283,7 @@ namespace MathCore.AI.NeuralNetworks
 
                 // Определяем вектор входа функции активации Net
                 double[] current_state = null;
-                if(state != null) current_state = state[layer_index] ?? new double[current_output.Length];
+                if (state != null) current_state = state[layer_index] ?? new double[current_output.Length];
 
                 // Определяем вектор смещения O
                 var current_layer_offset = layer_offsets[layer_index];
@@ -294,10 +293,10 @@ namespace MathCore.AI.NeuralNetworks
                 var current_layer_activation = layer_activation[layer_index];
 
                 ProcessLayer(
-                    current_layer_weights, 
-                    current_layer_offset, 
+                    current_layer_weights,
+                    current_layer_offset,
                     current_layer_offset_weights,
-                    prev_layer_output, 
+                    prev_layer_output,
                     current_output, current_layer_activation, current_state);
             }
         }
@@ -332,8 +331,8 @@ namespace MathCore.AI.NeuralNetworks
             }
         }
 
-       
-        
+
+
 
         #endregion
 
@@ -351,23 +350,52 @@ namespace MathCore.AI.NeuralNetworks
             SaveXmlTo(file);
         }
 
+        /// <summary>Сохранить структуру сети в файл XMl</summary>
+        /// <param name="FileName">Имя файла для сохранения данных</param>
+        public async Task SaveXmlToAsync([NotNull] string FileName)
+        {
+            using var file = File.CreateText(FileName ?? throw new ArgumentNullException(nameof(FileName)));
+            await SaveXmlToAsync(file).ConfigureAwait(false);
+        }
+
         /// <summary>Сохранить структуру сети в поток в формате XML</summary>
         /// <param name="Stream">Поток для сохранения</param>
         public void SaveXmlTo([NotNull] Stream Stream) => SaveXmlTo(XmlWriter.Create(Stream ?? throw new ArgumentNullException(nameof(Stream)), new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }));
 
+        /// <summary>Сохранить структуру сети в поток в формате XML</summary>
+        /// <param name="Stream">Поток для сохранения</param>
+        public async Task SaveXmlToAsync([NotNull] Stream Stream) => await SaveXmlToAsync(XmlWriter.Create(Stream ?? throw new ArgumentNullException(nameof(Stream)), new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }));
+
         /// <summary>Сохранить структуру сети в текст в формате XML</summary>
         /// <param name="Writer">Объект записи текста</param>
         public void SaveXmlTo([NotNull] TextWriter Writer) => SaveXmlTo(XmlWriter.Create(Writer ?? throw new ArgumentNullException(nameof(Writer)), new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }));
+
+        /// <summary>Сохранить структуру сети в текст в формате XML</summary>
+        /// <param name="Writer">Объект записи текста</param>
+        public async Task SaveXmlToAsync([NotNull] TextWriter Writer) => await SaveXmlToAsync(XmlWriter.Create(Writer ?? throw new ArgumentNullException(nameof(Writer)), new XmlWriterSettings { ConformanceLevel = ConformanceLevel.Fragment }));
 
         /// <summary>Сохранить структуру сети в формате XML</summary>
         /// <param name="Writer">Объект записи данных XML</param>
         public void SaveXmlTo([NotNull] XmlWriter Writer)
         {
             if (Writer is null) throw new ArgumentNullException(nameof(Writer));
+
             Writer.WriteStartElement("Network");                                        // <Network>   
             WriteLayers(Writer);
             Writer.WriteEndElement();                                                   // </Network>
             Writer.Flush();
+        }
+
+        /// <summary>Сохранить структуру сети в формате XML</summary>
+        /// <param name="Writer">Объект записи данных XML</param>
+        public async Task SaveXmlToAsync([NotNull] XmlWriter Writer)
+        {
+            if (Writer is null) throw new ArgumentNullException(nameof(Writer));
+
+            await Writer.WriteStartElementAsync(null, "Network", null).ConfigureAwait(false);
+            await WriteLayersAsync(Writer).ConfigureAwait(false);
+            await Writer.WriteEndElementAsync().ConfigureAwait(false);
+            await Writer.FlushAsync().ConfigureAwait(false);
         }
 
         /// <summary>Записать данные слоёв</summary>
@@ -376,13 +404,31 @@ namespace MathCore.AI.NeuralNetworks
         {
             for (var layer_index = 0; layer_index < _Layers.Length; layer_index++)
             {
-                Writer.WriteStartElement("Layer"); // <Layer inder="****">
-                Writer.WriteAttributeString("Index", layer_index.ToString());
                 var activation = _Activations[layer_index];
                 if (activation?.GetType() == typeof(Lambda)) throw new InvalidOperationException("Невозможно серилизовать лямда-функцию активации");
+
+                Writer.WriteStartElement("Layer"); // <Layer inder="****">
+                Writer.WriteAttributeString("Index", layer_index.ToString());
                 Writer.WriteAttributeString("Activation", (activation is null ? typeof(Sigmoid) : activation.GetType()).ToString());
                 WriteNeurons(Writer, layer_index);
                 Writer.WriteEndElement(); // </Layer>
+            }
+        }
+
+        /// <summary>Записать данные слоёв</summary>
+        /// <param name="Writer">Объект записи данных XML</param>
+        private async Task WriteLayersAsync([NotNull] XmlWriter Writer)
+        {
+            for (var layer_index = 0; layer_index < _Layers.Length; layer_index++)
+            {
+                var activation = _Activations[layer_index];
+                if (activation?.GetType() == typeof(Lambda)) throw new InvalidOperationException("Невозможно серилизовать лямда-функцию активации");
+
+                await Writer.WriteStartElementAsync(null, "Layer", null).ConfigureAwait(false);
+                await Writer.WriteAttributeStringAsync(null, "Index", null, layer_index.ToString()).ConfigureAwait(false);
+                await Writer.WriteAttributeStringAsync(null, "Activation", null, (activation is null ? typeof(Sigmoid) : activation.GetType()).ToString()).ConfigureAwait(false);
+                await WriteNeuronsAsync(Writer, layer_index).ConfigureAwait(false);
+                await Writer.WriteEndElementAsync().ConfigureAwait(false); // </Layer>
             }
         }
 
@@ -395,6 +441,17 @@ namespace MathCore.AI.NeuralNetworks
             var neurons_count = layer.GetLength(0);
             for (var neuron_index = 0; neuron_index < neurons_count; neuron_index++)
                 WriteNeuron(Writer, LayerIndex, neuron_index, layer);
+        }
+
+        /// <summary>Записать данные нейронов слоя</summary>
+        /// <param name="Writer">Объект записи данных XML</param>
+        /// <param name="LayerIndex">Индекс слоя</param>
+        private async Task WriteNeuronsAsync([NotNull] XmlWriter Writer, int LayerIndex)
+        {
+            var layer = _Layers[LayerIndex];
+            var neurons_count = layer.GetLength(0);
+            for (var neuron_index = 0; neuron_index < neurons_count; neuron_index++)
+                await WriteNeuronAsync(Writer, LayerIndex, neuron_index, layer).ConfigureAwait(false);
         }
 
         /// <summary>Записать данные нейрона</summary>
@@ -423,6 +480,38 @@ namespace MathCore.AI.NeuralNetworks
             Writer.WriteEndElement(); // </Neuron>
         }
 
+        /// <summary>Асинхронно записать данные нейрона</summary>
+        /// <param name="Writer">Объект записи данных XML</param>
+        /// <param name="LayerIndex">Индекс слоя</param>
+        /// <param name="NeuronIndex">Индекс нейрона</param>
+        /// <param name="LayerWeights">Матрица весовых коэффициентов слоя</param>
+        private async Task WriteNeuronAsync([NotNull] XmlWriter Writer, int LayerIndex, int NeuronIndex, [NotNull] double[,] LayerWeights)
+        {
+            var create_buffer_task = LayerWeights.Async(NeuronIndex, (layers, index) =>
+            {
+                var weights_buffer = new StringBuilder();
+                var invariant_culture = CultureInfo.InvariantCulture;
+                var inputs_count = layers.GetLength(1);
+                for (var input_index = 0; input_index < inputs_count - 1; input_index++)
+                    weights_buffer.AppendFormat("{0}; ", layers[index, input_index].ToString(__NumberFormat, invariant_culture));
+                weights_buffer.Append(layers[index, inputs_count - 1].ToString(__NumberFormat, invariant_culture));
+                return weights_buffer.ToString();
+            });
+
+            await Writer.WriteStartElementAsync(null, "Neuron", null).ConfigureAwait(false);
+            await Writer.WriteAttributeStringAsync(null, "Index", null, NeuronIndex.ToString()).ConfigureAwait(false);
+            var culture = CultureInfo.InvariantCulture;
+            await Writer.WriteAttributeStringAsync(null, "Offset", null, _Offsets[LayerIndex][NeuronIndex].ToString(__NumberFormat, culture)).ConfigureAwait(false);
+            await Writer.WriteAttributeStringAsync(null, "OffsetWeight", null, _OffsetsWeights[LayerIndex][NeuronIndex].ToString(__NumberFormat, culture)).ConfigureAwait(false);
+            var layer_out = LayerIndex < _Layers.Length - 1 ? _Outputs[LayerIndex] : null;
+            if (layer_out != null)
+                await Writer.WriteAttributeStringAsync(null, "Out", null, layer_out[NeuronIndex].ToString(__NumberFormat, culture)).ConfigureAwait(false);
+
+            await Writer.WriteStringAsync(await create_buffer_task.ConfigureAwait(false) ?? throw new InvalidOperationException()).ConfigureAwait(false);
+
+            await Writer.WriteEndElementAsync().ConfigureAwait(false);
+        }
+
         #endregion
 
         #region Чтение
@@ -435,8 +524,22 @@ namespace MathCore.AI.NeuralNetworks
         {
             if (FileName is null) throw new ArgumentNullException(nameof(FileName));
             if (!File.Exists(FileName)) throw new FileNotFoundException($"Файл {FileName} не найден", FileName);
-            using (var file = File.OpenText(FileName))
-                return LoadXmlFrom(file);
+
+            using var file = File.OpenText(FileName);
+            return LoadXmlFrom(file);
+        }
+
+        /// <summary>Чтение данных сети в формате XML из файла</summary>
+        /// <param name="FileName">Имя файла, созержащего структуру сети в формате XML</param>
+        /// <returns>Прочитанная из файла нейронная сеть</returns>
+        [NotNull]
+        public static async Task<MultilayerPerceptron> LoadXmlFromAsync([NotNull] string FileName)
+        {
+            if (FileName is null) throw new ArgumentNullException(nameof(FileName));
+            if (!File.Exists(FileName)) throw new FileNotFoundException($"Файл {FileName} не найден", FileName);
+
+            using var file = File.OpenText(FileName);
+            return await LoadXmlFromAsync(file);
         }
 
         /// <summary>Загрузка данных нейронной сети из потока в формате XML</summary>
@@ -444,10 +547,20 @@ namespace MathCore.AI.NeuralNetworks
         /// <returns>Прочитанная нейронная сеть</returns>
         [NotNull] public static MultilayerPerceptron LoadFromXml([NotNull] Stream Data) => LoadXmlFrom(XmlReader.Create(Data ?? throw new ArgumentNullException(nameof(Data))));
 
+        /// <summary>Загрузка данных нейронной сети из потока в формате XML</summary>
+        /// <param name="Data">Поток данных сети</param>
+        /// <returns>Прочитанная нейронная сеть</returns>
+        [NotNull] public static async Task<MultilayerPerceptron> LoadFromXmlAsync([NotNull] Stream Data) => await LoadXmlFromAsync(XmlReader.Create(Data ?? throw new ArgumentNullException(nameof(Data))));
+
         /// <summary>Загрузка данных сети из текста в формате XML</summary>
         /// <param name="Reader">Источник текстовых данных, хранящий структуру сети в формате XML</param>
         /// <returns>Прочитанная нейронная сеть</returns>
         [NotNull] public static MultilayerPerceptron LoadXmlFrom([NotNull] TextReader Reader) => LoadXmlFrom(XmlReader.Create(Reader ?? throw new ArgumentNullException(nameof(Reader))));
+
+        /// <summary>Загрузка данных сети из текста в формате XML</summary>
+        /// <param name="Reader">Источник текстовых данных, хранящий структуру сети в формате XML</param>
+        /// <returns>Прочитанная нейронная сеть</returns>
+        [NotNull] public static async Task<MultilayerPerceptron> LoadXmlFromAsync([NotNull] TextReader Reader) => await LoadXmlFromAsync(XmlReader.Create(Reader ?? throw new ArgumentNullException(nameof(Reader))));
 
         /// <summary>Чтение структуры сети из XML</summary>
         /// <param name="Reader">Источник XML, хранящий структуру сети</param>
@@ -483,6 +596,57 @@ namespace MathCore.AI.NeuralNetworks
                     activation_functions.Add(activation is Sigmoid ? null : activation);
                 }
                 ReadLayer(Reader, weights, offsets, offset_weights, outputs);
+            }
+
+            var network = new MultilayerPerceptron(weights.ToArray());
+            var layers_count = network.LayersCount;
+            foreach (var layer in network.Layer)
+            {
+                var layer_index = layer.LayerIndex;
+                layer.SetOffsets(offsets[layer_index]);
+                layer.SetOffsetWeights(offset_weights[layer_index]);
+                if (layer_index < layers_count - 1) // Установка значений выходов сети для всех слоёв кроме выходного
+                    layer.SetOutputs(outputs[layer_index]);
+                layer.Activation = activation_functions[layer_index];
+            }
+
+            return network;
+        }
+
+        /// <summary>Чтение структуры сети из XML</summary>
+        /// <param name="Reader">Источник XML, хранящий структуру сети</param>
+        /// <returns>Прочитанная нейронная сеть</returns>
+        [NotNull, ItemNotNull]
+        public static async Task<MultilayerPerceptron> LoadXmlFromAsync([NotNull] XmlReader Reader)
+        {
+            if (Reader is null) throw new ArgumentNullException(nameof(Reader));
+
+            await Reader.Async(r => r.ReadStartElement("Network")).ConfigureAwait(false);
+
+            var activation_functions_pool = new Dictionary<string, ActivationFunction>();
+            var activation_functions = new List<ActivationFunction>();
+            var weights = new List<double[,]>();
+            var offsets = new List<IList<double>>();
+            var offset_weights = new List<IList<double>>();
+            var outputs = new List<IList<double>>();
+
+            while (!Reader.EOF)
+            {
+                if (Reader.NodeType == XmlNodeType.Whitespace || Reader.NodeType == XmlNodeType.EndElement || Reader.Name != "Layer")
+                {
+                    await Reader.SkipAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                var activation_type_name = Reader.GetAttribute("Activation");
+                if (activation_type_name == null)
+                    activation_functions.Add(null);
+                else
+                {
+                    var activation = activation_functions_pool.GetValueOrAddNew(activation_type_name, ActivationFunctionCreator);
+                    activation_functions.Add(activation is Sigmoid ? null : activation);
+                }
+                await ReadLayerAsync(Reader, weights, offsets, offset_weights, outputs).ConfigureAwait(false);
             }
 
             var network = new MultilayerPerceptron(weights.ToArray());
@@ -541,6 +705,72 @@ namespace MathCore.AI.NeuralNetworks
                 layer_offet_weights.Add(Reader.GetAttributeDouble("OffsetWeight") ?? 0);
                 layer_outputs.Add(Reader.GetAttributeDouble("Out") ?? 0);
                 var content = Reader.ReadElementContentAsString();
+                var values = content.Split(';').Select(S => double.Parse(S.Trim(), NumberFormatInfo.InvariantInfo)).ToArray();
+                if (inputs_count is null)
+                    inputs_count = values.Length;
+                else if (values.Length != inputs_count)
+                    throw new InvalidOperationException(
+                        $"Количество весов ({values.Length}) для нейрона {index} не равно количеству весов для предыдущих нейронов ({inputs_count})");
+                neurons_weights.Add(values);
+
+                index++;
+            }
+
+            if (inputs_count is null) throw new InvalidOperationException("В слое отсутствуют нейроны");
+            var layer_weights = new double[neurons_weights.Count, (int)inputs_count];
+            for (var neuron = 0; neuron < neurons_weights.Count; neuron++)
+                for (var input = 0; input < inputs_count; input++)
+                {
+                    var neuron_weights = neurons_weights[neuron];
+                    layer_weights[neuron, input] = neuron_weights[input];
+                }
+
+            Weights.Add(layer_weights);
+            Offsets.Add(layer_offsets);
+            OffsetWeights.Add(layer_offet_weights);
+            Outputs.Add(layer_outputs);
+        }
+
+        /// <summary>Чтение данных слоя</summary>
+        /// <param name="Reader">Источник XML-данных</param>
+        /// <param name="Weights">Коллекция весовых коэффициентов слоёв</param>
+        /// <param name="Offsets">Коллекция смещений слоёв</param>
+        /// <param name="OffsetWeights">Коллекция весовых коэффициентов смещений слоёв</param>
+        /// <param name="Outputs">Коллекция значений выходов слоёв</param>
+        private static async Task ReadLayerAsync(
+            [NotNull] XmlReader Reader,
+            [NotNull] ICollection<double[,]> Weights,
+            [NotNull] ICollection<IList<double>> Offsets,
+            [NotNull] ICollection<IList<double>> OffsetWeights,
+            [NotNull] ICollection<IList<double>> Outputs)
+        {
+            await Reader.Async(r => r.ReadStartElement("Layer")).ConfigureAwait(false);
+            var neurons_weights = new List<double[]>();
+            var layer_offsets = new List<double>();
+            var layer_offet_weights = new List<double>();
+            var layer_outputs = new List<double>();
+            int? inputs_count = null;
+            var index = 0;
+            while (!Reader.EOF)
+            {
+                if (Reader.NodeType == XmlNodeType.Whitespace)
+                {
+                    await Reader.SkipAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                if (Reader.NodeType == XmlNodeType.EndElement) break;
+
+                if (Reader.Name != "Neuron")
+                {
+                    await Reader.SkipAsync().ConfigureAwait(false);
+                    continue;
+                }
+
+                layer_offsets.Add(Reader.GetAttributeDouble("Offset") ?? 0);
+                layer_offet_weights.Add(Reader.GetAttributeDouble("OffsetWeight") ?? 0);
+                layer_outputs.Add(Reader.GetAttributeDouble("Out") ?? 0);
+                var content = await Reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
                 var values = content.Split(';').Select(S => double.Parse(S.Trim(), NumberFormatInfo.InvariantInfo)).ToArray();
                 if (inputs_count is null)
                     inputs_count = values.Length;

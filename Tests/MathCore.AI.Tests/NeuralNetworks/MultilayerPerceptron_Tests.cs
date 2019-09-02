@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using MathCore.AI.NeuralNetworks;
 using MathCore.AI.NeuralNetworks.ActivationFunctions;
-using MathCore.AI.Tests.Service;
 using MathCore.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -30,12 +30,14 @@ namespace MathCore.AI.Tests.NeuralNetworks
             }
         }
 
-        private static double activation(double x) => 1 / (1 + Math.Exp(-x));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static double Activation(double x) => 1 / (1 + Math.Exp(-x));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void Activation([NotNull] double[] X, [NotNull] double[] FX)
         {
             for (var i = 0; i < X.Length; i++)
-                FX[i] = activation(X[i]);
+                FX[i] = Activation(X[i]);
         }
 
         private static void DirectDistribution(
@@ -518,7 +520,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             var errors = epohs.Select(e => e.ErrorAverage);
 
             var first_errors = errors.Take(2).ToArray();
-            var last_errors = errors.ToArray().TakeLast(50).ToArray();
+            var last_errors = errors.TakeLast(50).ToArray();
 
 
             CollectionAssert.That.Collection(first_errors).All(v => v > 0.4);

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using MathCore.AI.ART1;
-using MathCore.AI.Tests.Service;
 using MathCore.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

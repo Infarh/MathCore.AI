@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using MathCore.AI.NeuralNetworks;
-using MathCore.AI.Tests.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MathCore.AI.Tests.NeuralNetworks
