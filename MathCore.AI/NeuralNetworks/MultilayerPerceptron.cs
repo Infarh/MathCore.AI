@@ -2,7 +2,6 @@
 using MathCore.Annotations;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -253,9 +252,6 @@ namespace MathCore.AI.NeuralNetworks
             if (Input.Length != Layers[0].GetLength(1)) throw new ArgumentException($"Размер входного вектора ({Input.Length}) не равен количествоу входов сети ({Layers[0].GetLength(1)})", nameof(Input));
             if (Output.Length != Layers[Layers.Length - 1].GetLength(0)) throw new ArgumentException($"Размер выходного вектора ({Output.Length}) не соответвтует количеству выходов сети ({Layers[Layers.Length - 1].GetLength(0)})", nameof(Output));
             if (Activations.Length != Layers.Length) throw new InvalidOperationException("Размер массива функций активации не соответствует количеству слоёв сети");
-
-            Contract.EndContractBlock();
-
 
             var layer = Layers;                                     // Матрицы коэффициентов передачи слоёв
             var layers_count = layer.Length;                        // Количество слоёв
