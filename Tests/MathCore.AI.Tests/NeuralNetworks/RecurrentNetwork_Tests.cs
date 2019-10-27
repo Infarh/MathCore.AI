@@ -61,9 +61,9 @@ namespace MathCore.AI.Tests.NeuralNetworks
             var (weights, feedbacks) = GetTestNetworkStructure();
             var network = new RecurrentNetwork(weights, feedbacks);
 
-            Assert.That.Value(network.LayersCount).AreEqual(weights.Length);
-            Assert.That.Value(network.InputsCount).AreEqual(weights.First().GetLength(1));
-            Assert.That.Value(network.OutputsCount).AreEqual(weights.Last().GetLength(0));
+            Assert.That.Value(network.LayersCount).IsEqual(weights.Length);
+            Assert.That.Value(network.InputsCount).IsEqual(weights.First().GetLength(1));
+            Assert.That.Value(network.OutputsCount).IsEqual(weights.Last().GetLength(0));
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
 
             network.Process(input, output);
 
-            CollectionAssert.That.Collection(output).AreEquals(new [] { 0.2, 0.5, 0.8 }, 5.505e-006);
+            CollectionAssert.That.Collection(output).IsEqualTo(new[] { 0.2, 0.5, 0.8 }, 5.505e-006);
         }
     }
 }

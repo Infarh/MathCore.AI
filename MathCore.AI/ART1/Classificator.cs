@@ -126,6 +126,8 @@ namespace MathCore.AI.ART1
                     new_cluster.Add(prototype_vector, item);
                     has_changes = true;
                 }
+
+                iteration--;
             } while (has_changes && iteration >= 0);
         }
 

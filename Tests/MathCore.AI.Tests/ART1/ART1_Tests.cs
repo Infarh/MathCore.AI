@@ -106,11 +106,11 @@ namespace MathCore.AI.Tests.ART1
             var claster1 = classificator.Add(p1);
             var claster2 = classificator.Add(p2);
 
-            Assert.That.Value(claster0).AreReferenceEquals(claster2);
-            Assert.That.Value(claster0).AreNotReferenceEquals(claster1);
+            Assert.That.Value(claster0).IsReferenceEquals(claster2);
+            Assert.That.Value(claster0).IsNotReferenceEquals(claster1);
 
-            Assert.That.Value(claster0.ItemsCount).AreEqual(2);
-            Assert.That.Value(claster1.ItemsCount).AreEqual(1);
+            Assert.That.Value(claster0.ItemsCount).IsEqual(2);
+            Assert.That.Value(claster1.ItemsCount).IsEqual(1);
 
             Assert.IsTrue(claster0.Contains(p0));
             Assert.IsTrue(claster0.Contains(p2));
@@ -155,11 +155,11 @@ namespace MathCore.AI.Tests.ART1
                 new Item(0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0), //  9
             };
 
-            Assert.That.Value(classificator.Clusters.Count).AreEqual(0);
+            Assert.That.Value(classificator.Clusters.Count).IsEqual(0);
 
             var classification = classificator.Add(items);
             
-            Assert.That.Value(classificator.Clusters.Count).GreaterThen(0);
+            Assert.That.Value(classificator.Clusters.Count).GreaterThan(0);
 
             foreach (var current_class in classificator)
                 foreach (var another_class in classificator.Except(current_class))
