@@ -13,7 +13,7 @@ using System.Xml;
 namespace MathCore.AI.NeuralNetworks
 {
     /// <summary>Многослойная полносвязная нейронная сеть прямого распространения</summary>
-    public partial class MultilayerPerceptron : ILayeredNetwork, IEquatable<MultilayerPerceptron>
+    public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<MultilayerPerceptron>
     {
         /* --------------------------------------------------------------------------------------------- */
 
@@ -326,9 +326,6 @@ namespace MathCore.AI.NeuralNetworks
                 Output[output_index] = Activation?.Value(output) ?? Sigmoid.Activation(output);
             }
         }
-
-
-
 
         #endregion
 

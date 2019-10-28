@@ -27,7 +27,7 @@ namespace MathCore.AI.NeuralNetworks
         /// <returns>Результат выполнения обучения за эпоху</returns>
         [NotNull]
         public static Epoch Teach(
-            [NotNull] this NetworkTeacher Teacher,
+            [NotNull] this INetworkTeacher Teacher,
             double Rho,
             [NotNull, ItemNotNull] params Example[] Examples)
         {
@@ -56,7 +56,7 @@ namespace MathCore.AI.NeuralNetworks
 
         [NotNull]
         private static Epoch Teach(
-            [NotNull] this NetworkTeacher Teacher,
+            [NotNull] this INetworkTeacher Teacher,
             double Rho,
             [NotNull, ItemNotNull] IEnumerable<Example> Examples)
         {

@@ -6,7 +6,7 @@ namespace MathCore.AI.NeuralNetworks
 {
     public partial class MultilayerPerceptron
     {
-        [NotNull] public NetworkTeacher CreateTeacher() => new BackPropagationTeacher(this);
+        [NotNull] public INetworkTeacher CreateTeacher() => new BackPropagationTeacher(this);
 
         private class BackPropagationTeacher : NetworkTeacher
         {

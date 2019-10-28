@@ -3,35 +3,56 @@ using MathCore.Annotations;
 
 namespace MathCore.AI.NeuralNetworks
 {
+    /// <summary>Нейронный процессор</summary>
+    /// <typeparam name="TInput">Тип входных данных</typeparam>
+    /// <typeparam name="TOutput">Тип выходных данных</typeparam>
     public class NeuralProcessor<TInput, TOutput>
     {
+        /// <summary>Метод преобразования типа входных данных в массив вещественных чисел - массив признаков</summary>
+        /// <param name="InputValue">Входной объект</param>
+        /// <param name="NetworkInput">Массив входных признаков, подаваемый на вход нейронной сети</param>
+        /// <remarks>Цель метода определить - как входной объект отображается (проецируется) на массив входов сети</remarks>
         public delegate void InputFormatter(TInput InputValue, [NotNull] double[] NetworkInput);
 
+        /// <summary>Метод преобразования массива вещчественных чисел - массива выходных признаков нейронной сети в объект выхода</summary>
+        /// <param name="NetworkOutput">Массив выходных признаков нейронной сети</param>
+        /// <returns>Объект, сформированный на основе массива признаков, расчитанных нейронной сетью</returns>
         public delegate TOutput OutputFormatter([NotNull] double[] NetworkOutput);
 
-        public delegate void OutputTeachFormatter(TOutput OutputValue, [NotNull] double[] NetworkInput);
-
+        /// <summary>Нейронная сеть, осуществляющая преобразвоание входного набора признаков в выходной</summary>
         [NotNull] private readonly INeuralNetwork _Network;
+
+        /// <summary>Метод формирования входного набора признаков на основе входного объекта</summary>
         [NotNull] private readonly InputFormatter _InputFormatter;
+
+        /// <summary>Метод формирования выходного объекта на основе набора признаков, сформированного нейронной сетью</summary>
         [NotNull] private readonly OutputFormatter _OutputFormatter;
-        [CanBeNull] private readonly OutputTeachFormatter _OutputTeachFormatter;
+
+        /// <summary>Массив вещественных чисел - вектор входных признаков</summary>
         [NotNull] private readonly double[] _Input;
+
+        /// <summary>Массив вещественных чисел - вектор выходных признаков</summary>
         [NotNull] private readonly double[] _Output;
 
+        /// <summary>Создать новый нейронный процессор</summary>
+        /// <param name="Network">Нейронная сеть</param>
+        /// <param name="InputFormatter">Метод формирования вектора признаков входного воздействия</param>
+        /// <param name="OutputFormatter">Метод формирования выходного значени на основе вектора признаков, формируемого сетью</param>
         public NeuralProcessor(
             [NotNull] INeuralNetwork Network,
             [NotNull] InputFormatter InputFormatter,
-            [NotNull] OutputFormatter OutputFormatter,
-            [CanBeNull] OutputTeachFormatter OutputTeachFormatter = null)
+            [NotNull] OutputFormatter OutputFormatter)
         {
             _Network = Network ?? throw new ArgumentNullException(nameof(Network));
             _InputFormatter = InputFormatter ?? throw new ArgumentNullException(nameof(InputFormatter));
             _OutputFormatter = OutputFormatter ?? throw new ArgumentNullException(nameof(OutputFormatter));
-            _OutputTeachFormatter = OutputTeachFormatter;
             _Input = new double[_Network.InputsCount];
             _Output = new double[_Network.OutputsCount];
         }
 
+        /// <summary>Обработать значение</summary>
+        /// <param name="Input">Входное значение</param>
+        /// <returns>Выходное значение</returns>
         public TOutput Process(TInput Input)
         {
             _InputFormatter(Input, _Input);
@@ -39,13 +60,13 @@ namespace MathCore.AI.NeuralNetworks
             return _OutputFormatter(_Output);
         }
 
-        //public double Teach(TInput Input, TOutput ExpectedOutput)
-        //{
-        //    if (_OutputTeachFormatter is null)
-        //        throw new InvalidOperationException($"Не задан метод преобразвоания выходного типа данных {typeof(TOutput)} в массив double[]");
-        //    _InputFormatter(Input, _Input);
-        //    _OutputTeachFormatter(ExpectedOutput, _Output);
-        //    return _Network.Teach(_Input, _Output);
-        //}
+        /// <summary>Создать учителя сети</summary>
+        /// <returns>Учитель нейронной скети</returns>
+        public INetworkTeacher CreateTeacher()
+        {
+            if (!(_Network is ITeachableNeuralNetwork teachable_network))
+                throw new InvalidOperationException("Сеть не является обучаемой");
+            return teachable_network.CreateTeacher();
+        }
     }
 }
