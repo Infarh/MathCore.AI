@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -533,6 +534,53 @@ namespace MathCore.AI.Tests.NeuralNetworks
             var rnd = new Random();
             var network = new MultilayerPerceptron(1, new[] { 200, 50, 1 }, (Layer, Neuron, Input) => rnd.NextUniform(0.5));
             network.Layer[2].Activation = ActivationFunction.Linear;
+        }
+
+        [TestMethod]
+        public void SingleNeuronNetwork()
+        {
+            var network = new MultilayerPerceptron(1, new[] { 1 }, layer => layer.Activation = ActivationFunction.Linear);
+
+            Assert.That.Value(network.LayersCount).IsEqual(1);
+            Assert.That.Value(network.Layer[0].InputsCount).IsEqual(1);
+            Assert.That.Value(network.Layer[0].OutputsCount).IsEqual(1);
+
+            ref var k = ref network.Layer[0].Weights[0, 0];
+            ref var b = ref network.Layer[0].OffsetWeights[0];
+            k = 0.1;
+            Assert.That.Value(k).IsNotEqual(0);
+            Assert.That.Value(b).IsEqual(1);
+
+            var X = Enumerable.Range(0, 1001).Select(i => i / 1000d * 6 - 3);
+            //Assert.That.Value(X.Min()).IsEqual(-3);
+            //Assert.That.Value(X.Max()).IsEqual(3);
+
+            //var rnd = new Random();
+            double f(double x) => 2 * x + 5;// + rnd.NextNormal(0.1);
+            var data = X.ToArray(x => (x, f: f(x)));
+
+            var teacher = network.CreateTeacher();
+            var output = new double[1];
+            var error = data
+               .Mix()
+               .Select(d => teacher.Teach(new[] { d.x }, output, new[] { d.f }))
+               .TakeWhile(e => e > 0)
+               .ToArray();
+
+
+            Assert.That.Value(k).IsEqual(2);
+        }
+
+        private static T[] MixRef<T>([NotNull] T[] array, int seed)
+        {
+            var count = array.Length;
+            var rnd = new Random(seed);
+            var v = array[0];
+            var i1 = 0;
+            for (var i2 = 1; i2 <= count; ++i2)
+                array[i1] = array[i1 = rnd.Next(count)];
+            array[i1] = v;
+            return array;
         }
     }
 }
