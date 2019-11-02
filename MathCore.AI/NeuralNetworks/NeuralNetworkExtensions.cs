@@ -9,34 +9,27 @@ namespace MathCore.AI.NeuralNetworks
     {
         [NotNull]
         public static Epoch TeachRandom(
-            [NotNull] this NetworkTeacher Teacher,
-            double Rho,
+            [NotNull] this INetworkTeacher Teacher,
             [NotNull, ItemNotNull] Example[] Examples,
             [CanBeNull] Random rnd = null)
         {
             if (Teacher is null) throw new ArgumentNullException(nameof(Teacher));
             if (Examples is null) throw new ArgumentNullException(nameof(Examples));
 
-            return Teacher.Teach(Rho, Examples.AsRandomEnumerable(rnd));
+            return Teacher.Teach(Examples.AsRandomEnumerable(rnd));
         }
 
         /// <summary>Выполнить обучение нейронной сети (одну эпоху) по заданному набору обучающих примеров</summary>
         /// <param name="Teacher">Обучаемая нейронная сеть</param>
-        /// <param name="Rho">Коэффициент скорости обучения</param>
-        /// <param name="Examples">Набор обучающих примеро</param>
+        /// <param name="Examples">Набор обучающих примеров</param>
         /// <returns>Результат выполнения обучения за эпоху</returns>
         [NotNull]
-        public static Epoch Teach(
-            [NotNull] this INetworkTeacher Teacher,
-            double Rho,
-            [NotNull, ItemNotNull] params Example[] Examples)
+        public static Epoch Teach([NotNull] this INetworkTeacher Teacher, [NotNull, ItemNotNull] params Example[] Examples)
         {
             if (Teacher is null) throw new ArgumentNullException(nameof(Teacher));
             if (Examples is null) throw new ArgumentNullException(nameof(Examples));
             if (Teacher.Network.InputsCount == 0) throw new InvalidOperationException("Сеть не имеет входов");
             if (Teacher.Network.OutputsCount == 0) throw new InvalidOperationException("Сеть не имеет выходов");
-            if (double.IsNaN(Rho)) throw new ArgumentException("Коэффициент скорости обучения - не-число!", nameof(Rho));
-            if (Rho <= 0) throw new ArgumentOutOfRangeException(nameof(Rho), "Коэффициент скорости обучения должен быть больше 0");
 
             var inputs_count = Teacher.Network.InputsCount;
             var outputs_count = Teacher.Network.OutputsCount;
@@ -51,14 +44,11 @@ namespace MathCore.AI.NeuralNetworks
                     throw new InvalidOperationException($"Длина вектора ожидаемого результата №{i} ({example.ExpectedOutput.Length}) не равна количеству выходов сети ({outputs_count})");
             }
 
-            return Teach(Teacher, Rho, (IEnumerable<Example>)Examples);
+            return Teach(Teacher, (IEnumerable<Example>)Examples);
         }
 
         [NotNull]
-        private static Epoch Teach(
-            [NotNull] this INetworkTeacher Teacher,
-            double Rho,
-            [NotNull, ItemNotNull] IEnumerable<Example> Examples)
+        private static Epoch Teach([NotNull] this INetworkTeacher Teacher, [NotNull, ItemNotNull] IEnumerable<Example> Examples)
         {
             var outputs_count = Teacher.Network.OutputsCount;
             var examples = Examples as Example[] ?? Examples.ToArray();
@@ -71,7 +61,7 @@ namespace MathCore.AI.NeuralNetworks
                 var example = examples[i];
                 var example_input = example.Input;
                 var example_expected_output = example.ExpectedOutput;
-                var error = Teacher.Teach(example_input, output, example_expected_output, Rho);
+                var error = Teacher.Teach(example_input, output, example_expected_output);
                 if (error > max_error) max_error = error;
                 avg_error += error;
                 if (double.IsNaN(error)) throw new InvalidOperationException("Ошибка сети является \"не числом\" - возможно сеть нестабвльна.");

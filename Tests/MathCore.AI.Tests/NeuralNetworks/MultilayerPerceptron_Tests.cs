@@ -212,7 +212,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             var network = new MultilayerPerceptron(layers2);
 
             var network_output2 = new double[1];
-            var teacher = network.CreateTeacher();
+            var teacher = network.CreateTeacher<IBackPropagationTeacher>();
             error = teacher.Teach(network_input, network_output2, correct_output);
             CollectionAssert.That.Collection(network_output2).IsEqualTo(new[] { 0.78139 }, 4.31e-7);
             Assert.That.Value(error).IsEqual(0.023895, 7.19e-8);
@@ -357,8 +357,8 @@ namespace MathCore.AI.Tests.NeuralNetworks
             double[] expected_output = { 1 };                                             // Ожидаемое значение оклика сети для процесса обучения
 
             const double rho = 0.5;
-            var teacher = network.CreateTeacher();
-            var error = teacher.Teach(input, output, expected_output, rho);               // Обработка входного воздействия сетью
+            var teacher = network.CreateTeacher<IBackPropagationTeacher>(t => t.Rho = rho);
+            var error = teacher.Teach(input, output, expected_output);               // Обработка входного воздействия сетью
 
             CollectionAssert.That.Collection(output).ValuesAreEqual(0.78139043094733129); // Проверка отклика сети
             Assert.That.Value(error).IsEqual(0.023895071840696763);                      // Проверка вычисленного значения ошибки обработки
@@ -453,8 +453,8 @@ namespace MathCore.AI.Tests.NeuralNetworks
             Assert.That.Value(network[0]).IsEqual(network_structure[0]);
 
             const double rho = 0.5;
-            var teacher = network.CreateTeacher();
-            teacher.Teach(input, output, expected_output, rho);
+            var teacher = network.CreateTeacher<IBackPropagationTeacher>(t => t.Rho = rho);
+            teacher.Teach(input, output, expected_output);
 
             CollectionAssert.That.Collection(network[0]).IsEqualTo(new[,]
             {
@@ -482,13 +482,13 @@ namespace MathCore.AI.Tests.NeuralNetworks
             // H - Health points    (Текущий уровень здоровья)
             // K - Knifes count     (количество ножей)
             // G - Guns count       (количество пистолетов)
-            // E - Enemys count     (враг поблизости - количество)
+            // E - Enemy count     (враг поблизости - количество)
             // Варианты действий
-            // A - Atack enemy      (атаковать врага!)
+            // A - Attack enemy      (атаковать врага!)
             // R - Run              (бежать!!!)
             // W - Wander           (бродить, слоняться, искать приключений)
             // H - Hide             (прятаться...)
-            // Должен быть выбран один из вариантов действйи - максимальное значение
+            // Должен быть выбран один из вариантов действий - максимальное значение
             Example[] examples =
             {                    // H  K  G  E            A  R  W  H
                 new Example(new []{ 2, 0, 0, 0 }, new []{ 0, 0, 1, 0 }), //  0 - здоровы как бык,   оружия нет,    врагов нет - бродить
@@ -513,12 +513,12 @@ namespace MathCore.AI.Tests.NeuralNetworks
                 new Example(new []{ 0, 1, 0, 1 }, new []{ 0, 0, 0, 1 }), // 17 - здоровья нет...,   есть нож,      враг 1     - прятаться...
             };
 
-            var teacher = controller.CreateTeacher();
-            var epohs = Enumerable
+            var teacher = controller.CreateTeacher<IBackPropagationTeacher>(t => t.Rho = 0.2);
+            var epochs = Enumerable
                 .Range(0, 100_000)
-                .Select(I => teacher.Teach(0.2, examples))
+                .Select(I => teacher.Teach(examples))
                 .ToArray();
-            var errors = epohs.Select(e => e.ErrorAverage);
+            var errors = epochs.Select(e => e.ErrorAverage);
 
             var first_errors = errors.Take(2).ToArray();
             var last_errors = errors.TakeLast(50).ToArray();
@@ -537,7 +537,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
         }
 
         [TestMethod]
-        public void SingleNeuronNetwork()
+        public void SingleNeuronNetwork_Variant1()
         {
             var network = new MultilayerPerceptron(1, new[] { 1 }, layer => layer.Activation = ActivationFunction.Linear);
 
@@ -552,35 +552,84 @@ namespace MathCore.AI.Tests.NeuralNetworks
             Assert.That.Value(b).IsEqual(1);
 
             var X = Enumerable.Range(0, 1001).Select(i => i / 1000d * 6 - 3);
-            //Assert.That.Value(X.Min()).IsEqual(-3);
-            //Assert.That.Value(X.Max()).IsEqual(3);
 
-            //var rnd = new Random();
-            double f(double x) => 2 * x + 5;// + rnd.NextNormal(0.1);
+            double f(double x) => 2 * x + 5;
             var data = X.ToArray(x => (x, f: f(x)));
 
-            var teacher = network.CreateTeacher();
+            var teacher = network.CreateTeacher<IBackPropagationTeacher>(t => t.Rho = 0.03);
             var output = new double[1];
+            const int random_variant = 1;
+            var rnd = new Random(random_variant);
             var error = data
-               .Mix()
+               .Mix(rnd)
                .Select(d => teacher.Teach(new[] { d.x }, output, new[] { d.f }))
                .TakeWhile(e => e > 0)
                .ToArray();
 
-
-            Assert.That.Value(k).IsEqual(2);
+            const double eps = 1e-13;
+            Assert.That.Value(k).IsEqualTo(2).WithAccuracy(eps);
+            Assert.That.Value(b).IsEqualTo(5).WithAccuracy(eps);
+            Assert.That.Value(error.Last()).LessThan(error.First());
+            Assert.That.Value(error.Last()).IsEqualTo(0).WithAccuracy(1e-30);
+            Assert.That.Value(error.Length).IsEqual(417);
         }
 
-        private static T[] MixRef<T>([NotNull] T[] array, int seed)
+        [TestMethod]
+        public void SingleNeuronNetwork_Variant2()
         {
-            var count = array.Length;
-            var rnd = new Random(seed);
-            var v = array[0];
-            var i1 = 0;
-            for (var i2 = 1; i2 <= count; ++i2)
-                array[i1] = array[i1 = rnd.Next(count)];
-            array[i1] = v;
-            return array;
+            var network = new MultilayerPerceptron(1, new[] { 1 }, layer => layer.Activation = ActivationFunction.Linear);
+
+            Assert.That.Value(network.LayersCount).IsEqual(1);
+            Assert.That.Value(network.Layer[0].InputsCount).IsEqual(1);
+            Assert.That.Value(network.Layer[0].OutputsCount).IsEqual(1);
+
+            ref var k = ref network.Layer[0].Weights[0, 0];
+            ref var b = ref network.Layer[0].OffsetWeights[0];
+            k = 1;
+            Assert.That.Value(k).IsNotEqual(0);
+            Assert.That.Value(b).IsEqual(1);
+
+            var X = Enumerable.Range(0, 1001).Select(x => x / 100d);
+                    
+            const double k0 = 2;
+            const double b0 = 5;
+            double F(double x) => k0 * x + b0;
+            var data = X.ToArray(x => (x, f: F(x)));
+            const int random_variant = 1;
+            var rnd = new Random(random_variant);
+            var data_mix = data.Mix(rnd);
+
+            var teacher = network.CreateTeacher<IBackPropagationTeacher>(t => t.Rho = 0.037);
+
+            var errors = new List<double>(100);
+            const double eps = 1e-14;
+            var result = new double[1];
+            var xx = new double[1];
+            var ff = new double[1];
+            ref var x0 = ref xx[0];
+            ref var f0 = ref ff[0];
+            for (var i = 0; i < 1000; i++)
+            {
+                var error = 0d;
+                foreach (var d in data_mix)
+                {
+                    (x0, f0) = d;
+                    var e = teacher.Teach(xx, result, ff);
+                    error += e;
+                    Assert.IsFalse(double.IsNaN(k));
+                }
+                errors.Add(error);
+                //Debug.WriteLine("er[{0}] = {1}; k={2:0.###}; b={3:0.###}", i, error, k, b);
+                if(error <= eps) 
+                    break;
+            }
+
+            Assert.That.Value(errors.Count).IsEqual(4);
+            Assert.That.Value(errors.Last()).LessThan(errors.First());
+            Assert.That.Value(errors.Last()).IsEqual(0);
+
+            Assert.That.Value(k).IsEqual(2);
+            Assert.That.Value(b).IsEqualTo(b0);
         }
     }
 }

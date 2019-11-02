@@ -61,12 +61,14 @@ namespace MathCore.AI.NeuralNetworks
         }
 
         /// <summary>Создать учителя сети</summary>
-        /// <returns>Учитель нейронной скети</returns>
-        public INetworkTeacher CreateTeacher()
+        /// <returns>Учитель нейронной сети</returns>
+        [NotNull]
+        public TNetworkTeacher CreateTeacher<TNetworkTeacher>([CanBeNull] Action<TNetworkTeacher> Configurator = null)
+            where TNetworkTeacher : class, INetworkTeacher
         {
             if (!(_Network is ITeachableNeuralNetwork teachable_network))
                 throw new InvalidOperationException("Сеть не является обучаемой");
-            return teachable_network.CreateTeacher();
+            return teachable_network.CreateTeacher(Configurator);
         }
     }
 }
