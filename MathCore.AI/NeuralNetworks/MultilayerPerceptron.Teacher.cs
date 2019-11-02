@@ -6,9 +6,19 @@ namespace MathCore.AI.NeuralNetworks
 {
     public partial class MultilayerPerceptron
     {
-        [NotNull] public INetworkTeacher CreateTeacher() => new BackPropagationTeacher(this);
+        public INetworkTeacher CreateTeacher() => new BackPropagationTeacher(this);
 
-        private class BackPropagationTeacher : NetworkTeacher
+        public TNetworkTeacher CreateTeacher<TNetworkTeacher>(Action<TNetworkTeacher> Configurator = null)
+            where TNetworkTeacher : class, INetworkTeacher
+        {
+            var teacher = new BackPropagationTeacher(this) as TNetworkTeacher 
+                          ?? throw new InvalidOperationException(
+                              $"Учитель сети не может быть представлен в виде {typeof(TNetworkTeacher)}");
+            Configurator?.Invoke(teacher);
+            return teacher;
+        }
+
+        private class BackPropagationTeacher : NetworkTeacher, IBackPropagationTeacher
         {
             [NotNull] private readonly MultilayerPerceptron _Network;
             [NotNull] private readonly double[][] _Errors;
@@ -17,6 +27,13 @@ namespace MathCore.AI.NeuralNetworks
             private double _LastError = double.PositiveInfinity;
             [NotNull] private readonly double[][,] _BestVariantW;
             [NotNull] private readonly double[][] _BestVariantOffsetW;
+
+            private double _Rho = 0.2;
+            private double _InertialFactor;
+
+            public double Rho { get => _Rho; set => _Rho = value; }
+
+            public double InertialFactor { get => _InertialFactor; set => _InertialFactor = value; }
 
             public BackPropagationTeacher([NotNull] MultilayerPerceptron Network) : base(Network)
             {
@@ -38,15 +55,15 @@ namespace MathCore.AI.NeuralNetworks
                 }
             }
 
-            public override double Teach(double[] Input, double[] Output, double[] Expected, double Rho = 0.2D, double InertialFactor = 0D)
+            public override double Teach(double[] Input, double[] Output, double[] Expected)
             {
                 if (Input is null) throw new ArgumentNullException(nameof(Input));
                 if (Output is null) throw new ArgumentNullException(nameof(Output));
                 if (Expected is null) throw new ArgumentNullException(nameof(Expected));
                 if (Expected.Length != Output.Length) throw new InvalidOperationException("Длина вектора ожидаемого результата не совпадает с длиной вектора результата сети");
-                if (InertialFactor < 0 || InertialFactor >= 1) throw new ArgumentOutOfRangeException(nameof(InertialFactor), InertialFactor, "Коэффициент инерции должен быть больше, либо равен 0 и меньше 1");
 
-                Rho = Math.Max(0, Math.Min(Rho, 1));
+                var inertial_factor = _InertialFactor;
+                var rho = Math.Max(0, Math.Min(_Rho, 1));
 
                 var layers_count = _Network.LayersCount;
                 var outputs_count = _Network.OutputsCount;
@@ -67,10 +84,10 @@ namespace MathCore.AI.NeuralNetworks
                     state,
                     outputs);
 
-                var delta_w = InertialFactor.Equals(0d) ? null : _DeltaW;
+                var delta_w = inertial_factor.Equals(0d) ? null : _DeltaW;
 
                 var errors = _Errors;                                       // Массив ошибок в слоях
-                var output_layer_error = errors[layers_count - 1];          // Ошибка выходого слоя
+                var output_layer_error = errors[layers_count - 1];          // Ошибка выходного слоя
 
                 for (var output_index = 0; output_index < outputs_count; output_index++)
                     output_layer_error[output_index] = (Expected[output_index] - Output[output_index])
@@ -86,7 +103,7 @@ namespace MathCore.AI.NeuralNetworks
 
                     #region Обратное распространение ошибки
 
-                    // Если слой не последний, то пересчитываем сошибку текущего слоя на предыдущий
+                    // Если слой не последний, то пересчитываем ошибку текущего слоя на предыдущий
                     if (layer_index > 0)
                     {
                         // Количество выходов (нейронов) в предыдущем слое
@@ -109,7 +126,7 @@ namespace MathCore.AI.NeuralNetworks
                             for (var j = 0; j < layer_outputs_count; j++) // j - номер связи с j-тым нейроном текущего слоя
                                 err += error_level[j] * w[j, i];          // i - номер нейрона в предыдущем слое
 
-                            // Ошибка по нейрону = суммарная взвешаная ошибка всех связей умнженная на значение производной функции активации для выхода нейрона
+                            // Ошибка по нейрону = суммарная взвешенная ошибка всех связей умноженная на значение производной функции активации для выхода нейрона
                             switch (prev_layer_activation)
                             {
                                 case null:
@@ -136,18 +153,18 @@ namespace MathCore.AI.NeuralNetworks
                     {
                         var error = error_level[neuron_index]; // Ошибка для нейрона в слое
                                                                // Корректируем вес смещения
-                        var neuron_delta_w = Rho * error * offset[neuron_index] * w_offset[neuron_index];
+                        var neuron_delta_w = rho * error * offset[neuron_index] * w_offset[neuron_index];
                         if (layer_delta_w != null)
                         {
-                            neuron_delta_w = InertialFactor * layer_delta_w[neuron_index]
-                                             + (1 - InertialFactor) * neuron_delta_w;
+                            neuron_delta_w = inertial_factor * layer_delta_w[neuron_index]
+                                             + (1 - inertial_factor) * neuron_delta_w;
                             layer_delta_w[neuron_index] = neuron_delta_w;
                         }
                         w_offset[neuron_index] += neuron_delta_w;
 
                         // Для каждого входа нейрона корректируем вес связи
                         for (var input_index = 0; input_index < layer_inputs_count; input_index++)
-                            w[neuron_index, input_index] += Rho * error * layer_inputs[input_index];
+                            w[neuron_index, input_index] += rho * error * layer_inputs[input_index];
                     }
                 }
 
