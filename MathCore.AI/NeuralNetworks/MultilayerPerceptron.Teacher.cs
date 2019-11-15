@@ -19,15 +19,31 @@ namespace MathCore.AI.NeuralNetworks
             return teacher;
         }
 
+        /// <summary>Объект-учитель, выполняющий обучение многослойной сети методом обратного распространения</summary>
         private class BackPropagationTeacher : NetworkTeacher, IBackPropagationTeacher
         {
+            /// <summary>Обучаемая сеть</summary>
             [NotNull] private readonly MultilayerPerceptron _Network;
+
+            /// <summary>Ошибки на выходах нейронов в слоях</summary>
             [NotNull] private readonly double[][] _Errors;
+
+            /// <summary>Состояние входов нейронов (аргументы активационной функции)</summary>
             [NotNull] private readonly double[][] _State;
+
+            /// <summary>Величина изменения веса связи нейрона с предыдущей итерации обучения</summary>
             [NotNull] private readonly double[][,] _DW;
+
+            /// <summary>Величина изменения веса смещения нейрона с предыдущей итерации обучения</summary>
             [NotNull] private readonly double[][] _DWoffset;
+
+            /// <summary>Предыдущая ошибка прямого распространения</summary>
             private double _LastError = double.PositiveInfinity;
+
+            /// <summary>Лучший вариант весов входов в слоях</summary>
             [NotNull] private readonly double[][,] _BestVariantW;
+
+            /// <summary>Лучший вариант весов смещений нейронов в слоях</summary>
             [NotNull] private readonly double[][] _BestVariantOffsetW;
 
             public double Rho { get; set; } = 0.2;
@@ -189,9 +205,16 @@ namespace MathCore.AI.NeuralNetworks
                 return network_error;
             }
 
+            /// <summary>Скопировать архитектуру</summary>
+            /// <param name="SourceW">Набор матриц коэффициентов источника операции копирования</param>
+            /// <param name="DestinationW">Набор матриц коэффициентов приёмника операции копирования</param>
+            /// <param name="SourceOffsetW">Набор весов коэффициентов смещения источника операции копирования</param>
+            /// <param name="DestinationOffsetW">Набор весов коэффициентов смещения приёмника операции копирования</param>
             private static void CopyArchitecture(
-                IReadOnlyList<double[,]> SourceW, IReadOnlyList<double[,]> DestinationW,
-                IReadOnlyList<double[]> SourceOffsetW, IReadOnlyList<double[]> DestinationOffsetW)
+                [NotNull] IReadOnlyList<double[,]> SourceW, 
+                [NotNull] IReadOnlyList<double[,]> DestinationW,
+                [NotNull] IReadOnlyList<double[]> SourceOffsetW, 
+                [NotNull] IReadOnlyList<double[]> DestinationOffsetW)
             {
                 var layers_count = SourceW.Count;
                 for (var i = 0; i < layers_count; i++)
@@ -201,6 +224,10 @@ namespace MathCore.AI.NeuralNetworks
                     SourceOffsetW[i].CopyTo(DestinationOffsetW[i], 0);
             }
 
+            /// <summary>Расчёт ошибки</summary>
+            /// <param name="Output">Вектор результата вычисления прямого распространения</param>
+            /// <param name="Expected">Вектор ожидаемого значения</param>
+            /// <returns>Величина квадратичной ошибки</returns>
             private static double GetError([NotNull] double[] Output, [NotNull] double[] Expected)
             {
                 var network_errors = 0d;
@@ -213,6 +240,7 @@ namespace MathCore.AI.NeuralNetworks
                 return network_errors * 0.5;
             }
 
+            /// <summary>Установить значение оптимальной архитектуры сети</summary>
             public override void SetBestVariant() => CopyArchitecture(_BestVariantW, _Network._Layers, _BestVariantOffsetW, _Network._OffsetsWeights);
         }
     }
