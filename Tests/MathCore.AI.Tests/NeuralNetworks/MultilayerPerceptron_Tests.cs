@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using MathCore.AI.NeuralNetworks;
 using MathCore.AI.NeuralNetworks.ActivationFunctions;
-using MathCore.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace MathCore.AI.Tests.NeuralNetworks
@@ -15,11 +13,11 @@ namespace MathCore.AI.Tests.NeuralNetworks
     public class MultilayerPerceptron_Tests
     {
         private static void ProcessLayer(
-            [NotNull] double[] Input,
-            [NotNull] double[,] W,
-            [NotNull] double[] NeuronOffsets,
-            [NotNull] double[] OffsetsWeights,
-            [NotNull] double[] Output)
+            [Annotations.NotNull] double[] Input,
+            [Annotations.NotNull] double[,] W,
+            [Annotations.NotNull] double[] NeuronOffsets,
+            [Annotations.NotNull] double[] OffsetsWeights,
+            [Annotations.NotNull] double[] Output)
         {
             for (var output_index = 0; output_index < Output.Length; output_index++)
             {
@@ -35,19 +33,19 @@ namespace MathCore.AI.Tests.NeuralNetworks
         private static double Activation(double x) => 1 / (1 + Math.Exp(-x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void Activation([NotNull] double[] X, [NotNull] double[] FX)
+        private static void Activation([Annotations.NotNull] double[] X, [Annotations.NotNull] double[] FX)
         {
             for (var i = 0; i < X.Length; i++)
                 FX[i] = Activation(X[i]);
         }
 
         private static void DirectDistribution(
-            [NotNull] double[][] Inputs,
-            [NotNull] double[][,] Layers,
-            [NotNull] double[][] Offsets,
-            [NotNull] double[][] OffsetsWeights,
-            [NotNull] double[][] Outputs,
-            [NotNull] double[] NetworkOutput)
+            [Annotations.NotNull] double[][] Inputs,
+            [Annotations.NotNull] double[][,] Layers,
+            [Annotations.NotNull] double[][] Offsets,
+            [Annotations.NotNull] double[][] OffsetsWeights,
+            [Annotations.NotNull] double[][] Outputs,
+            [Annotations.NotNull] double[] NetworkOutput)
         {
             var layer_index = -1;
             do
@@ -287,7 +285,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             Assert.That.Value(network.OutputsCount).IsEqual(outputs_count);
         }
 
-        private static void CheckNetwork([NotNull] MultilayerPerceptron Network, [NotNull] double[][,] W)
+        private static void CheckNetwork([Annotations.NotNull] MultilayerPerceptron Network, [Annotations.NotNull] double[][,] W)
         {
             if (Network is null) throw new ArgumentNullException(nameof(Network));
             if (W is null) throw new ArgumentNullException(nameof(W));
@@ -331,7 +329,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
         ///  f(x) = 1 / (1 + e^-x)
         ///  df(x)/dx = x * (1 - x)
         /// </remarks>
-        [NotNull]
+        [Annotations.NotNull]
         private static double[][,] GetNetworkStructure() => new[]
         {
             new[,] // Матрица коэффициентов передачи первого слоя

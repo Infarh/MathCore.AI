@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MathCore.AI.NeuralNetworks.ActivationFunctions;
 using MathCore.Annotations;
 
@@ -18,22 +19,36 @@ namespace MathCore.AI.NeuralNetworks
             return teacher;
         }
 
+        /// <summary>Объект-учитель, выполняющий обучение многослойной сети методом обратного распространения</summary>
         private class BackPropagationTeacher : NetworkTeacher, IBackPropagationTeacher
         {
+            /// <summary>Обучаемая сеть</summary>
             [NotNull] private readonly MultilayerPerceptron _Network;
+
+            /// <summary>Ошибки на выходах нейронов в слоях</summary>
             [NotNull] private readonly double[][] _Errors;
+
+            /// <summary>Состояние входов нейронов (аргументы активационной функции)</summary>
             [NotNull] private readonly double[][] _State;
-            [NotNull] private readonly double[][] _DeltaW;
+
+            /// <summary>Величина изменения веса связи нейрона с предыдущей итерации обучения</summary>
+            [NotNull] private readonly double[][,] _DW;
+
+            /// <summary>Величина изменения веса смещения нейрона с предыдущей итерации обучения</summary>
+            [NotNull] private readonly double[][] _DWoffset;
+
+            /// <summary>Предыдущая ошибка прямого распространения</summary>
             private double _LastError = double.PositiveInfinity;
+
+            /// <summary>Лучший вариант весов входов в слоях</summary>
             [NotNull] private readonly double[][,] _BestVariantW;
+
+            /// <summary>Лучший вариант весов смещений нейронов в слоях</summary>
             [NotNull] private readonly double[][] _BestVariantOffsetW;
 
-            private double _Rho = 0.2;
-            private double _InertialFactor;
+            public double Rho { get; set; } = 0.2;
 
-            public double Rho { get => _Rho; set => _Rho = value; }
-
-            public double InertialFactor { get => _InertialFactor; set => _InertialFactor = value; }
+            public double InertialFactor { get; set; }
 
             public BackPropagationTeacher([NotNull] MultilayerPerceptron Network) : base(Network)
             {
@@ -41,15 +56,17 @@ namespace MathCore.AI.NeuralNetworks
                 var layers_count = _Network.LayersCount;
                 _Errors = new double[layers_count][];
                 _State = new double[layers_count][];
-                _DeltaW = new double[layers_count][];
+                _DW = new double[layers_count][,];
+                _DWoffset = new double[layers_count][];
                 _BestVariantW = new double[layers_count][,];
                 _BestVariantOffsetW = new double[layers_count][];
                 for (var i = 0; i < layers_count; i++)
                 {
-                    var neurons_count = _Network._Layers[i].GetLength(0);
+                    var (neurons_count, inputs_count) = _Network._Layers[i];
                     _Errors[i] = new double[neurons_count];
                     _State[i] = new double[neurons_count];
-                    _DeltaW[i] = new double[neurons_count];
+                    _DW[i] = new double[neurons_count, inputs_count];
+                    _DWoffset[i] = new double[neurons_count];
                     _BestVariantW[i] = (double[,])Network._Layers[i].Clone();
                     _BestVariantOffsetW[i] = (double[])Network._OffsetsWeights[i].Clone();
                 }
@@ -62,8 +79,8 @@ namespace MathCore.AI.NeuralNetworks
                 if (Expected is null) throw new ArgumentNullException(nameof(Expected));
                 if (Expected.Length != Output.Length) throw new InvalidOperationException("Длина вектора ожидаемого результата не совпадает с длиной вектора результата сети");
 
-                var inertial_factor = _InertialFactor;
-                var rho = Math.Max(0, Math.Min(_Rho, 1));
+                var inertial_factor = InertialFactor;
+                var rho = Math.Max(0, Math.Min(Rho, 1));
 
                 var layers_count = _Network.LayersCount;
                 var outputs_count = _Network.OutputsCount;
@@ -84,7 +101,8 @@ namespace MathCore.AI.NeuralNetworks
                     state,
                     outputs);
 
-                var delta_w = inertial_factor.Equals(0d) ? null : _DeltaW;
+                var dw = inertial_factor.Equals(0d) ? null : _DW;
+                var dw_offset = inertial_factor.Equals(0d) ? null : _DWoffset;
 
                 var errors = _Errors;                                       // Массив ошибок в слоях
                 var output_layer_error = errors[layers_count - 1];          // Ошибка выходного слоя
@@ -99,7 +117,6 @@ namespace MathCore.AI.NeuralNetworks
                     var layer_inputs_count = w.GetLength(1);    // Количество входов текущего слоя
                     var layer_outputs_count = w.GetLength(0);   // Количество выходов (нейронов) текущего слоя
                     var error_level = errors[layer_index];      // Ошибка текущего слоя
-
 
                     #region Обратное распространение ошибки
 
@@ -144,27 +161,37 @@ namespace MathCore.AI.NeuralNetworks
 
                     #endregion
 
-                    var offset = layer_offsets[layer_index];                               // Для данного слоя - смещение нейронов
-                    var w_offset = layer_offset_weights[layer_index];                      //                  - веса смещений
+                    var offset = layer_offsets[layer_index];           // Для данного слоя - смещение нейронов
+                    var w_offset = layer_offset_weights[layer_index];  //                  - веса смещений
                     var layer_inputs = layer_index > 0 ? outputs[layer_index - 1] : Input;
-                    var layer_delta_w = delta_w?[layer_index];
+                    var layer_dw = dw?[layer_index];
+                    var layer_dw_offset = dw_offset?[layer_index];
                     // Для всех нейронов слоя корректируем коэффициенты их входных связей и весов смещений
-                    for (var neuron_index = 0; neuron_index < layer_outputs_count; neuron_index++)
+                    for (var neuron = 0; neuron < layer_outputs_count; neuron++)
                     {
-                        var error = error_level[neuron_index]; // Ошибка для нейрона в слое
-                                                               // Корректируем вес смещения
-                        var neuron_delta_w = rho * error * offset[neuron_index] * w_offset[neuron_index];
-                        if (layer_delta_w != null)
+                        var error = error_level[neuron]; // Ошибка для нейрона в слое
+                                                         // Корректируем вес смещения
+                        var neuron_delta_w = rho * error * offset[neuron] * w_offset[neuron];
+                        if (layer_dw_offset != null)
                         {
-                            neuron_delta_w = inertial_factor * layer_delta_w[neuron_index]
+                            neuron_delta_w = inertial_factor * layer_dw_offset[neuron]
                                              + (1 - inertial_factor) * neuron_delta_w;
-                            layer_delta_w[neuron_index] = neuron_delta_w;
+                            layer_dw_offset[neuron] = neuron_delta_w;
                         }
-                        w_offset[neuron_index] += neuron_delta_w;
+                        w_offset[neuron] += neuron_delta_w;
 
                         // Для каждого входа нейрона корректируем вес связи
-                        for (var input_index = 0; input_index < layer_inputs_count; input_index++)
-                            w[neuron_index, input_index] += rho * error * layer_inputs[input_index];
+                        for (var input = 0; input < layer_inputs_count; input++)
+                        {
+                            var neuron_dw = rho * error * layer_inputs[input];
+                            if (layer_dw != null)
+                            {
+                                neuron_dw = inertial_factor * layer_dw[neuron, input]
+                                            + (1 - inertial_factor) * neuron_dw;
+                                layer_dw[neuron, input] = neuron_dw;
+                            }
+                            w[neuron, input] += neuron_dw;
+                        }
                     }
                 }
 
@@ -178,18 +205,29 @@ namespace MathCore.AI.NeuralNetworks
                 return network_error;
             }
 
+            /// <summary>Скопировать архитектуру</summary>
+            /// <param name="SourceW">Набор матриц коэффициентов источника операции копирования</param>
+            /// <param name="DestinationW">Набор матриц коэффициентов приёмника операции копирования</param>
+            /// <param name="SourceOffsetW">Набор весов коэффициентов смещения источника операции копирования</param>
+            /// <param name="DestinationOffsetW">Набор весов коэффициентов смещения приёмника операции копирования</param>
             private static void CopyArchitecture(
-                double[][,] SourceW, double[][,] DestinationW,
-                double[][] SourceOffsetW, double[][] DestinationOffsetW)
+                [NotNull] IReadOnlyList<double[,]> SourceW, 
+                [NotNull] IReadOnlyList<double[,]> DestinationW,
+                [NotNull] IReadOnlyList<double[]> SourceOffsetW, 
+                [NotNull] IReadOnlyList<double[]> DestinationOffsetW)
             {
-                var layers_count = SourceW.Length;
+                var layers_count = SourceW.Count;
                 for (var i = 0; i < layers_count; i++)
                     Buffer.BlockCopy(SourceW[i], 0, DestinationW[i], 0, SourceW[i].GetLength(0) * SourceW[i].GetLength(1) * 8);
 
-                for (var i = 0; i < SourceOffsetW.Length; i++)
+                for (var i = 0; i < SourceOffsetW.Count; i++)
                     SourceOffsetW[i].CopyTo(DestinationOffsetW[i], 0);
             }
 
+            /// <summary>Расчёт ошибки</summary>
+            /// <param name="Output">Вектор результата вычисления прямого распространения</param>
+            /// <param name="Expected">Вектор ожидаемого значения</param>
+            /// <returns>Величина квадратичной ошибки</returns>
             private static double GetError([NotNull] double[] Output, [NotNull] double[] Expected)
             {
                 var network_errors = 0d;
@@ -202,6 +240,7 @@ namespace MathCore.AI.NeuralNetworks
                 return network_errors * 0.5;
             }
 
+            /// <summary>Установить значение оптимальной архитектуры сети</summary>
             public override void SetBestVariant() => CopyArchitecture(_BestVariantW, _Network._Layers, _BestVariantOffsetW, _Network._OffsetsWeights);
         }
     }
