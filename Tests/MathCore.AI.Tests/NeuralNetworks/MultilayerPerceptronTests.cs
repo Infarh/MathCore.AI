@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace MathCore.AI.Tests.NeuralNetworks
 {
     [TestClass]
-    public class MultilayerPerceptron_Tests
+    public class MultilayerPerceptronTests
     {
         private static void ProcessLayer(
             [Annotations.NotNull] double[] Input,
@@ -122,18 +122,15 @@ namespace MathCore.AI.Tests.NeuralNetworks
 
             double[] correct_output = { 1 };
 
-            var error = 0d;
-            for (var i = 0; i < network_output.Length; i++)
-                error += (correct_output[i] - network_output[i]).Pow2();
-            error *= 0.5;
+            var error = correct_output.Zip(network_input, (c, v) => c - v).Sum(delta => delta.Pow2()) / 2;
 
             Assert.That.Value(error).IsEqual(0.023895, 7.19e-8);
 
-            var output_error = errors[errors.Length - 1];
+            var output_error = errors[^1];
             for (var i = 0; i < output_error.Length; i++)
                 output_error[i] = (correct_output[i] - network_output[i]) * activation_inverse(network_output[i]);
 
-            CollectionAssert.That.Collection(errors[errors.Length - 1]).IsEqualTo(new[] { 0.0373 }, 4.28e-5);
+            CollectionAssert.That.Collection(errors[^1]).IsEqualTo(new[] { 0.0373 }, 4.28e-5);
 
             for (var level = errors.Length - 2; level >= 0; level--)
             {
@@ -307,10 +304,10 @@ namespace MathCore.AI.Tests.NeuralNetworks
                 CollectionAssert.That.Collection(Network.OffsetWeights[i]).ElementsAreEqualTo(1);         // По умолчанию веса векторов смещений равны 1
             }
 
-            Assert.That.Value(Network.HiddentOutputs.Count).IsEqual(layers_count - 1);
+            Assert.That.Value(Network.HiddenOutputs.Count).IsEqual(layers_count - 1);
             for (var i = 0; i < layers_count - 1; i++)
             {
-                var hidden_inputs = Network.HiddentOutputs[i];
+                var hidden_inputs = Network.HiddenOutputs[i];
                 Assert.That.Value(hidden_inputs.Length).IsEqual(W[i].GetLength(0));
                 CollectionAssert.That.Collection(hidden_inputs).ElementsAreEqualTo(0);
             }
@@ -393,7 +390,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             network.Process(input, output);
 
             CollectionAssert.That.Collection(output).ValuesAreEqual(0.78139043094733129);
-            CollectionAssert.That.Collection(network.HiddentOutputs[0]).ValuesAreEqual(0.81757447619364365, 0.95257412682243336);
+            CollectionAssert.That.Collection(network.HiddenOutputs[0]).ValuesAreEqual(0.81757447619364365, 0.95257412682243336);
         }
 
         [TestMethod]
@@ -408,7 +405,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             var output = network.Process(input);
 
             CollectionAssert.That.Collection(output).ValuesAreEqual(0.78139043094733129);
-            CollectionAssert.That.Collection(network.HiddentOutputs[0]).ValuesAreEqual(0.81757447619364365, 0.95257412682243336);
+            CollectionAssert.That.Collection(network.HiddenOutputs[0]).ValuesAreEqual(0.81757447619364365, 0.95257412682243336);
         }
 
         [TestMethod]
@@ -426,7 +423,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             network.Process(input, output, expected_output, errors);
 
             CollectionAssert.That.Collection(output).ValuesAreEqual(0.78139043094733129);
-            CollectionAssert.That.Collection(network.HiddentOutputs[0]).ValuesAreEqual(0.81757447619364365, 0.95257412682243336);
+            CollectionAssert.That.Collection(network.HiddenOutputs[0]).ValuesAreEqual(0.81757447619364365, 0.95257412682243336);
             CollectionAssert.That.Collection(errors).ValuesAreEqual(0.023895071840696763);
         }
 
@@ -445,7 +442,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             network.Process(input, output, expected_output, errors);
 
             CollectionAssert.That.Collection(output).ValuesAreEqual(0.78139043094733129);
-            CollectionAssert.That.Collection(network.HiddentOutputs[0]).ValuesAreEqual(0.81757447619364365, 0.95257412682243336);
+            CollectionAssert.That.Collection(network.HiddenOutputs[0]).ValuesAreEqual(0.81757447619364365, 0.95257412682243336);
             CollectionAssert.That.Collection(errors).ValuesAreEqual(0.023895071840696763);
 
             Assert.That.Value(network[0]).IsEqual(network_structure[0]);
@@ -539,20 +536,21 @@ namespace MathCore.AI.Tests.NeuralNetworks
         {
             var network = new MultilayerPerceptron(1, new[] { 1 }, layer => layer.Activation = ActivationFunction.Linear);
 
-            Assert.That.Value(network.LayersCount).IsEqual(1);
-            Assert.That.Value(network.Layer[0].InputsCount).IsEqual(1);
-            Assert.That.Value(network.Layer[0].OutputsCount).IsEqual(1);
+            Assert.That.Value(network)
+               .Where(net => net.LayersCount).Check(count => count.IsEqual(1))
+               .Where(net => net.Layer[0]).Check(layer0 => layer0
+                   .Where(layer => layer.InputsCount).Check(count => count.IsEqual(1))
+                   .Where(layer => layer.OutputsCount).Check(count => count.IsEqual(1)));
 
             ref var k = ref network.Layer[0].Weights[0, 0];
             ref var b = ref network.Layer[0].OffsetWeights[0];
             k = 0.1;
-            Assert.That.Value(k).IsNotEqual(0);
-            Assert.That.Value(b).IsEqual(1);
+            Assert.That.Value(k).IsNotEqual(0).And.Value(b).IsEqual(1);
 
             var X = Enumerable.Range(0, 1001).Select(i => i / 1000d * 6 - 3);
 
-            double f(double x) => 2 * x + 5;
-            var data = X.ToArray(x => (x, f: f(x)));
+            static double F(double x) => 2 * x + 5;
+            var data = X.ToArray(x => (x, f: F(x)));
 
             var teacher = network.CreateTeacher<IBackPropagationTeacher>(t => t.Rho = 0.03);
             var output = new double[1];
@@ -567,9 +565,9 @@ namespace MathCore.AI.Tests.NeuralNetworks
             const double eps = 1e-13;
             Assert.That.Value(k).IsEqualTo(2).WithAccuracy(eps);
             Assert.That.Value(b).IsEqualTo(5).WithAccuracy(eps);
-            Assert.That.Value(error.Last()).LessThan(error.First());
-            Assert.That.Value(error.Last()).IsEqualTo(0).WithAccuracy(1e-30);
-            Assert.That.Value(error.Length).IsEqual(417);
+            Assert.That.Value(error)
+               .Where(errors => errors.Length).Check(count => count.IsEqual(417))
+               .Where(errors => errors[^1]).Check(LastError => LastError.LessThen(error.First()).IsEqualTo(0).WithAccuracy(eps));
         }
 
         [TestMethod]
@@ -577,21 +575,22 @@ namespace MathCore.AI.Tests.NeuralNetworks
         {
             var network = new MultilayerPerceptron(1, new[] { 1 }, layer => layer.Activation = ActivationFunction.Linear);
 
-            Assert.That.Value(network.LayersCount).IsEqual(1);
-            Assert.That.Value(network.Layer[0].InputsCount).IsEqual(1);
-            Assert.That.Value(network.Layer[0].OutputsCount).IsEqual(1);
+            Assert.That.Value(network)
+               .Where(net => net.LayersCount).Check(count => count.IsEqual(1))
+               .Where(net => net.Layer[0]).Check(layer0 => layer0
+                   .Where(layer => layer.InputsCount).Check(count => count.IsEqual(1))
+                   .Where(layer => layer.OutputsCount).Check(count => count.IsEqual(1)));
 
             ref var k = ref network.Layer[0].Weights[0, 0];
             ref var b = ref network.Layer[0].OffsetWeights[0];
             k = 1;
-            Assert.That.Value(k).IsNotEqual(0);
-            Assert.That.Value(b).IsEqual(1);
+            Assert.That.Value(k).IsNotEqual(0).And.Value(b).IsEqual(1);
 
             var X = Enumerable.Range(0, 1001).Select(x => x / 100d);
                     
             const double k0 = 2;
             const double b0 = 5;
-            double F(double x) => k0 * x + b0;
+            static double F(double x) => k0 * x + b0;
             var data = X.ToArray(x => (x, f: F(x)));
             const int random_variant = 1;
             var rnd = new Random(random_variant);
@@ -614,7 +613,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
                     (x0, f0) = d;
                     var e = teacher.Teach(xx, result, ff);
                     error += e;
-                    Assert.IsFalse(double.IsNaN(k));
+                    Assert.That.Value(k).IsNotNaN();
                 }
                 errors.Add(error);
                 //Debug.WriteLine("er[{0}] = {1}; k={2:0.###}; b={3:0.###}", i, error, k, b);
@@ -622,12 +621,13 @@ namespace MathCore.AI.Tests.NeuralNetworks
                     break;
             }
 
-            Assert.That.Value(errors.Count).IsEqual(4);
-            Assert.That.Value(errors.Last()).LessThan(errors.First());
-            Assert.That.Value(errors.Last()).IsEqual(0);
-
-            Assert.That.Value(k).IsEqual(2);
-            Assert.That.Value(b).IsEqualTo(b0);
+            Assert.That.Value(errors)
+               .Where(e => e.Count).Check(count => count.IsEqual(4))
+               .Where(e => e[^1]).Check(LastError => LastError
+                   .LessThen(errors.First())
+                   .IsEqual(0)).And
+               .Value(k).IsEqual(2).And
+               .Value(b).IsEqualTo(b0);
         }
     }
 }

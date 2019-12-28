@@ -3,7 +3,7 @@ using MathCore.Annotations;
 
 namespace MathCore.AI.NeuralNetworks.ActivationFunctions
 {
-    /// <summary>Лямда</summary>
+    /// <summary>Лямбда</summary>
     public class Lambda : ActivationFunction
     {
         [NotNull] private readonly Func<double, double> _Activation;

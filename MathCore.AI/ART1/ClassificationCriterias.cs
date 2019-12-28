@@ -27,7 +27,7 @@ namespace MathCore.AI.ART1
         public ClassificationCriteria<T> Add([CanBeNull] string Name, [NotNull] Func<T, double> Criteria)
         {
             if (_Criterias.Any(c => c.Name == Name)) throw new ArgumentException($"Критерий с именем {Name} уже существует", nameof(Name));
-            if (_Criterias.Any(c => c.Equals(Criteria))) throw new ArgumentException("Критерий с указаннной функцией уже существует", nameof(Criteria));
+            if (_Criterias.Any(c => c.Equals(Criteria))) throw new ArgumentException("Критерий с указанной функцией уже существует", nameof(Criteria));
 
             var criteria = new ClassificationCriteria<T>(Name, Criteria ?? throw new ArgumentNullException(nameof(Criteria)));
             _Criterias.Add(criteria);
@@ -41,14 +41,14 @@ namespace MathCore.AI.ART1
         [NotNull]
         public ClassificationCriteria<T> Add([NotNull] Func<T, double> Criteria)
         {
-            if (_Criterias.Any(c => c.Equals(Criteria))) throw new ArgumentException("Критерий с указаннной функцией уже существует", nameof(Criteria));
+            if (_Criterias.Any(c => c.Equals(Criteria))) throw new ArgumentException("Критерий с указанной функцией уже существует", nameof(Criteria));
 
             var criteria = new ClassificationCriteria<T>(Criteria ?? throw new ArgumentNullException(nameof(Criteria)));
             _Criterias.Add(criteria);
             return criteria;
         }
 
-        /// <summary>Получить вектор оценко классификатора</summary>
+        /// <summary>Получить вектор оценок классификатора</summary>
         /// <param name="Item">Оцениваемый объект</param>
         /// <returns>Вектор числовых значений оценок классификатора</returns>
         [NotNull]

@@ -7,7 +7,7 @@ namespace MathCore.AI.NeuralNetworks.ActivationFunctions
         [NotNull] public ComplexActivationFunction Exponent => new ComplexExponenrt();
 
         /// <summary>Значение функции активации</summary>
-        /// <param name="x">Взвешанная сумма входов нейронов</param>
+        /// <param name="x">Взвешенная сумма входов нейронов</param>
         /// <returns>Значение выхода нейрона</returns>
         public abstract Complex Value(Complex x);
 

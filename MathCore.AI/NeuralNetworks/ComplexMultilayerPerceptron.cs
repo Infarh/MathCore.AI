@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using MathCore.AI.NeuralNetworks.ActivationFunctions;
 using MathCore.Annotations;
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedMember.Global
 
 namespace MathCore.AI.NeuralNetworks
 {
@@ -51,7 +53,7 @@ namespace MathCore.AI.NeuralNetworks
             /// <param name="LayerIndex">номер слоя</param>
             /// <param name="Layers">Матрицы коэффициентов слоёв</param>
             /// <param name="Offsets">Смещения слоёв</param>
-            /// <param name="OffsetWeights">Веса смащений слоёв</param>
+            /// <param name="OffsetWeights">Веса смещений слоёв</param>
             /// <param name="Outputs">Выходы слоёв</param>
             /// <param name="Activations">Массив всех активационных функций сети</param>
             internal LayerManager(int LayerIndex,
@@ -110,13 +112,13 @@ namespace MathCore.AI.NeuralNetworks
             /// <param name="OffsetValues">Требуемое значение смещений для всех нейронов слоя</param>
             public void SetOffsets([NotNull] ICollection<Complex> OffsetValues) => (OffsetValues ?? throw new ArgumentNullException(nameof(OffsetValues))).CopyTo(Offsets, 0);
 
-            /// <summary>Инициализацтор смещений нейронов</summary>
+            /// <summary>Инициализатор смещений нейронов</summary>
             /// <param name="Neuron">Номер нейрона</param>
             /// <returns>Значение смещения для указанного нейрона</returns>
             public delegate Complex LayerOffsetsInitializer(int Neuron);
 
             /// <summary>Установка значений смещений нейронов</summary>
-            /// <param name="Setter">Инициализацтор смещений</param>
+            /// <param name="Setter">Инициализатор смещений</param>
             public void SetOffsets([NotNull] LayerOffsetsInitializer Setter)
             {
                 if (Setter is null) throw new ArgumentNullException(nameof(Setter));
@@ -139,7 +141,7 @@ namespace MathCore.AI.NeuralNetworks
             public void SetOffsetWeights([NotNull] ICollection<Complex> WeightValues) => (WeightValues ?? throw new ArgumentNullException(nameof(WeightValues))).CopyTo(OffsetWeights, 0);
 
             /// <summary>Установка значений весов смещений нейронов</summary>
-            /// <param name="Setter">Инициализацтор весов смещений</param>
+            /// <param name="Setter">Инициализатор весов смещений</param>
             public void SetOffsetWeights([NotNull] LayerOffsetsInitializer Setter)
             {
                 if (Setter is null) throw new ArgumentNullException(nameof(Setter));
@@ -165,6 +167,7 @@ namespace MathCore.AI.NeuralNetworks
                 if (HeaderLinesCount > 0)
                     lines = lines.Skip(HeaderLinesCount);
                 var w = lines
+                    .Where(line => !string.IsNullOrEmpty(line))
                     .Select(Line => Line.Split(Separator).Select(Complex.Parse).ToArray())
                     .ToArray();
                 var layer = _Layers[LayerIndex];
@@ -223,7 +226,7 @@ namespace MathCore.AI.NeuralNetworks
             /// <summary>Выходы сети</summary>
             [NotNull] private readonly Complex[][] _Outputs;
 
-            /// <summary>Установщие активационной функции указанного слоя</summary>
+            /// <summary>Установщик активационной функции указанного слоя</summary>
             /// <param name="LayerIndex">Номер слоя функцию которого требуется установить</param>
             /// <returns>Установщик активационной функции слоя</returns>
             [NotNull]
@@ -304,11 +307,12 @@ namespace MathCore.AI.NeuralNetworks
         /// <inheritdoc />
         public int OutputsCount => _Layers[_Layers.Length - 1].GetLength(0);
 
-        /// <inheritdoc />
+        /// <summary>Число слоёв</summary>
         public int LayersCount => _Layers.Length;
 
-        /// <inheritdoc />
-        public IReadOnlyList<Complex[]> HiddentOutputs => _Outputs;
+        /// <summary>Скрытые выходы</summary>
+        [NotNull]
+        public IReadOnlyList<Complex[]> HiddenOutputs => _Outputs;
 
         /// <summary>Индекс матриц весовых коэффициентов слоёв</summary>
         /// <param name="layer">Номер слоя</param>
@@ -362,7 +366,7 @@ namespace MathCore.AI.NeuralNetworks
         }
 
         /// <summary>Инициализация матрицы весовых коэффициентов слоя</summary>
-        /// <param name="LayerWeights">Мастрица весовых коэффициентов слоя</param>
+        /// <param name="LayerWeights">Матрица весовых коэффициентов слоя</param>
         /// <param name="LayerIndex">Индекс слоя</param>
         /// <param name="Initializer">Функция инициализации весовых коэффициентов слоя</param>
         private static void InitializeLayerWeightsMatrix(
@@ -463,8 +467,8 @@ namespace MathCore.AI.NeuralNetworks
         {
             if (Input is null) throw new ArgumentNullException(nameof(Input));
             if (Output is null) throw new ArgumentNullException(nameof(Output));
-            if (Input.Length != InputsCount) throw new ArgumentException($"Размер входного вектора ({Input.Length}) не равен количествоу входов сети ({InputsCount})", nameof(Input));
-            if (Output.Length != OutputsCount) throw new ArgumentException($"Размер выходного вектора ({Output.Length}) не соответвтует количеству выходов сети ({OutputsCount})", nameof(Output));
+            if (Input.Length != InputsCount) throw new ArgumentException($"Размер входного вектора ({Input.Length}) не равен количество входов сети ({InputsCount})", nameof(Input));
+            if (Output.Length != OutputsCount) throw new ArgumentException($"Размер выходного вектора ({Output.Length}) не соответствует количеству выходов сети ({OutputsCount})", nameof(Output));
 
             var layers = _Layers;                                       // Матрицы коэффициентов передачи слоёв
             var layers_count = layers.Length;                           // Количество слоёв
@@ -515,7 +519,7 @@ namespace MathCore.AI.NeuralNetworks
 
             var layer_activation_inverse = _Activations;                                  // Производные активационных функций слоёв
             var errors = new Complex[layers_count][];                                       // Массив ошибок в слоях
-            var output_layer_error = errors[layers_count - 1] = new Complex[outputs_count]; // Ошибка выходого слоя
+            var output_layer_error = errors[layers_count - 1] = new Complex[outputs_count]; // Ошибка выходного слоя
 
             for (var output_index = 0; output_index < outputs_count; output_index++)
                 output_layer_error[output_index] =
@@ -532,7 +536,7 @@ namespace MathCore.AI.NeuralNetworks
 
                 #region Обратное распространение ошибки
 
-                // Если слой не последний, то пересчитываем сошибку текущего слоя на предыдущий
+                // Если слой не последний, то пересчитываем ошибку текущего слоя на предыдущий
                 if (layer_index > 0)
                 {
                     // Количество выходов (нейронов) в предыдущем слое
@@ -552,10 +556,10 @@ namespace MathCore.AI.NeuralNetworks
                         for (var j = 0; j < layer_outputs_count; j++) // j - номер связи с j-тым нейроном текущего слоя
                             err += error_level[j] * w[j, i];          // i - номер нейрона в предыдущем слое
 
-                        // Значение на выходе расчитываемого нейрона в предыдущем слое
+                        // Значение на выходе рассчитываемого нейрона в предыдущем слое
                         var output = prev_layer_output[i];
                         prev_error_level[i] = err * (prev_layer_activation_inverse?.dValue(output) ?? ComplexExponenrt.dActivation(output));
-                        // Ошибка по нейрону = суммарная взвешаная ошибка всех связей умнженная на значение производной функции активации для выхода нейрона
+                        // Ошибка по нейрону = суммарная взвешенная ошибка всех связей умноженная на значение производной функции активации для выхода нейрона
                     }
                 }
 
@@ -579,6 +583,7 @@ namespace MathCore.AI.NeuralNetworks
             }
 
             var network_errors = 0d;
+            // ReSharper disable once LoopCanBeConvertedToQuery
             for (var i = 0; i < Output.Length; i++)
             {
                 var delta = Expected[i] - Output[i];

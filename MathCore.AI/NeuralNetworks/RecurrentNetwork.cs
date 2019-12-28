@@ -36,7 +36,7 @@ namespace MathCore.AI.NeuralNetworks
             int InputsCount,
             [NotNull] IEnumerable<int> NeuronsCount,
             LayerInitializer LayerInitializer,
-            NetworkFeddbackCoefficientInitializer FeedbackInitializer)
+            [CanBeNull] NetworkFeddbackCoefficientInitializer FeedbackInitializer)
             : this(
                 InputsCount,
                 (NeuronsCount ?? throw new ArgumentNullException(nameof(NeuronsCount))).ToArray(),
@@ -54,7 +54,7 @@ namespace MathCore.AI.NeuralNetworks
             }
         }
 
-        private RecurrentNetwork(int InputsCount, [NotNull] int[] NeuronsCount, LayerInitializer LayerInitializer)
+        private RecurrentNetwork(int InputsCount, [NotNull] IReadOnlyList<int> NeuronsCount, LayerInitializer LayerInitializer)
             : base(InputsCount, NeuronsCount, LayerInitializer)
         {
             _LayerFeedbacks = new double[InputsCount][,];
@@ -79,9 +79,9 @@ namespace MathCore.AI.NeuralNetworks
             if (Output is null)
                 throw new ArgumentNullException(nameof(Output));
             if (Input.Length != InputsCount)
-                throw new ArgumentException($"Размер входного вектора ({Input.Length}) не равен количествоу входов сети ({InputsCount})", nameof(Input));
+                throw new ArgumentException($"Размер входного вектора ({Input.Length}) не равен количеству входов сети ({InputsCount})", nameof(Input));
             if (Output.Length != OutputsCount)
-                throw new ArgumentException($"Размер выходного вектора ({Output.Length}) не соответвтует количеству выходов сети ({OutputsCount})", nameof(Output));
+                throw new ArgumentException($"Размер выходного вектора ({Output.Length}) не соответствует количеству выходов сети ({OutputsCount})", nameof(Output));
 
             var layers = _Layers;                                       // Матрицы коэффициентов передачи слоёв
             var feedbacks = _LayerFeedbacks;                            // Матрица обратных связей
@@ -146,7 +146,7 @@ namespace MathCore.AI.NeuralNetworks
 
             var layer_activation_inverse = _Activations;                                  // Производные активационных функций слоёв
             var errors = new double[layers_count][];                                       // Массив ошибок в слоях
-            var output_layer_error = errors[layers_count - 1] = new double[outputs_count]; // Ошибка выходого слоя
+            var output_layer_error = errors[layers_count - 1] = new double[outputs_count]; // Ошибка выходного слоя
 
             for (var output_index = 0; output_index < outputs_count; output_index++)
                 output_layer_error[output_index] =
@@ -165,7 +165,7 @@ namespace MathCore.AI.NeuralNetworks
 
                 #region Обратное распространение ошибки
 
-                // Если слой не последний, то пересчитываем сошибку текущего слоя на предыдущий
+                // Если слой не последний, то пересчитываем ошибку текущего слоя на предыдущий
                 if (layer_index > 0)
                 {
                     // Количество выходов (нейронов) в предыдущем слое
@@ -185,10 +185,10 @@ namespace MathCore.AI.NeuralNetworks
                         for (var j = 0; j < layer_outputs_count; j++) // j - номер связи с j-тым нейроном текущего слоя
                             err += error_level[j] * w[j, i];          // i - номер нейрона в предыдущем слое
 
-                        // Значение на выходе расчитываемого нейрона в предыдущем слое
+                        // Значение на выходе рассчитываемого нейрона в предыдущем слое
                         var output = prev_layer_output[i];
                         prev_error_level[i] = err * (prev_layer_activation_inverse?.DiffValue(output) ?? Sigmoid.DiffActivation(output));
-                        // Ошибка по нейрону = суммарная взвешаная ошибка всех связей умнженная на значение производной функции активации для выхода нейрона
+                        // Ошибка по нейрону = суммарная взвешенная ошибка всех связей умноженная на значение производной функции активации для выхода нейрона
                     }
                 }
 

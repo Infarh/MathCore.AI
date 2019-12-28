@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace MathCore.AI.Tests.ART1
 {
     [TestClass]
-    public class ART1_Tests
+    public class ART1Tests
     {
         /// <summary>Сущность, подлежащая классификации</summary>
         private class Item
@@ -85,8 +85,8 @@ namespace MathCore.AI.Tests.ART1
         }
 
         [TestMethod]
-        public void Algotithm_Base_Logic()
-        {
+        public void Algorithm_Base_Logic()
+        {           
             int[] p0 = { 1, 1, 1, 0, 0, 1, 0 };
             int[] p1 = { 1, 0, 0, 1, 1, 0, 1 };
             int[] p2 = { 1, 1, 0, 0, 0, 1, 0 };
@@ -102,20 +102,20 @@ namespace MathCore.AI.Tests.ART1
                 classificator.Criterias.Add(p => p[index]);
             }
 
-            var claster0 = classificator.Add(p0);
-            var claster1 = classificator.Add(p1);
-            var claster2 = classificator.Add(p2);
+            var cluster0 = classificator.Add(p0);
+            var cluster1 = classificator.Add(p1);
+            var cluster2 = classificator.Add(p2);
 
-            Assert.That.Value(claster0).IsReferenceEquals(claster2);
-            Assert.That.Value(claster0).IsNotReferenceEquals(claster1);
+            Assert.That.Value(cluster0).IsReferenceEquals(cluster2);
+            Assert.That.Value(cluster0).IsNotReferenceEquals(cluster1);
 
-            Assert.That.Value(claster0.ItemsCount).IsEqual(2);
-            Assert.That.Value(claster1.ItemsCount).IsEqual(1);
+            Assert.That.Value(cluster0.ItemsCount).IsEqual(2);
+            Assert.That.Value(cluster1.ItemsCount).IsEqual(1);
 
-            Assert.IsTrue(claster0.Contains(p0));
-            Assert.IsTrue(claster0.Contains(p2));
+            Assert.IsTrue(cluster0.Contains(p0));
+            Assert.IsTrue(cluster0.Contains(p2));
 
-            Assert.IsTrue(claster1.Contains(p1));
+            Assert.IsTrue(cluster1.Contains(p1));
         }
 
         [TestMethod]

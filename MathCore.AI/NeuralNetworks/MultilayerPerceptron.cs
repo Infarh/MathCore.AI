@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 // ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace MathCore.AI.NeuralNetworks
 {
@@ -55,11 +56,12 @@ namespace MathCore.AI.NeuralNetworks
         /// <inheritdoc />
         public int OutputsCount => _Layers[_Layers.Length - 1].GetLength(0);
 
-        /// <inheritdoc />
+        /// <summary>Число слоёв</summary>
         public int LayersCount => _Layers.Length;
 
-        /// <inheritdoc />
-        public IReadOnlyList<double[]> HiddentOutputs => _Outputs;
+        /// <summary>Скрытые выходы</summary>
+        [NotNull]
+        public IReadOnlyList<double[]> HiddenOutputs => _Outputs;
 
         /// <summary>Индекс матриц весовых коэффициентов слоёв</summary>
         /// <param name="layer">Номер слоя</param>
@@ -113,7 +115,7 @@ namespace MathCore.AI.NeuralNetworks
         }
 
         /// <summary>Инициализация матрицы весовых коэффициентов слоя</summary>
-        /// <param name="LayerWeights">Мастрица весовых коэффициентов слоя</param>
+        /// <param name="LayerWeights">Матрица весовых коэффициентов слоя</param>
         /// <param name="LayerIndex">Индекс слоя</param>
         /// <param name="Initializer">Функция инициализации весовых коэффициентов слоя</param>
         private static void InitializeLayerWeightsMatrix(
@@ -123,7 +125,7 @@ namespace MathCore.AI.NeuralNetworks
         {
             for (var i = 0; i < LayerWeights.GetLength(0); i++)
                 for (var j = 0; j < LayerWeights.GetLength(1); j++)
-                    LayerWeights[i, j] = Initializer?.Invoke(LayerIndex, i, j) ?? 1;
+                    LayerWeights[i, j] = Initializer.Invoke(LayerIndex, i, j);
         }
 
         /// <summary>Создать массив матриц передачи слоёв</summary>
@@ -165,6 +167,7 @@ namespace MathCore.AI.NeuralNetworks
         /// <summary>Инициализатор слоя</summary><param name="Layer">Менеджер инициализируемого слоя</param>
         public delegate void LayerInitializer([NotNull] LayerManager Layer);
 
+        [NotNull]
         private static NetworkCoefficientInitializer GetStandartRandomInitializer()
         {
             var rnd = new Random();
@@ -271,7 +274,7 @@ namespace MathCore.AI.NeuralNetworks
                     ? Input                                              // принимаем входной вектор
                     : outputs[layer_index - 1];                          // иначе берём массив выходов предыдущего слоя
 
-                // Определяем вектор входа следующего слоя Xnext         
+                // Определяем вектор входа следующего слоя X_next         
                 var current_output = layer_index == layers_count - 1     // Если слой последний, то за выходы "следующего слоя"
                     ? Output                                             // Принимаем массив выходного вектора
                     : outputs[layer_index]                               // иначе берём массив текущего слоя
@@ -302,8 +305,8 @@ namespace MathCore.AI.NeuralNetworks
         /// <param name="Offset">Вектор смещений нейронов</param>
         /// <param name="OffsetWeight">Вектор весовых коэффициентов</param>
         /// <param name="Input">Вектор входного воздействия</param>
-        /// <param name="Output">Вектор выходных значений неройнов</param>
-        /// <param name="Activation">Активационная функция слоя (если не задана, то используется Сигмоида)</param>
+        /// <param name="Output">Вектор выходных значений нейронов</param>
+        /// <param name="Activation">Активационная функция слоя (если не задана, то используется Сигмоид)</param>
         /// <param name="State">Вектор входа функции активации</param>
         private static void ProcessLayer(
             [NotNull] double[,] LayerWeights,
@@ -314,7 +317,7 @@ namespace MathCore.AI.NeuralNetworks
             [CanBeNull] ActivationFunction Activation = null,
             [CanBeNull] double[] State = null)
         {
-            // Вычисляем Xnext = f(Net = W * X + Wo*O)
+            // Вычисляем X_next = f(Net = W * X + Wo*O)
             var layer_outputs_count = LayerWeights.GetLength(0);
             for (var output_index = 0; output_index < layer_outputs_count; output_index++)
             {
@@ -373,9 +376,9 @@ namespace MathCore.AI.NeuralNetworks
         {
             if (Writer is null) throw new ArgumentNullException(nameof(Writer));
 
-            Writer.WriteStartElement("Network");                                        // <Network>   
+            Writer.WriteStartElement("Network"); // <Network>
             WriteLayers(Writer);
-            Writer.WriteEndElement();                                                   // </Network>
+            Writer.WriteEndElement();            // </Network>
             Writer.Flush();
         }
 
@@ -400,7 +403,7 @@ namespace MathCore.AI.NeuralNetworks
                 var activation = _Activations[layer_index];
                 if (activation?.GetType() == typeof(Lambda)) throw new InvalidOperationException("Невозможно серилизовать лямда-функцию активации");
 
-                Writer.WriteStartElement("Layer"); // <Layer inder="****">
+                Writer.WriteStartElement("Layer"); // <Layer Index="****">
                 Writer.WriteAttributeString("Index", layer_index.ToString());
                 Writer.WriteAttributeString("Activation", (activation is null ? typeof(Sigmoid) : activation.GetType()).ToString());
                 WriteNeurons(Writer, layer_index);
@@ -415,7 +418,7 @@ namespace MathCore.AI.NeuralNetworks
             for (var layer_index = 0; layer_index < _Layers.Length; layer_index++)
             {
                 var activation = _Activations[layer_index];
-                if (activation?.GetType() == typeof(Lambda)) throw new InvalidOperationException("Невозможно серилизовать лямда-функцию активации");
+                if (activation?.GetType() == typeof(Lambda)) throw new InvalidOperationException("Невозможно сериaлизовать лямбда-функцию активации");
 
                 await Writer.WriteStartElementAsync(null, "Layer", null).ConfigureAwait(false);
                 await Writer.WriteAttributeStringAsync(null, "Index", null, layer_index.ToString()).ConfigureAwait(false);
@@ -510,7 +513,7 @@ namespace MathCore.AI.NeuralNetworks
         #region Чтение
 
         /// <summary>Чтение данных сети в формате XML из файла</summary>
-        /// <param name="FileName">Имя файла, созержащего структуру сети в формате XML</param>
+        /// <param name="FileName">Имя файла, содержащего структуру сети в формате XML</param>
         /// <returns>Прочитанная из файла нейронная сеть</returns>
         [NotNull]
         public static MultilayerPerceptron LoadXmlFrom([NotNull] string FileName)
@@ -523,7 +526,7 @@ namespace MathCore.AI.NeuralNetworks
         }
 
         /// <summary>Чтение данных сети в формате XML из файла</summary>
-        /// <param name="FileName">Имя файла, созержащего структуру сети в формате XML</param>
+        /// <param name="FileName">Имя файла, содержащего структуру сети в формате XML</param>
         /// <returns>Прочитанная из файла нейронная сеть</returns>
         [NotNull]
         public static async Task<MultilayerPerceptron> LoadXmlFromAsync([NotNull] string FileName)
@@ -543,7 +546,7 @@ namespace MathCore.AI.NeuralNetworks
         /// <summary>Загрузка данных нейронной сети из потока в формате XML</summary>
         /// <param name="Data">Поток данных сети</param>
         /// <returns>Прочитанная нейронная сеть</returns>
-        [NotNull] public static async Task<MultilayerPerceptron> LoadFromXmlAsync([NotNull] Stream Data) => await LoadXmlFromAsync(XmlReader.Create(Data ?? throw new ArgumentNullException(nameof(Data))));
+        [NotNull, ItemNotNull] public static async Task<MultilayerPerceptron> LoadFromXmlAsync([NotNull] Stream Data) => await LoadXmlFromAsync(XmlReader.Create(Data ?? throw new ArgumentNullException(nameof(Data))));
 
         /// <summary>Загрузка данных сети из текста в формате XML</summary>
         /// <param name="Reader">Источник текстовых данных, хранящий структуру сети в формате XML</param>
@@ -553,7 +556,7 @@ namespace MathCore.AI.NeuralNetworks
         /// <summary>Загрузка данных сети из текста в формате XML</summary>
         /// <param name="Reader">Источник текстовых данных, хранящий структуру сети в формате XML</param>
         /// <returns>Прочитанная нейронная сеть</returns>
-        [NotNull] public static async Task<MultilayerPerceptron> LoadXmlFromAsync([NotNull] TextReader Reader) => await LoadXmlFromAsync(XmlReader.Create(Reader ?? throw new ArgumentNullException(nameof(Reader))));
+        [NotNull, ItemNotNull] public static async Task<MultilayerPerceptron> LoadXmlFromAsync([NotNull] TextReader Reader) => await LoadXmlFromAsync(XmlReader.Create(Reader ?? throw new ArgumentNullException(nameof(Reader))));
 
         /// <summary>Чтение структуры сети из XML</summary>
         /// <param name="Reader">Источник XML, хранящий структуру сети</param>
@@ -792,7 +795,7 @@ namespace MathCore.AI.NeuralNetworks
 
         /// <summary>Метод создания активационной функции на основе её имени</summary>
         /// <param name="FunctionTypeName">Имя типа активационной функции</param>
-        /// <returns>АКтивационная функция с указанным именем</returns>
+        /// <returns>Активационная функция с указанным именем</returns>
         [NotNull]
         private static ActivationFunction ActivationFunctionCreator([NotNull] string FunctionTypeName)
         {

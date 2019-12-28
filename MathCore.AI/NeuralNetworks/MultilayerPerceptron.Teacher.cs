@@ -149,7 +149,7 @@ namespace MathCore.AI.NeuralNetworks
                                 case null:
                                     prev_layer_error[i] = err * Sigmoid.DiffActivation(prev_layer_output[i]);
                                     break;
-                                case DiffSiplifiedActivationFunction activation:
+                                case DiffSimplifiedActivationFunction activation:
                                     prev_layer_error[i] = err * activation.DiffFunc(prev_layer_output[i]);
                                     break;
                                 default:

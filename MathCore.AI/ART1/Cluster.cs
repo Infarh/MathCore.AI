@@ -83,9 +83,9 @@ namespace MathCore.AI.ART1
             }
         }
 
-        /// <summary>Проверка на пренадлежность элемента кластеру</summary>
+        /// <summary>Проверка на принадлежность элемента кластеру</summary>
         /// <param name="Prototype">Вектор-прототип</param>
-        /// <param name="Betta">Бетта-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</param>
+        /// <param name="Betta">Бета-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</param>
         /// <param name="Vigilance">Параметр внимательности (0;1]</param>
         /// <returns></returns>
         internal bool SimilarityAndCareTest([NotNull] double[] Prototype, double Betta, double Vigilance)
@@ -112,6 +112,7 @@ namespace MathCore.AI.ART1
         #region Overrides of Object
 
         /// <inheritdoc />
+        [NotNull]
         public override string ToString()
         {
             var result = new StringBuilder();

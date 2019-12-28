@@ -6,7 +6,7 @@ namespace MathCore.AI.NeuralNetworks
     /// <summary>Результат обучения для одного обучающего образца</summary>
     public class TeachResult
     {
-        /// <summary>Образец, на котором прводилось обучение</summary>
+        /// <summary>Образец, на котором проводилось обучение</summary>
         [NotNull]
         public Example Example { get; }
 
@@ -30,6 +30,6 @@ namespace MathCore.AI.NeuralNetworks
             this.Error = Error;
         }
 
-        public override string ToString() => $"err - {Error.RoundAdaptive(3)}";
+        [NotNull] public override string ToString() => $"err - {Error.RoundAdaptive(3)}";
     }
 }
