@@ -67,8 +67,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
         [TestMethod]
         public void NeuralNetwork_Integral_Test()
         {
-
-            double activation_inverse(double x) => x * (1 - x);
+            static double ActivationInverse(double x) => x * (1 - x);
 
             double[,] W0 =
             {
@@ -122,13 +121,13 @@ namespace MathCore.AI.Tests.NeuralNetworks
 
             double[] correct_output = { 1 };
 
-            var error = correct_output.Zip(network_input, (c, v) => c - v).Sum(delta => delta.Pow2()) / 2;
+            var error = correct_output.Zip(network_output, (c, v) => c - v).Sum(delta => delta.Pow2()) / 2;
 
             Assert.That.Value(error).IsEqual(0.023895, 7.19e-8);
 
             var output_error = errors[^1];
             for (var i = 0; i < output_error.Length; i++)
-                output_error[i] = (correct_output[i] - network_output[i]) * activation_inverse(network_output[i]);
+                output_error[i] = (correct_output[i] - network_output[i]) * ActivationInverse(network_output[i]);
 
             CollectionAssert.That.Collection(errors[^1]).IsEqualTo(new[] { 0.0373 }, 4.28e-5);
 
@@ -143,7 +142,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
                     var err = 0d;
                     for (var j = 0; j < prev_error_level.Length; j++)
                         err += prev_error_level[j] * w[j, i];
-                    error_level[i] = err * activation_inverse(level_inputs[i]);
+                    error_level[i] = err * ActivationInverse(level_inputs[i]);
                 }
             }
 
