@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MathCore.AI.NeuralNetworks.MultilayerPerceptron">
+    <Position X="8" Y="1.75" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="MathCore.AI.NeuralNetworks.MultilayerPerceptron.NetworkCoefficientInitializer" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>NeuralNetworks\MultilayerPerceptron.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerInitializer" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>NeuralNetworks\MultilayerPerceptron.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Class Name="MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager">
+        <NestedTypes>
+          <Delegate Name="MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.LayerWeightsInitializer" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>NeuralNetworks\MultilayerPerceptron.LayerManager.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Delegate>
+          <Delegate Name="MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayerManager.LayerOffsetsInitializer" Collapsed="true">
+            <TypeIdentifier>
+              <NewMemberFileName>NeuralNetworks\MultilayerPerceptron.LayerManager.cs</NewMemberFileName>
+            </TypeIdentifier>
+          </Delegate>
+        </NestedTypes>
+        <TypeIdentifier>
+          <NewMemberFileName>NeuralNetworks\MultilayerPerceptron.LayerManager.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="MathCore.AI.NeuralNetworks.MultilayerPerceptron.LayersManager">
+        <TypeIdentifier>
+          <NewMemberFileName>NeuralNetworks\MultilayerPerceptron.LayerManager.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+      <Class Name="MathCore.AI.NeuralNetworks.MultilayerPerceptron.BackPropagationTeacher">
+        <TypeIdentifier>
+          <NewMemberFileName>NeuralNetworks\MultilayerPerceptron.Teacher.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAYAAAGCCEEMAIByggAAAABEAYIA4BGFQAAAgACQyE=</HashCode>
+      <FileName>NeuralNetworks\MultilayerPerceptron.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
