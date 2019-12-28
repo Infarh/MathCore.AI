@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace MathCore.AI.Tests.NeuralNetworks
 {
     [TestClass]
-    public class RecurrentNetwork_Tests
+    public class RecurrentNetworkTests
     {
         private static (double[][,] Weights, double[][,] Feedbacks) GetTestNetworkStructure()
         {
@@ -69,8 +69,8 @@ namespace MathCore.AI.Tests.NeuralNetworks
         [TestMethod]
         public void SingleProcessTest()
         {
-            var (weights, feedbacks) = GetTestNetworkStructure();
-            var network = new RecurrentNetwork(weights, feedbacks);
+            var (weights, feedback) = GetTestNetworkStructure();
+            var network = new RecurrentNetwork(weights, feedback);
 
             var input = Enumerable.Range(1, network.InputsCount).Select(v => (double)v).ToArray();
             var output = new double[network.OutputsCount];

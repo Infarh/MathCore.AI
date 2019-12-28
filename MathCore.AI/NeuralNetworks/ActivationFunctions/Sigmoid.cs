@@ -3,7 +3,7 @@
 namespace MathCore.AI.NeuralNetworks.ActivationFunctions
 {
     /// <summary>Логистическая функция (Сигмоид)</summary>
-    public class Sigmoid : DiffSiplifiedActivationFunction
+    public class Sigmoid : DiffSimplifiedActivationFunction
     {
         public static double Activation(double x) => 1 / (1 + Math.Exp(-x));
 

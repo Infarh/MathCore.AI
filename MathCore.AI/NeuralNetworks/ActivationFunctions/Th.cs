@@ -3,7 +3,7 @@
 namespace MathCore.AI.NeuralNetworks.ActivationFunctions
 {
     /// <summary>Гиперболический тангенс</summary>
-    public class Th : DiffSiplifiedActivationFunction
+    public class Th : DiffSimplifiedActivationFunction
     {
         public override double Value(double x)
         {

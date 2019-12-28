@@ -59,7 +59,7 @@ namespace MathCore.AI.NeuralNetworks
             /// <param name="LayerIndex">номер слоя</param>
             /// <param name="Layers">Матрицы коэффициентов слоёв</param>
             /// <param name="Offsets">Смещения слоёв</param>
-            /// <param name="OffsetWeights">Веса смащений слоёв</param>
+            /// <param name="OffsetWeights">Веса смещений слоёв</param>
             /// <param name="Outputs">Выходы слоёв</param>
             /// <param name="Activations">Массив всех активационных функций сети</param>
             internal LayerManager(int LayerIndex,
@@ -106,7 +106,7 @@ namespace MathCore.AI.NeuralNetworks
             }
 
             /// <summary>Инициализация весовых коэффициентов слоя случайными числами с равномерным распределением</summary>
-            /// <param name="Sigma">Среднеквадратическое отклонение</param>
+            /// <param name="Sigma">Среднеквадратичное отклонение</param>
             /// <param name="Mu">Математическое ожидание</param>
             public void SetWeightsUniform(double Sigma = 1, double Mu = 0)
             {
@@ -130,7 +130,7 @@ namespace MathCore.AI.NeuralNetworks
             }
 
             /// <summary>Инициализация весовых коэффициентов слоя случайными числами с нормальным распределением</summary>
-            /// <param name="Sigma">Среднеквадратическое отклонение</param>
+            /// <param name="Sigma">Среднеквадратичное отклонение</param>
             /// <param name="Mu">Математическое ожидание</param>
             public void SetWeightsNormal(double Sigma = 1, double Mu = 0)
             {
@@ -166,13 +166,13 @@ namespace MathCore.AI.NeuralNetworks
             /// <param name="OffsetValues">Требуемое значение смещений для всех нейронов слоя</param>
             public void SetOffsets([NotNull] ICollection<double> OffsetValues) => (OffsetValues ?? throw new ArgumentNullException(nameof(OffsetValues))).CopyTo(Offsets, 0);
 
-            /// <summary>Инициализацтор смещений нейронов</summary>
+            /// <summary>Инициализатор смещений нейронов</summary>
             /// <param name="Neuron">Номер нейрона</param>
             /// <returns>Значение смещения для указанного нейрона</returns>
             public delegate double LayerOffsetsInitializer(int Neuron);
 
             /// <summary>Установка значений смещений нейронов</summary>
-            /// <param name="Setter">Инициализацтор смещений</param>
+            /// <param name="Setter">Инициализатор смещений</param>
             public void SetOffsets([NotNull] LayerOffsetsInitializer Setter)
             {
                 if (Setter is null) throw new ArgumentNullException(nameof(Setter));
@@ -195,7 +195,7 @@ namespace MathCore.AI.NeuralNetworks
             public void SetOffsetWeights([NotNull] ICollection<double> WeightValues) => (WeightValues ?? throw new ArgumentNullException(nameof(WeightValues))).CopyTo(OffsetWeights, 0);
 
             /// <summary>Установка значений весов смещений нейронов</summary>
-            /// <param name="Setter">Инициализацтор весов смещений</param>
+            /// <param name="Setter">Инициализатор весов смещений</param>
             public void SetOffsetWeights([NotNull] LayerOffsetsInitializer Setter)
             {
                 if (Setter is null) throw new ArgumentNullException(nameof(Setter));
@@ -221,6 +221,7 @@ namespace MathCore.AI.NeuralNetworks
                 if (HeaderLinesCount > 0)
                     lines = lines.Skip(HeaderLinesCount);
                 var w = lines
+                    .Where(line => !string.IsNullOrEmpty(line))
                     .Select(Line => Line.Split(Separator).Select(S => double.Parse(S, NumberFormatInfo.InvariantInfo)).ToArray())
                     .ToArray();
                 var layer = _Layers[LayerIndex];
@@ -279,7 +280,7 @@ namespace MathCore.AI.NeuralNetworks
             /// <summary>Выходы сети</summary>
             [NotNull] private readonly double[][] _Outputs;
 
-            /// <summary>Установщие активационной функции указанного слоя</summary>
+            /// <summary>Установщик активационной функции указанного слоя</summary>
             /// <param name="LayerIndex">Номер слоя функцию которого требуется установить</param>
             /// <returns>Установщик активационной функции слоя</returns>
             [NotNull]

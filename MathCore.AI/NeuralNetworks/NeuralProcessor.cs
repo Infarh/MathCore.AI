@@ -1,5 +1,7 @@
 ﻿using System;
 using MathCore.Annotations;
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedType.Global
 
 namespace MathCore.AI.NeuralNetworks
 {
@@ -14,12 +16,12 @@ namespace MathCore.AI.NeuralNetworks
         /// <remarks>Цель метода определить - как входной объект отображается (проецируется) на массив входов сети</remarks>
         public delegate void InputFormatter(TInput InputValue, [NotNull] double[] NetworkInput);
 
-        /// <summary>Метод преобразования массива вещчественных чисел - массива выходных признаков нейронной сети в объект выхода</summary>
+        /// <summary>Метод преобразования массива вещественных чисел - массива выходных признаков нейронной сети в объект выхода</summary>
         /// <param name="NetworkOutput">Массив выходных признаков нейронной сети</param>
-        /// <returns>Объект, сформированный на основе массива признаков, расчитанных нейронной сетью</returns>
+        /// <returns>Объект, сформированный на основе массива признаков, рассчитанных нейронной сетью</returns>
         public delegate TOutput OutputFormatter([NotNull] double[] NetworkOutput);
 
-        /// <summary>Нейронная сеть, осуществляющая преобразвоание входного набора признаков в выходной</summary>
+        /// <summary>Нейронная сеть, осуществляющая преобразование входного набора признаков в выходной</summary>
         [NotNull] private readonly INeuralNetwork _Network;
 
         /// <summary>Метод формирования входного набора признаков на основе входного объекта</summary>
@@ -37,7 +39,7 @@ namespace MathCore.AI.NeuralNetworks
         /// <summary>Создать новый нейронный процессор</summary>
         /// <param name="Network">Нейронная сеть</param>
         /// <param name="InputFormatter">Метод формирования вектора признаков входного воздействия</param>
-        /// <param name="OutputFormatter">Метод формирования выходного значени на основе вектора признаков, формируемого сетью</param>
+        /// <param name="OutputFormatter">Метод формирования выходного значения на основе вектора признаков, формируемого сетью</param>
         public NeuralProcessor(
             [NotNull] INeuralNetwork Network,
             [NotNull] InputFormatter InputFormatter,

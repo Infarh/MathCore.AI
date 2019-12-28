@@ -16,10 +16,10 @@ namespace MathCore.AI.ART1
         /// <remarks>Определяет размер кластера</remarks>
         private double _Vigilance = 0.9;
 
-        /// <summary>Бетта-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</summary>
+        /// <summary>Бета-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</summary>
         private double _Beta = 1;
 
-        /// <summary>Количество иметарций перераспределения образцов по кластерам для операции добавления</summary>
+        /// <summary>Количество имитаций перераспределения образцов по кластерам для операции добавления</summary>
         private int _AddIterationsCount = 50;
 
         /// <summary>Образованные кластеры</summary>
@@ -41,7 +41,7 @@ namespace MathCore.AI.ART1
             }
         }
 
-        /// <summary>Бетта-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</summary>
+        /// <summary>Бета-параметр (разрушения связей) - чем больше, тем больше кластеров будет образовано</summary>
         public double Beta
         {
             get => _Beta;
@@ -56,13 +56,13 @@ namespace MathCore.AI.ART1
             }
         }
 
-        /// <summary>Количество иметарций перераспределения образцов по кластерам для операции добавления</summary>
+        /// <summary>Количество имитаций перераспределения образцов по кластерам для операции добавления</summary>
         public int AddOperationIterationCount
         {
             get => _AddIterationsCount;
             set => _AddIterationsCount = value;
         }
-
+        
         /// <summary>Критерии классификации</summary>
         [NotNull] public ClassificationCriterias<T> Criterias { get; } = new ClassificationCriterias<T>();
 
@@ -71,7 +71,7 @@ namespace MathCore.AI.ART1
 
         /// <summary>Добавить новый объект в классификатор</summary>
         /// <param name="Item">Классифицируемый объект</param>
-        /// <returns>Кластер, в который отнесён добавляемый обект</returns>
+        /// <returns>Кластер, в который отнесён добавляемый объект</returns>
         [NotNull]
         public Cluster<T> Add([NotNull] T Item)
         {
@@ -80,7 +80,7 @@ namespace MathCore.AI.ART1
 
             if (_Clusters.Count == 0) return CreateFirstCluster(Item);
 
-            KeyValuePair<double[], T>[] GetAllItems(T item, IEnumerable<Cluster<T>> clusters, ClassificationCriterias<T> criterias) =>
+            static KeyValuePair<double[], T>[] GetAllItems(T item, IEnumerable<Cluster<T>> clusters, ClassificationCriterias<T> criterias) =>
                 clusters
                    .SelectMany(c => c)
                    .AppendFirst(item)
@@ -145,7 +145,7 @@ namespace MathCore.AI.ART1
 
         /// <summary>Добавить элементы в классификатор</summary>
         /// <param name="Items">Классифицируемые элементы</param>
-        /// <returns>Словарь классоф элементов</returns>
+        /// <returns>Словарь классов элементов</returns>
         [NotNull]
         public Dictionary<T, Cluster<T>> Add([NotNull] IEnumerable<T> Items)
         {

@@ -5,7 +5,7 @@ namespace MathCore.AI.NeuralNetworks.ActivationFunctions
     /// <summary>Функция активации</summary>
     public abstract class ActivationFunction
     {
-        /// <summary>Сигмоида (логистическая)</summary>
+        /// <summary>Сигмоид (логистическая)</summary>
         [NotNull] public static Sigmoid Sigmoid => new Sigmoid();
 
         /// <summary>Линейная функция</summary>
@@ -15,7 +15,7 @@ namespace MathCore.AI.NeuralNetworks.ActivationFunctions
         [NotNull] public static Th Th => new Th();
 
         /// <summary>Значение функции активации</summary>
-        /// <param name="x">Взвешанная сумма входов нейронов</param>
+        /// <param name="x">Взвешенная сумма входов нейронов</param>
         /// <returns>Значение выхода нейрона</returns>
         public abstract double Value(double x);
 

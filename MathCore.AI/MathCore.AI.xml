@@ -202,7 +202,7 @@
         </member>
         <member name="M:MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction.Value(System.Double)">
             <summary>Значение функции активации</summary>
-            <param name="x">Взвешанная сумма входов нейронов</param>
+            <param name="x">Взвешенная сумма входов нейронов</param>
             <returns>Значение выхода нейрона</returns>
         </member>
         <member name="M:MathCore.AI.NeuralNetworks.ActivationFunctions.ActivationFunction.DiffValue(System.Double)">
@@ -212,7 +212,7 @@
         </member>
         <member name="M:MathCore.AI.NeuralNetworks.ActivationFunctions.ComplexActivationFunction.Value(MathCore.Complex)">
             <summary>Значение функции активации</summary>
-            <param name="x">Взвешанная сумма входов нейронов</param>
+            <param name="x">Взвешенная сумма входов нейронов</param>
             <returns>Значение выхода нейрона</returns>
         </member>
         <member name="M:MathCore.AI.NeuralNetworks.ActivationFunctions.ComplexActivationFunction.dValue(MathCore.Complex)">
