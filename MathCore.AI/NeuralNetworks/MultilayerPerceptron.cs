@@ -281,9 +281,9 @@ namespace MathCore.AI.NeuralNetworks
                 double[] current_state = null;
                 if (state != null) current_state = state[layer_index] ?? new double[current_output.Length];
 
-                // Определяем вектор смещения O
+                // Определяем вектор смещения O (Offset)
                 var current_layer_offset = layer_offsets[layer_index];
-                // Определяем вектор весов смещения Wo
+                // Определяем вектор весов смещения Wo (Weight of offset)
                 var current_layer_offset_weights = layer_offset_weights[layer_index];
 
                 var current_layer_activation = layer_activation[layer_index];
@@ -316,10 +316,10 @@ namespace MathCore.AI.NeuralNetworks
         {
             // Вычисляем Xnext = f(Net = W * X + Wo*O)
             var layer_outputs_count = LayerWeights.GetLength(0);
+            var layer_inputs_count = LayerWeights.GetLength(1);
             for (var output_index = 0; output_index < layer_outputs_count; output_index++)
             {
                 var output = Offset[output_index] * OffsetWeight[output_index];
-                var layer_inputs_count = LayerWeights.GetLength(1);
                 for (var input_index = 0; input_index < layer_inputs_count; input_index++)
                     output += LayerWeights[output_index, input_index] * Input[input_index];
                 if (State != null) State[output_index] = output;
