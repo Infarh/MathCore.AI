@@ -21,6 +21,11 @@ namespace MathCore.AI.NeuralNetworks
         /// <returns>Объект, сформированный на основе массива признаков, рассчитанных нейронной сетью</returns>
         public delegate TOutput OutputFormatter([NotNull] double[] NetworkOutput);
 
+        /// <summary>Метод преобразования выходного значения в массив значений выхода сети (используется в процессе обучения)</summary>
+        /// <param name="Output">Выходное значение</param>
+        /// <param name="NetworkOutput">Массив значений на выходе нейронной сети</param>
+        public delegate void BackOutputFormatter(TOutput Output, double[] NetworkOutput);
+
         /// <summary>Нейронная сеть, осуществляющая преобразование входного набора признаков в выходной</summary>
         [NotNull] private readonly INeuralNetwork _Network;
 
@@ -63,6 +68,7 @@ namespace MathCore.AI.NeuralNetworks
         }
 
         /// <summary>Создать учителя сети</summary>
+        /// <param name="Configurator">Метод конфигурации учителя</param>
         /// <returns>Учитель нейронной сети</returns>
         [NotNull]
         public TNetworkTeacher CreateTeacher<TNetworkTeacher>([CanBeNull] Action<TNetworkTeacher> Configurator = null)
@@ -72,5 +78,59 @@ namespace MathCore.AI.NeuralNetworks
                 throw new InvalidOperationException("Сеть не является обучаемой");
             return teachable_network.CreateTeacher(Configurator);
         }
+
+        private class ProcessorTeacher : INeuralProcessorTeacher<TInput, TOutput>
+        {
+            [NotNull] private readonly NeuralProcessor<TInput, TOutput> _NeuralProcessor;
+            [NotNull] private readonly BackOutputFormatter _BackOutputFormatter;
+            [NotNull] private readonly INetworkTeacher _Teacher;
+            [NotNull] private readonly double[] _Input;
+            [NotNull] private readonly double[] _Output;
+            [NotNull] private readonly double[] _Expected;
+
+            public ProcessorTeacher(
+                [NotNull] NeuralProcessor<TInput, TOutput> NeuralProcessor, 
+                [NotNull] BackOutputFormatter BackOutputFormatter, 
+                [NotNull] INetworkTeacher Teacher)
+            {
+                _NeuralProcessor = NeuralProcessor;
+                _BackOutputFormatter = BackOutputFormatter;
+                _Teacher = Teacher;
+                var network = Teacher.Network;
+                _Input = new double[network.InputsCount];
+                _Output = new double[network.OutputsCount];
+                _Expected = new double[_Output.Length];
+            }
+
+            public INeuralNetwork Network => _NeuralProcessor._Network;
+
+            public double Teach(TInput Input, TOutput Expected)
+            {
+                _NeuralProcessor._InputFormatter(Input, _Input);
+                _BackOutputFormatter(Expected, _Expected);
+                return _Teacher.Teach(_Input, _Output, _Expected);
+            } 
+
+            public double Teach(TInput Input, TOutput Expected, out TOutput Output)
+            {
+                _NeuralProcessor._InputFormatter(Input, _Input);
+                _BackOutputFormatter(Expected, _Expected);
+                var error = _Teacher.Teach(_Input, _Output, _Expected);
+                Output = _NeuralProcessor._OutputFormatter(_Output);
+                return error;
+            }
+        }
+
+        /// <summary>Получить учитель процессора</summary>
+        /// <typeparam name="TNetworkTeacher">Тип учителя</typeparam>
+        /// <param name="BackOutputFormatter">Метод обратного преобразования выходного значения в массив значений выхода сети</param>
+        /// <param name="Configurator">Метод конфигурации учителя</param>
+        /// <returns>Учитель процессора</returns>
+        [NotNull]
+        public INeuralProcessorTeacher<TInput, TOutput> CreateTeacher<TNetworkTeacher>(
+            [NotNull] BackOutputFormatter BackOutputFormatter,
+            [CanBeNull] Action<TNetworkTeacher> Configurator = null)
+            where TNetworkTeacher : class, INetworkTeacher =>
+            new ProcessorTeacher(this, BackOutputFormatter, CreateTeacher(Configurator));
     }
 }
