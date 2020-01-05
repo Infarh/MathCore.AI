@@ -79,31 +79,49 @@ namespace MathCore.AI.NeuralNetworks
             return teachable_network.CreateTeacher(Configurator);
         }
 
+        /// <summary>Учитель нейронной сети, используемой в нейропроцессоре</summary>
         private class ProcessorTeacher : INeuralProcessorTeacher<TInput, TOutput>
         {
+            /// <summary>Обучаемый нейронный процессор</summary>
             [NotNull] private readonly NeuralProcessor<TInput, TOutput> _NeuralProcessor;
+
+            /// <summary>Метод преобразования значения выхода нейропроцессора в массив вещественных значений выхода нейронной сети</summary>
             [NotNull] private readonly BackOutputFormatter _BackOutputFormatter;
+
+            /// <summary>Объект, осуществляющий обучение нейронной сети</summary>
             [NotNull] private readonly INetworkTeacher _Teacher;
+
+            /// <summary>Значения входа нейронной сети </summary>
             [NotNull] private readonly double[] _Input;
+
+            /// <summary>Текущие значения выхода сети в процессе обучения</summary>
             [NotNull] private readonly double[] _Output;
+
+            /// <summary>Массив ожидаемых значений на выходе сети</summary>
             [NotNull] private readonly double[] _Expected;
 
+            /// <summary>Инициализация нового экземпляра <see cref="ProcessorTeacher"/></summary>
+            /// <param name="NeuralProcessor">Обучаемый нейронный процессор</param>
+            /// <param name="BackOutputFormatter">Метод упаковки ожидаемого значения на выходе нейронной сети в массив вещественных чисел - значений выходов сети</param>
+            /// <param name="Teacher">Учитель сети</param>
             public ProcessorTeacher(
                 [NotNull] NeuralProcessor<TInput, TOutput> NeuralProcessor, 
                 [NotNull] BackOutputFormatter BackOutputFormatter, 
                 [NotNull] INetworkTeacher Teacher)
             {
-                _NeuralProcessor = NeuralProcessor;
-                _BackOutputFormatter = BackOutputFormatter;
-                _Teacher = Teacher;
+                _NeuralProcessor = NeuralProcessor ?? throw new ArgumentNullException(nameof(NeuralProcessor));
+                _BackOutputFormatter = BackOutputFormatter ?? throw new ArgumentNullException(nameof(BackOutputFormatter));
+                _Teacher = Teacher ?? throw new ArgumentNullException(nameof(Teacher));
                 var network = Teacher.Network;
                 _Input = new double[network.InputsCount];
                 _Output = new double[network.OutputsCount];
                 _Expected = new double[_Output.Length];
             }
 
+            /// <inheritdoc />
             public INeuralNetwork Network => _NeuralProcessor._Network;
 
+            /// <inheritdoc />
             public double Teach(TInput Input, TOutput Expected)
             {
                 _NeuralProcessor._InputFormatter(Input, _Input);
@@ -111,6 +129,7 @@ namespace MathCore.AI.NeuralNetworks
                 return _Teacher.Teach(_Input, _Output, _Expected);
             } 
 
+            /// <inheritdoc />
             public double Teach(TInput Input, TOutput Expected, out TOutput Output)
             {
                 _NeuralProcessor._InputFormatter(Input, _Input);
