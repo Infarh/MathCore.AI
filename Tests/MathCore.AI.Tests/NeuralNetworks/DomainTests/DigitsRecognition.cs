@@ -129,6 +129,120 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
             },
         };
 
+        private static readonly Dictionary<char, int[]> __BoldSymbols = new Dictionary<char, int[]>
+        {
+            ['\0'] = new[]
+            {
+                0,0,0,0,0,0,0,0, //|        
+                0,0,0,0,0,0,0,0, //|        
+                0,0,0,0,0,0,0,0, //|        
+                0,0,0,0,0,0,0,0, //|        
+                0,0,0,0,0,0,0,0, //|        
+                0,0,0,0,0,0,0,0, //|        
+                0,0,0,0,0,0,0,0, //|        
+            },
+            ['0'] = new[]
+            {
+                0,1,1,1,1,1,1,0, //| 111111 
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,1,1, //|11    11
+                0,1,1,1,1,1,1,0, //| 111111 
+            },
+            ['1'] = new[]
+            {
+                0,0,0,1,1,0,0,0, //|   11   
+                0,1,1,1,1,0,0,0, //| 1111   
+                1,1,0,1,1,0,0,0, //|11 11   
+                0,0,0,1,1,0,0,0, //|   11   
+                0,0,0,1,1,0,0,0, //|   11   
+                0,0,0,1,1,0,0,0, //|   11   
+                1,1,1,1,1,1,1,1, //|11111111
+            },
+            ['2'] = new[]
+            {
+                0,1,1,1,1,1,1,0, //| 111111 
+                1,1,0,0,0,0,1,1, //|11    11
+                0,0,0,0,0,1,1,0, //|     11 
+                0,0,0,0,1,1,0,0, //|    11  
+                0,0,1,1,0,0,0,0, //|  11    
+                1,1,0,0,0,0,0,0, //|11      
+                1,1,1,1,1,1,1,1, //|11111111
+            },
+            ['3'] = new[]
+            {
+                0,1,1,1,1,1,1,0, //| 111111 
+                1,1,0,0,0,0,1,1, //|11    11
+                0,0,0,0,0,1,1,1, //|     111
+                0,0,0,0,1,1,1,0, //|    111
+                0,0,0,0,0,1,1,1, //|     111
+                1,1,0,0,0,0,1,1, //|11    11
+                0,1,1,1,1,1,1,0, //| 111111 
+            },
+            ['4'] = new[]
+            {
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,1,1, //|11    11
+                0,1,1,1,1,1,1,1, //| 1111111
+                0,0,0,0,0,0,1,1, //|      11
+                0,0,0,0,0,0,1,1, //|      11
+                0,0,0,0,0,0,1,1, //|      11
+            },
+            ['5'] = new[]
+            {
+                1,1,1,1,1,1,1,1, //|11111111
+                1,1,0,0,0,0,0,0, //|11      
+                1,1,1,1,1,1,1,0, //|1111111 
+                1,1,1,0,0,0,1,1, //|111   11
+                0,0,0,0,0,0,1,1, //|      11
+                1,1,0,0,0,0,1,1, //|11    11
+                0,1,1,1,1,1,1,0, //| 111111 
+            },
+            ['6'] = new[]
+            {
+                0,1,1,1,1,1,1,0, //| 111111 
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,0,0, //|11      
+                1,1,1,1,1,1,1,0, //|1111111 
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,1,1, //|11    11
+                0,1,1,1,1,1,1,0, //| 111111 
+            },
+            ['7'] = new[]
+            {
+                1,1,1,1,1,1,1,1, //|11111111
+                0,0,0,0,0,0,1,1, //|      11
+                0,0,0,0,0,1,1,0, //|     11 
+                0,0,0,0,1,1,0,0, //|    11  
+                0,0,0,1,1,0,0,0, //|   11   
+                0,0,1,1,0,0,0,0, //|  11    
+                0,1,1,0,0,0,0,0, //| 11     
+            },
+            ['8'] = new[]
+            {
+                0,1,1,1,1,1,1,0, //| 111111 
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,1,1, //|11    11
+                0,1,1,1,1,1,1,0, //| 111111 
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,1,1, //|11    11
+                0,1,1,1,1,1,1,0, //| 111111 
+            },
+            ['9'] = new[]
+            {
+                0,1,1,1,1,1,1,0, //| 111111 
+                1,1,0,0,0,0,1,1, //|11    11
+                1,1,0,0,0,0,1,1, //|11    11
+                0,1,1,1,1,1,1,1, //| 1111111
+                0,0,0,0,0,0,1,1, //|      11
+                1,1,0,0,0,0,1,1, //|11    11
+                0,1,1,1,1,1,1,0, //| 111111 
+            },
+        };
+
         [NotNull]
         private static int[] AddBinaryNoise([NotNull] int[] Data, [CanBeNull] Random rnd = null)
         {
@@ -164,7 +278,7 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
             return result;
         }
 
-        private static int[][] GetDigitSymbolsImages() => __Symbols
+        private static int[][] GetDigitSymbolsImages(Dictionary<char, int[]> Symbols = null) => (Symbols ?? __Symbols)
            .Where(v => char.IsDigit(v.Key))
            .ToDictionary(v => (int)char.GetNumericValue(v.Key), v => v.Value)
            .Aggregate(
@@ -177,9 +291,9 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
                 });
 
         [NotNull]
-        private static (NeuralProcessor<int[], int> Processor, double Error) GetProcessor(int MaxEpochCount = 5000)
+        private static (NeuralProcessor<int[], int> Processor, double Error) GetProcessor(Dictionary<char, int[]> Symbols = null, int MaxEpochCount = 5000)
         {
-            var chars = GetDigitSymbolsImages();
+            var chars = GetDigitSymbolsImages(Symbols);
 
             var network = new MultilayerPerceptron(InputsCount: 35, NeuronsCount: new[] { 15, 10 });
 
@@ -188,12 +302,7 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
                 InputFormatter: (vv, inputs) => vv.Foreach((v, i) => inputs[i] = v),
                 OutputFormatter: outputs => outputs.GetMaxIndex());
 
-            var teacher = processor.CreateTeacher<IBackPropagationTeacher>(
-                BackOutputFormatter: (v, outputs) =>
-                {
-                    Array.Clear(outputs, 0, outputs.Length);
-                    outputs[v] = 1;
-                });
+            var teacher = processor.CreateTeacher((index, outputs) => outputs[index] = 1);
 
             var epoch_errors = Enumerable.Range(0, MaxEpochCount)
                .Select(_ => chars.Select((vv, i) => teacher.Teach(vv, i)).Max())

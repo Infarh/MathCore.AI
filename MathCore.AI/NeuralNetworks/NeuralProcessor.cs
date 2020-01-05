@@ -2,6 +2,8 @@
 using MathCore.Annotations;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedType.Global
+// ReSharper disable ConvertToAutoProperty
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace MathCore.AI.NeuralNetworks
 {
@@ -41,6 +43,12 @@ namespace MathCore.AI.NeuralNetworks
         /// <summary>Массив вещественных чисел - вектор выходных признаков</summary>
         [NotNull] private readonly double[] _Output;
 
+        /// <summary>Очищать массив входа сети перед обработкой данных</summary>
+        private bool _ClearInput = true;
+
+        /// <summary>Очищать массив входа сети перед обработкой данных</summary>
+        public bool ClearInput { get => _ClearInput; set => _ClearInput = value; }
+
         /// <summary>Создать новый нейронный процессор</summary>
         /// <param name="Network">Нейронная сеть</param>
         /// <param name="InputFormatter">Метод формирования вектора признаков входного воздействия</param>
@@ -62,6 +70,8 @@ namespace MathCore.AI.NeuralNetworks
         /// <returns>Выходное значение</returns>
         public TOutput Process(TInput Input)
         {
+            if(_ClearInput) 
+                Array.Clear(_Input, 0, _Input.Length);
             _InputFormatter(Input, _Input);
             _Network.Process(_Input, _Output);
             return _OutputFormatter(_Output);
@@ -71,12 +81,21 @@ namespace MathCore.AI.NeuralNetworks
         /// <param name="Configurator">Метод конфигурации учителя</param>
         /// <returns>Учитель нейронной сети</returns>
         [NotNull]
-        public TNetworkTeacher CreateTeacher<TNetworkTeacher>([CanBeNull] Action<TNetworkTeacher> Configurator = null)
+        public TNetworkTeacher CreateTeacher<TNetworkTeacher>([CanBeNull] Action<TNetworkTeacher> Configurator)
             where TNetworkTeacher : class, INetworkTeacher
         {
             if (!(_Network is ITeachableNeuralNetwork teachable_network))
                 throw new InvalidOperationException("Сеть не является обучаемой");
             return teachable_network.CreateTeacher(Configurator);
+        }
+
+        /// <summary>Создать учителя сети</summary><returns>Учитель нейронной сети</returns>
+        [NotNull]
+        public INetworkTeacher CreateTeacher()
+        {
+            if (!(_Network is ITeachableNeuralNetwork teachable_network))
+                throw new InvalidOperationException("Сеть не является обучаемой");
+            return teachable_network.CreateTeacher();
         }
 
         /// <summary>Учитель нейронной сети, используемой в нейропроцессоре</summary>
@@ -124,6 +143,7 @@ namespace MathCore.AI.NeuralNetworks
             /// <inheritdoc />
             public double Teach(TInput Input, TOutput Expected)
             {
+                Array.Clear(_Input, 0, _Input.Length);
                 _NeuralProcessor._InputFormatter(Input, _Input);
                 _BackOutputFormatter(Expected, _Expected);
                 return _Teacher.Teach(_Input, _Output, _Expected);
@@ -132,9 +152,7 @@ namespace MathCore.AI.NeuralNetworks
             /// <inheritdoc />
             public double Teach(TInput Input, TOutput Expected, out TOutput Output)
             {
-                _NeuralProcessor._InputFormatter(Input, _Input);
-                _BackOutputFormatter(Expected, _Expected);
-                var error = _Teacher.Teach(_Input, _Output, _Expected);
+                var error = Teach(Input, Expected);
                 Output = _NeuralProcessor._OutputFormatter(_Output);
                 return error;
             }
@@ -148,8 +166,15 @@ namespace MathCore.AI.NeuralNetworks
         [NotNull]
         public INeuralProcessorTeacher<TInput, TOutput> CreateTeacher<TNetworkTeacher>(
             [NotNull] BackOutputFormatter BackOutputFormatter,
-            [CanBeNull] Action<TNetworkTeacher> Configurator = null)
+            [CanBeNull] Action<TNetworkTeacher> Configurator)
             where TNetworkTeacher : class, INetworkTeacher =>
             new ProcessorTeacher(this, BackOutputFormatter, CreateTeacher(Configurator));
+
+        /// <summary>Получить учитель процессора</summary>
+        /// <param name="BackOutputFormatter">Метод обратного преобразования выходного значения в массив значений выхода сети</param>
+        /// <returns>Учитель процессора</returns>
+        [NotNull]
+        public INeuralProcessorTeacher<TInput, TOutput> CreateTeacher([NotNull] BackOutputFormatter BackOutputFormatter) => 
+            new ProcessorTeacher(this, BackOutputFormatter, CreateTeacher());
     }
 }
