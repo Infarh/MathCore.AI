@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MathCore.AI.NeuralNetworks;
+using MathCore.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 // ReSharper disable ArgumentsStyleAnonymousFunction
 // ReSharper disable ArgumentsStyleNamedExpression
@@ -127,25 +128,28 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
             },
         };
 
-        [TestMethod]
-        public void DigitsRecognitionTest()
+        private static int[][] GetDigitSymbolsImages() => __Symbols
+           .Where(v => char.IsDigit(v.Key))
+           .ToDictionary(v => (int)char.GetNumericValue(v.Key), v => v.Value)
+           .Aggregate(
+                new int[10][],
+                (S, v) =>
+                {
+                    var (i, value) = v;
+                    S[i] = value;
+                    return S;
+                });
+
+        [NotNull]
+        private static NeuralProcessor<int[], int> GetProcessor(int MaxEpochCount = 1000)
         {
-            var chars = __Symbols.Where(v => char.IsDigit(v.Key))
-               .ToDictionary(v => (int)char.GetNumericValue(v.Key), v => v.Value)
-               .Aggregate(
-                    new int[10][],
-                    (S, v) =>
-                    {
-                        var (i, value) = v;
-                        S[i] = value;
-                        return S;
-                    });
+            var chars = GetDigitSymbolsImages();
 
             var network = new MultilayerPerceptron(InputsCount: 35, NeuronsCount: new[] { 15, 10 });
 
             var processor = new NeuralProcessor<int[], int>(
-                Network: network, 
-                InputFormatter: (vv, inputs) => vv.Foreach((v, i) => inputs[i] = v), 
+                Network: network,
+                InputFormatter: (vv, inputs) => vv.Foreach((v, i) => inputs[i] = v),
                 OutputFormatter: outputs => outputs.GetMaxIndex());
 
             var teacher = processor.CreateTeacher<IBackPropagationTeacher>(
@@ -155,17 +159,29 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
                     outputs[v] = 1;
                 });
 
-            var epoch_errors = Enumerable.Range(0, 1000)
+            var epoch_errors = Enumerable.Range(0, MaxEpochCount)
                .Select(_ => chars.Select((vv, i) => teacher.Teach(vv, i)).Max())
                .TakeWhile(error => error > 0.01)
                .ToArray();
 
             Assert.That.Value(epoch_errors[0]).GreaterThan(epoch_errors[^1]);
 
+            return processor;
+        }
+
+        [TestMethod]
+        public void DigitsRecognitionTest()
+        {
+            var processor = GetProcessor();
+
+            var chars = GetDigitSymbolsImages();
+
             var results = chars.ToArray(processor.Process);
 
             var expected_results = Enumerable.Range(0, 10).ToArray();
             CollectionAssert.That.Collection(results).IsEqualTo(expected_results);
         }
+
+
     }
 }
