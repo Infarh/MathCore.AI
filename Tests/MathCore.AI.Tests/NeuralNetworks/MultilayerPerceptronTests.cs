@@ -566,7 +566,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             Assert.That.Value(b).IsEqualTo(5).WithAccuracy(eps);
             Assert.That.Value(error)
                .Where(errors => errors.Length).Check(count => count.IsEqual(417))
-               .Where(errors => errors[^1]).Check(LastError => LastError.LessThen(error.First()).IsEqualTo(0).WithAccuracy(eps));
+               .Where(errors => errors[^1]).Check(LastError => LastError.LessThan(error.First()).IsEqualTo(0).WithAccuracy(eps));
         }
 
         [TestMethod]
@@ -623,7 +623,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             Assert.That.Value(errors)
                .Where(e => e.Count).Check(count => count.IsEqual(4))
                .Where(e => e[^1]).Check(LastError => LastError
-                   .LessThen(errors.First())
+                   .LessThan(errors.First())
                    .IsEqual(0)).And
                .Value(k).IsEqual(2).And
                .Value(b).IsEqualTo(b0);
