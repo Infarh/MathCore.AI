@@ -4,6 +4,7 @@ using MathCore.Annotations;
 // ReSharper disable UnusedType.Global
 // ReSharper disable ConvertToAutoProperty
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable ConvertToAutoPropertyWhenPossible
 
 namespace MathCore.AI.NeuralNetworks
 {
@@ -70,7 +71,7 @@ namespace MathCore.AI.NeuralNetworks
         /// <returns>Выходное значение</returns>
         public TOutput Process(TInput Input)
         {
-            if(_ClearInput) 
+            if (_ClearInput)
                 Array.Clear(_Input, 0, _Input.Length);
             _InputFormatter(Input, _Input);
             _Network.Process(_Input, _Output);
@@ -119,13 +120,25 @@ namespace MathCore.AI.NeuralNetworks
             /// <summary>Массив ожидаемых значений на выходе сети</summary>
             [NotNull] private readonly double[] _Expected;
 
+            /// <summary>Очищать вектор входа сети перед каждой итерацией обучения</summary>
+            private bool _ClearInput;
+
+            /// <summary>Очищать вектор ожидаемого значения сети перед каждой итерацией обучения</summary>
+            private bool _ClearExpected = true;
+
+            /// <inheritdoc />
+            public bool ClearInput { get => _ClearInput; set => _ClearInput = value; }
+
+            /// <inheritdoc />
+            public bool ClearExpected { get => _ClearExpected; set => _ClearExpected = value; }
+
             /// <summary>Инициализация нового экземпляра <see cref="ProcessorTeacher"/></summary>
             /// <param name="NeuralProcessor">Обучаемый нейронный процессор</param>
             /// <param name="BackOutputFormatter">Метод упаковки ожидаемого значения на выходе нейронной сети в массив вещественных чисел - значений выходов сети</param>
             /// <param name="Teacher">Учитель сети</param>
             public ProcessorTeacher(
-                [NotNull] NeuralProcessor<TInput, TOutput> NeuralProcessor, 
-                [NotNull] BackOutputFormatter BackOutputFormatter, 
+                [NotNull] NeuralProcessor<TInput, TOutput> NeuralProcessor,
+                [NotNull] BackOutputFormatter BackOutputFormatter,
                 [NotNull] INetworkTeacher Teacher)
             {
                 _NeuralProcessor = NeuralProcessor ?? throw new ArgumentNullException(nameof(NeuralProcessor));
@@ -143,11 +156,13 @@ namespace MathCore.AI.NeuralNetworks
             /// <inheritdoc />
             public double Teach(TInput Input, TOutput Expected)
             {
-                Array.Clear(_Input, 0, _Input.Length);
+                if (_ClearInput) Array.Clear(_Input, 0, _Input.Length);
+                if(_ClearExpected) Array.Clear(_Expected, 0, _Expected.Length);
+
                 _NeuralProcessor._InputFormatter(Input, _Input);
                 _BackOutputFormatter(Expected, _Expected);
                 return _Teacher.Teach(_Input, _Output, _Expected);
-            } 
+            }
 
             /// <inheritdoc />
             public double Teach(TInput Input, TOutput Expected, out TOutput Output)
@@ -174,7 +189,7 @@ namespace MathCore.AI.NeuralNetworks
         /// <param name="BackOutputFormatter">Метод обратного преобразования выходного значения в массив значений выхода сети</param>
         /// <returns>Учитель процессора</returns>
         [NotNull]
-        public INeuralProcessorTeacher<TInput, TOutput> CreateTeacher([NotNull] BackOutputFormatter BackOutputFormatter) => 
+        public INeuralProcessorTeacher<TInput, TOutput> CreateTeacher([NotNull] BackOutputFormatter BackOutputFormatter) =>
             new ProcessorTeacher(this, BackOutputFormatter, CreateTeacher());
     }
 }

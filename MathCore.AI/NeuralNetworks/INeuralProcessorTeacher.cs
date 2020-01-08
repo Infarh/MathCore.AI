@@ -8,6 +8,12 @@ namespace MathCore.AI.NeuralNetworks
     /// <typeparam name="TOutput">Тип выходного значения</typeparam>
     public interface INeuralProcessorTeacher<in TInput, TOutput>
     {
+        /// <summary>Очищать вектор входа сети перед каждой итерацией обучения</summary>
+        bool ClearInput { get; set; }
+
+        /// <summary>Очищать вектор ожидаемого значения сети перед каждой итерацией обучения</summary>
+        bool ClearExpected { get; set; }
+
         /// <summary>Обучаемая сеть</summary>
         [NotNull] INeuralNetwork Network { get; }
 
