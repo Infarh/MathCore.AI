@@ -499,7 +499,7 @@ namespace MathCore.AI.NeuralNetworks
                     var inputs_count = w.GetLength(1);
                     for (var input_index = 0; input_index < inputs_count; input_index++)
                         output += w[output_index, input_index] * prev_output[input_index];
-                    current_output[output_index] = layer_activation[layer_index]?.Value(output) ?? ComplexExponenrt.Activation(output);
+                    current_output[output_index] = layer_activation[layer_index]?.Value(output) ?? ComplexExponent.Activation(output);
                 }
             }
         }
@@ -525,7 +525,7 @@ namespace MathCore.AI.NeuralNetworks
                 output_layer_error[output_index] =
                     (Expected[output_index] - Output[output_index]) * (layer_activation_inverse[layers_count - 1]
                                                                         ?.dValue(Output[output_index])
-                                                                       ?? ComplexExponenrt.dActivation(Output[output_index]));
+                                                                       ?? ComplexExponent.dActivation(Output[output_index]));
             // Проходим по всем слоям от выхода ко входу
             for (var layer_index = errors.Length - 1; layer_index >= 0; layer_index--)
             {
@@ -558,7 +558,7 @@ namespace MathCore.AI.NeuralNetworks
 
                         // Значение на выходе рассчитываемого нейрона в предыдущем слое
                         var output = prev_layer_output[i];
-                        prev_error_level[i] = err * (prev_layer_activation_inverse?.dValue(output) ?? ComplexExponenrt.dActivation(output));
+                        prev_error_level[i] = err * (prev_layer_activation_inverse?.dValue(output) ?? ComplexExponent.dActivation(output));
                         // Ошибка по нейрону = суммарная взвешенная ошибка всех связей умноженная на значение производной функции активации для выхода нейрона
                     }
                 }

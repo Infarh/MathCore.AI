@@ -4,6 +4,8 @@ using System.Text;
 using MathCore.AI.ART1;
 using MathCore.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// ReSharper disable MemberCanBePrivate.Local
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 namespace MathCore.AI.Tests.ART1
 {
@@ -14,7 +16,7 @@ namespace MathCore.AI.Tests.ART1
         private class Item
         {
             /// <summary>Молоток</summary>
-            public bool Humer { get; set; }
+            public bool Hummer { get; set; }
             /// <summary>Бумага</summary>
             public bool Paper { get; set; }
             /// <summary>Шоколадка</summary>
@@ -30,7 +32,7 @@ namespace MathCore.AI.Tests.ART1
             /// <summary>Карандаш</summary>
             public bool Pencil { get; set; }
             /// <summary>Шоколадка</summary>
-            public bool HeanthBar { get; set; }
+            public bool ChocolateBar { get; set; }
             /// <summary>Счётчик ленты</summary>
             public bool TapeCounter { get; set; }
             /// <summary>Переплётная машина</summary>
@@ -44,7 +46,7 @@ namespace MathCore.AI.Tests.ART1
                 for (var i = 0; i < Values.Length; i++)
                     switch (i)
                     {
-                        case 0: Humer = Values[i] > 0; break;
+                        case 0: Hummer = Values[i] > 0; break;
                         case 1: Paper = Values[i] > 0; break;
                         case 2: Snickers = Values[i] > 0; break;
                         case 3: Screwdriver = Values[i] > 0; break;
@@ -52,7 +54,7 @@ namespace MathCore.AI.Tests.ART1
                         case 5: KitKat = Values[i] > 0; break;
                         case 6: Wrench = Values[i] > 0; break;
                         case 7: Pencil = Values[i] > 0; break;
-                        case 8: HeanthBar = Values[i] > 0; break;
+                        case 8: ChocolateBar = Values[i] > 0; break;
                         case 9: TapeCounter = Values[i] > 0; break;
                         case 10: BindingMachine = Values[i] > 0; break;
                     }
@@ -64,7 +66,7 @@ namespace MathCore.AI.Tests.ART1
             {
                 var result = new StringBuilder();
 
-                if (Humer) result.Append($"{nameof(Humer)}, ");
+                if (Hummer) result.Append($"{nameof(Hummer)}, ");
                 if (Paper) result.Append($"{nameof(Paper)}, ");
                 if (Snickers) result.Append($"{nameof(Snickers)}, ");
                 if (Screwdriver) result.Append($"{nameof(Screwdriver)}, ");
@@ -72,7 +74,7 @@ namespace MathCore.AI.Tests.ART1
                 if (KitKat) result.Append($"{nameof(KitKat)}, ");
                 if (Wrench) result.Append($"{nameof(Wrench)}, ");
                 if (Pencil) result.Append($"{nameof(Pencil)}, ");
-                if (HeanthBar) result.Append($"{nameof(HeanthBar)}, ");
+                if (ChocolateBar) result.Append($"{nameof(ChocolateBar)}, ");
                 if (TapeCounter) result.Append($"{nameof(TapeCounter)}, ");
                 if (BindingMachine) result.Append($"{nameof(BindingMachine)}, ");
 
@@ -127,7 +129,7 @@ namespace MathCore.AI.Tests.ART1
                 Beta = 1,
                 Criterias =
                 {
-                    { "Молоток", Item => Item.Humer ? 1 : 0 },
+                    { "Молоток", Item => Item.Hummer ? 1 : 0 },
                     { "Бумага", Item => Item.Paper ? 1 : 0 },
                     { "Snickers", Item => Item.Snickers ? 1 : 0 },
                     { "Отвёртка", Item => Item.Screwdriver ? 1 : 0 },
@@ -135,7 +137,7 @@ namespace MathCore.AI.Tests.ART1
                     { "Kit-Kat", Item => Item.KitKat ? 1 : 0 },
                     { "Гаечный ключ", Item => Item.Wrench ? 1 : 0 },
                     { "Карандаш", Item => Item.Pencil ? 1 : 0 },
-                    { "Heanth Bar", Item => Item.HeanthBar ? 1 : 0 },
+                    { "Heanth Bar", Item => Item.ChocolateBar ? 1 : 0 },
                     { "Счётчик ленты", Item => Item.TapeCounter ? 1 : 0 },
                     { "Переплётная машина", Item => Item.BindingMachine ? 1 : 0 },
                 }
@@ -157,6 +159,7 @@ namespace MathCore.AI.Tests.ART1
 
             Assert.That.Value(classificator.Clusters.Count).IsEqual(0);
 
+            // ReSharper disable once UnusedVariable
             var classification = classificator.Add(items);
             
             Assert.That.Value(classificator.Clusters.Count).GreaterThan(0);
