@@ -1,5 +1,6 @@
 ﻿using System;
 using MathCore.Annotations;
+// ReSharper disable UnusedMember.Global
 
 namespace MathCore.AI.NeuralNetworks
 {
@@ -12,9 +13,11 @@ namespace MathCore.AI.NeuralNetworks
         /// <param name="Network">Обучаемая нейронная сеть</param>
         protected NetworkTeacher(INeuralNetwork Network) => this.Network = Network;
 
+        /// <inheritdoc />
         public abstract double Teach(double[] Input, double[] Output, double[] Expected);
 
-        public TNetworkTeacher As<TNetworkTeacher>(Action<TNetworkTeacher> Configurator = null) 
+        [NotNull]
+        public TNetworkTeacher As<TNetworkTeacher>([CanBeNull] Action<TNetworkTeacher> Configurator = null) 
             where TNetworkTeacher : class, INetworkTeacher
         {
             var teacher = this as TNetworkTeacher ?? throw new InvalidOperationException($"Учитель не поддерживает интерфейс {typeof(TNetworkTeacher)}");

@@ -1,6 +1,6 @@
 ﻿namespace MathCore.AI.NeuralNetworks.ActivationFunctions
 {
-    public class ComplexExponenrt : ComplexActivationFunction
+    public class ComplexExponent : ComplexActivationFunction
     {
         public static Complex Activation(Complex z) => Complex.Exp(z);
 

@@ -278,9 +278,10 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
             return result;
         }
 
-        private static int[][] GetDigitSymbolsImages(Dictionary<char, int[]> Symbols = null) => (Symbols ?? __Symbols)
+        private static int[][] GetDigitSymbolsImages([CanBeNull] Dictionary<char, int[]> Symbols = null) => (Symbols ?? __Symbols)
            .Where(v => char.IsDigit(v.Key))
            .ToDictionary(v => (int)char.GetNumericValue(v.Key), v => v.Value)
+           .OrderBy(v => v.Key)
            .Aggregate(
                 new int[10][],
                 (S, v) =>
@@ -290,24 +291,26 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
                     return S;
                 });
 
-        [NotNull]
         private static (NeuralProcessor<int[], int> Processor, double Error) GetProcessor(Dictionary<char, int[]> Symbols = null, int MaxEpochCount = 5000)
         {
             var chars = GetDigitSymbolsImages(Symbols);
 
-            var network = new MultilayerPerceptron(InputsCount: 35, NeuronsCount: new[] { 15, 10 });
-
+            var char_length = chars[0].Length;
+            var chars_count = chars.Length;
+            const int hidden_layer_length = 15;
             var processor = new NeuralProcessor<int[], int>(
-                Network: network,
+                Network: new MultilayerPerceptron(InputsCount: char_length, NeuronsCount: new[] { hidden_layer_length, chars_count }),
                 InputFormatter: (vv, inputs) => vv.Foreach((v, i) => inputs[i] = v),
                 OutputFormatter: outputs => outputs.GetMaxIndex());
 
-            var teacher = processor.CreateTeacher((index, outputs) => outputs[index] = 1);
+            var processor_teacher = processor.CreateTeacher(BackOutputFormatter: (index, outputs) => outputs[index] = 1);
 
             var epoch_errors = Enumerable.Range(0, MaxEpochCount)
-               .Select(_ => chars.Select((vv, i) => teacher.Teach(vv, i)).Max())
+               .Select(_ => chars.Select((vv, i) => processor_teacher.Teach(vv, i)).Max())
                .TakeWhile(error => error > 0.001)
                .ToArray();
+
+            epoch_errors = new[] { epoch_errors[0], epoch_errors[^1] };
 
             var last_error = epoch_errors[^1];
             Assert.That.Value(epoch_errors[0]).GreaterThan(last_error);
