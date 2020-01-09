@@ -1,4 +1,4 @@
-﻿using MathCore.Annotations;
+﻿using System;
 
 namespace MathCore.AI.NeuralNetworks
 {
@@ -14,6 +14,6 @@ namespace MathCore.AI.NeuralNetworks
         /// <summary>Обработать образ</summary>
         /// <param name="Input">Входной образ</param>
         /// <param name="Output">Отклик сети</param>
-        void Process([NotNull] double[] Input, [NotNull] double[] Output);
+        void Process(Span<double> Input, Span<double> Output);
     }
 }

@@ -660,7 +660,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             var input = new double[expected_inputs_count];
             var output = new double[expected_outputs_count];
 
-            network1.Process(input, hidden_nodes);
+            network1.Process(new Span<double>(input), hidden_nodes);
             network2.Process(hidden_nodes, output);
         }
     }

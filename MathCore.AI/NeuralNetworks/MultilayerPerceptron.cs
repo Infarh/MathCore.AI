@@ -218,7 +218,7 @@ namespace MathCore.AI.NeuralNetworks
         /// <summary>Обработка данных сетью</summary>
         /// <param name="Input">Массив входа</param>
         /// <param name="Output">Массив выхода</param>
-        public virtual void Process(double[] Input, double[] Output) => Process(Input, Output, _Layers, _Activations, _Offsets, _OffsetsWeights, null, _Outputs);
+        public virtual void Process(Span<double> Input, Span<double> Output) => Process(Input, Output, _Layers, _Activations, _Offsets, _OffsetsWeights, null, _Outputs);
 
         /// <summary>Обработка данных сетью</summary>
         /// <param name="Input">Массив входа</param>
@@ -234,8 +234,8 @@ namespace MathCore.AI.NeuralNetworks
         /// </param>
         /// <param name="Outputs">Массив векторов выходных значений слоёв</param>
         private static void Process(
-            [NotNull] double[] Input,
-            [NotNull] double[] Output,
+            Span<double> Input,
+            Span<double> Output,
             [NotNull] double[][,] Layers,
             [NotNull] ActivationFunction[] Activations,
             [NotNull] double[][] Offsets,
@@ -244,8 +244,6 @@ namespace MathCore.AI.NeuralNetworks
             [NotNull] double[][] Outputs
             )
         {
-            if (Input is null) throw new ArgumentNullException(nameof(Input));
-            if (Output is null) throw new ArgumentNullException(nameof(Output));
             if (Layers is null) throw new ArgumentNullException(nameof(Layers));
             if (Activations is null) throw new ArgumentNullException(nameof(Activations));
             if (Offsets is null) throw new ArgumentNullException(nameof(Offsets));
@@ -312,8 +310,8 @@ namespace MathCore.AI.NeuralNetworks
             [NotNull] double[,] LayerWeights,
             [NotNull] double[] Offset,
             [NotNull] double[] OffsetWeight,
-            [NotNull] double[] Input,
-            [NotNull] double[] Output,
+            Span<double> Input,
+            Span<double> Output,
             [CanBeNull] ActivationFunction Activation = null,
             [CanBeNull] double[] State = null)
         {
