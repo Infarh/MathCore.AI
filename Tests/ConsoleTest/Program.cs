@@ -8,6 +8,7 @@ namespace MathCore.AI
         {
             Console.WriteLine();
 
+
             Console.ReadLine();
         }
     }
