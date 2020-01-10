@@ -3,12 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>0.1.7.2</Version>
+    <Version>0.1.8</Version>
     <Authors>Shmachilin P.A.</Authors>
     <Company />
     <Description>Библиотека алгоритмов машинного обучения и искусственного интеллекта</Description>
     <PackageLicenseFile></PackageLicenseFile>
-    <PackageReleaseNotes>Обновление пакетов</PackageReleaseNotes>
+    <PackageReleaseNotes>Замена массивов на Span в сигнатуре метода Process нейронной сети</PackageReleaseNotes>
     <LangVersion>8</LangVersion>
     <PackageProjectUrl>https://github.com/Infarh/MathCore.AI</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Infarh/MathCore.AI</RepositoryUrl>
