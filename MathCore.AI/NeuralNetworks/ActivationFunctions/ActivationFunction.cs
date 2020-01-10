@@ -1,4 +1,5 @@
 ﻿using MathCore.Annotations;
+// ReSharper disable UnusedMember.Global
 
 namespace MathCore.AI.NeuralNetworks.ActivationFunctions
 {
@@ -10,6 +11,11 @@ namespace MathCore.AI.NeuralNetworks.ActivationFunctions
 
         /// <summary>Линейная функция</summary>
         [NotNull] public static Linear Linear => new Linear();
+
+        /// <summary>Линейная функция с параметрами</summary>
+        /// <param name="K">Производная</param>
+        /// <param name="B">Смещение</param>
+        [NotNull] public static Linear GetLinear(double K, double B = 0) => new Linear(K, B);
 
         /// <summary>Гиперболический тангенс</summary>
         [NotNull] public static Th Th => new Th();

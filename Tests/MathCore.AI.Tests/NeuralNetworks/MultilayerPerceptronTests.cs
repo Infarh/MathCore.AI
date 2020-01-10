@@ -241,7 +241,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
 
         // ReSharper disable once ObjectCreationAsStatement
         [TestMethod, ExpectedException(typeof(ArgumentException))]
-        public void ZerroLayersNetworkCreation_Test() => new MultilayerPerceptron();
+        public void ZerroLayersNetworkCreation_Test() => new MultilayerPerceptron(new double[0][,]);
 
         [TestMethod]
         public void InconsistentLayersInputsCount_Test()
@@ -660,7 +660,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             var input = new double[expected_inputs_count];
             var output = new double[expected_outputs_count];
 
-            network1.Process(input, hidden_nodes);
+            network1.Process(new Span<double>(input), hidden_nodes);
             network2.Process(hidden_nodes, output);
         }
     }

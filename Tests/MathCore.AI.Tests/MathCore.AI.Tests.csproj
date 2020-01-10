@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MathCore" Version="0.0.15" />
-    <PackageReference Include="MathCore.TestsExtensions" Version="0.1.19" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.0.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
+    <PackageReference Include="MathCore" Version="0.0.16" />
+    <PackageReference Include="MathCore.TestsExtensions" Version="0.1.20" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0-preview-20200102-01" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.0-beta2" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.0-beta2" />
   </ItemGroup>
 
   <ItemGroup>

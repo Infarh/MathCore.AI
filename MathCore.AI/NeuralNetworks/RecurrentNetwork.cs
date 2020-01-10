@@ -72,12 +72,8 @@ namespace MathCore.AI.NeuralNetworks
         /// <summary>Обработка данных сетью</summary>
         /// <param name="Input">Массив входа</param>
         /// <param name="Output">Массив выхода</param>
-        public override void Process(double[] Input, double[] Output)
+        public override void Process(Span<double> Input, Span<double> Output)
         {
-            if (Input is null)
-                throw new ArgumentNullException(nameof(Input));
-            if (Output is null)
-                throw new ArgumentNullException(nameof(Output));
             if (Input.Length != InputsCount)
                 throw new ArgumentException($"Размер входного вектора ({Input.Length}) не равен количеству входов сети ({InputsCount})", nameof(Input));
             if (Output.Length != OutputsCount)
@@ -113,7 +109,7 @@ namespace MathCore.AI.NeuralNetworks
                 if (layer_index == layers_count - 1)
                     _Output.CopyTo(last_current_output, 0);
                 else
-                    current_output.CopyTo(last_current_output, 0);
+                    current_output.CopyTo(last_current_output);
 
                 for (var output_index = 0; output_index < layer_outputs_count; output_index++)
                 {
@@ -128,7 +124,7 @@ namespace MathCore.AI.NeuralNetworks
                     current_output[output_index] = layer_activation[layer_index]?.Value(output) ?? Sigmoid.Activation(output);
                 }
             }
-            Output.CopyTo(_Output, 0);
+            Output.CopyTo(_Output);
         }
 
         #region Overrides of MultilayerPerceptron
