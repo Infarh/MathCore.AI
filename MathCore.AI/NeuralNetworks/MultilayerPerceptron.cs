@@ -168,11 +168,28 @@ namespace MathCore.AI.NeuralNetworks
         public delegate void LayerInitializer([NotNull] LayerManager Layer);
 
         [NotNull]
-        private static NetworkCoefficientInitializer GetStandartRandomInitializer()
+        private static NetworkCoefficientInitializer GetStandardRandomInitializer()
         {
             var rnd = new Random();
             return (l, n, i) => rnd.NextDouble() - 0.5;
         }
+
+        /// <summary>Проверка массива числа входов</summary>
+        /// <param name="Counts">Проверяемый массив входов</param>
+        /// <returns>Возвращает проверяемый массив входов</returns>
+        /// <exception cref="ArgumentNullException">если <paramref name="Counts"/> == <see langword="null"/></exception>
+        /// <exception cref="ArgumentException">если длина <paramref name="Counts"/> == 0</exception>
+        [NotNull]
+        private static int[] CheckNeuronsCounts([NotNull] int[] Counts)
+        {
+            if (Counts is null) throw new ArgumentNullException(nameof(Counts));
+            if(Counts.Length == 0) throw new ArgumentException("Длина массива не может быть равен 0", nameof(Counts));
+            return Counts;
+        }
+
+        /// <summary>Инициализация новой многослойной нейронной сети</summary>
+        /// <param name="Counts">Число входов и число нейронов (выходов) на соответствующих слоях</param>
+        public MultilayerPerceptron([NotNull] params int[] Counts) : this(CheckNeuronsCounts(Counts)[0], Counts.Skip(1).ToArray()) { }
 
         /// <summary>Инициализация новой многослойной нейронной сети</summary>
         /// <param name="InputsCount">Количество входов сети</param>
@@ -182,7 +199,7 @@ namespace MathCore.AI.NeuralNetworks
             int InputsCount,
             [NotNull] IEnumerable<int> NeuronsCount,
             [CanBeNull] NetworkCoefficientInitializer Initialize = null)
-            : this(CreateLayersMatrix(InputsCount, NeuronsCount, Initialize ?? GetStandartRandomInitializer())) { }
+            : this(CreateLayersMatrix(InputsCount, NeuronsCount, Initialize ?? GetStandardRandomInitializer())) { }
 
         /// <summary>Инициализация новой многослойной нейронной сети</summary>
         /// <param name="InputsCount">Количество входов сети</param>

@@ -241,7 +241,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
 
         // ReSharper disable once ObjectCreationAsStatement
         [TestMethod, ExpectedException(typeof(ArgumentException))]
-        public void ZerroLayersNetworkCreation_Test() => new MultilayerPerceptron();
+        public void ZerroLayersNetworkCreation_Test() => new MultilayerPerceptron(new double[0][,]);
 
         [TestMethod]
         public void InconsistentLayersInputsCount_Test()
