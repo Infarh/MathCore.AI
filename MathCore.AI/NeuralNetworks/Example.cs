@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MathCore.Annotations;
+// ReSharper disable UnusedMember.Global
 
 namespace MathCore.AI.NeuralNetworks
 {
