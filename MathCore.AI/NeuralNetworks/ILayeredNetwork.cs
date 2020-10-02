@@ -9,6 +9,6 @@ namespace MathCore.AI.NeuralNetworks
         int LayersCount { get; }
 
         /// <summary>Массив выходов скрытых слоёв</summary>
-        [NotNull] IReadOnlyList<double[]> HiddentOutputs { get; }
+        [NotNull] IReadOnlyList<double[]> HiddenOutputs { get; }
     }
 }

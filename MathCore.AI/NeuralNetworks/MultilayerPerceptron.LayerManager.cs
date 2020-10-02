@@ -240,9 +240,11 @@ namespace MathCore.AI.NeuralNetworks
                 var hash = Consts.BigPrime_int;
                 unchecked
                 {
-                    hash ^= LayerIndex;
-                    hash ^= OffsetWeights.GetComplexHashCode() * hash_base;
-                    hash ^= Offsets.GetComplexHashCode() * hash_base;
+                    hash = hash * hash_base ^ LayerIndex.GetHashCode();
+                    for (var i = 0; i < OffsetWeights.Length; i++)
+                        hash = hash * hash_base ^ OffsetWeights[i].GetHashCode();
+                    for (var i = 0; i < Offsets.Length; i++)
+                        hash = hash * hash_base ^ Offsets[i].GetHashCode();
 
                 }
                 var outputs_count = OutputsCount;
@@ -253,7 +255,7 @@ namespace MathCore.AI.NeuralNetworks
                     for (var input = 0; input < inputs_count; input++)
                         unchecked
                         {
-                            hash ^= double_equality.GetHashCode(weights[neuron, input]) * hash_base;
+                            hash = hash * hash_base ^ double_equality.GetHashCode(weights[neuron, input]);
                         }
                 return hash;
 

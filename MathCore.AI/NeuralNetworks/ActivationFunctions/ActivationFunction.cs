@@ -12,10 +12,18 @@ namespace MathCore.AI.NeuralNetworks.ActivationFunctions
         /// <summary>Линейная функция</summary>
         [NotNull] public static Linear Linear => new Linear();
 
+        /// <summary>Отсечка</summary>
+        [NotNull] public static ReLU ReLU => new ReLU();
+
         /// <summary>Линейная функция с параметрами</summary>
         /// <param name="K">Производная</param>
         /// <param name="B">Смещение</param>
         [NotNull] public static Linear GetLinear(double K, double B = 0) => new Linear(K, B);
+
+        /// <summary>Функция отсечки (линейная ломанная x>0?k*x:0)</summary>
+        /// <param name="K">Производная</param>
+        /// <param name="B">Смещение</param>
+        [NotNull] public static ReLU GetReLU(double K, double B = 0) => new ReLU(K, B);
 
         /// <summary>Гиперболический тангенс</summary>
         [NotNull] public static Th Th => new Th();

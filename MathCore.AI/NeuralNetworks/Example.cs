@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MathCore.Annotations;
+// ReSharper disable UnusedMember.Global
 
 namespace MathCore.AI.NeuralNetworks
 {
@@ -35,5 +36,18 @@ namespace MathCore.AI.NeuralNetworks
         }
 
         #endregion
+    }
+
+    public class Example<TInput, TOutput>
+    {
+        public TInput Input { get; }
+
+        public TOutput ExpectedOutput { get; }
+
+        public Example(TInput Input, TOutput ExpectedOutput)
+        {
+            this.Input = Input;
+            this.ExpectedOutput = ExpectedOutput;
+        }
     }
 }
