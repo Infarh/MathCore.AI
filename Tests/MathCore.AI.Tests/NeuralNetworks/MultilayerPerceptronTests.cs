@@ -241,11 +241,10 @@ namespace MathCore.AI.Tests.NeuralNetworks
 
         // ReSharper disable once ObjectCreationAsStatement
         [TestMethod, ExpectedException(typeof(ArgumentException))]
-        public void ZerroLayersNetworkCreation_Test() => new MultilayerPerceptron(new double[0][,]);
+        public void ZeroLayersNetworkCreation_Test() => new MultilayerPerceptron(new double[0][,]);
 
         [TestMethod]
-        public void InconsistentLayersInputsCount_Test()
-        {
+        public void InconsistentLayersInputsCount_Test() =>
             Assert.ThrowsException<FormatException>(() =>
                 new MultilayerPerceptron(
                     new double[,]
@@ -263,7 +262,6 @@ namespace MathCore.AI.Tests.NeuralNetworks
                     {
                         { 1, 1 }
                     }));
-        }
 
         [TestMethod]
         public void RandomWeightCreation_Test()
@@ -473,24 +471,24 @@ namespace MathCore.AI.Tests.NeuralNetworks
             Assert.That.Value(controller.OutputsCount).IsEqual(4);
 
             // Состояние персонажа
-            // H - Health points    (Текущий уровень здоровья)
-            // K - Knifes count     (количество ножей)
-            // G - Guns count       (количество пистолетов)
-            // E - Enemy count     (враг поблизости - количество)
+            // H - Health points     (Текущий уровень здоровья)
+            // K - Knifes count      (количество ножей)
+            // G - Guns count        (количество пистолетов)
+            // E - Enemy count       (враг поблизости - количество)
             // Варианты действий
             // A - Attack enemy      (атаковать врага!)
-            // R - Run              (бежать!!!)
-            // W - Wander           (бродить, слоняться, искать приключений)
-            // H - Hide             (прятаться...)
+            // R - Run               (бежать!!!)
+            // W - Wander            (бродить, слоняться, искать приключений)
+            // H - Hide              (прятаться...)
             // Должен быть выбран один из вариантов действий - максимальное значение
             Example[] examples =
             {                    // H  K  G  E            A  R  W  H
-                new Example(new []{ 2, 0, 0, 0 }, new []{ 0, 0, 1, 0 }), //  0 - здоровы как бык,   оружия нет,    врагов нет - бродить
-                new Example(new []{ 2, 0, 0, 1 }, new []{ 0, 0, 1, 0 }), //  1 - здоровы как бык,   оружия нет,    враг 1     - уворачиваться
-                new Example(new []{ 2, 0, 1, 1 }, new []{ 0, 0, 0, 0 }), //  2 - здоровы как бык,   есть пистолет, врага нет  - уворачиваться
-                new Example(new []{ 2, 0, 1, 2 }, new []{ 1, 0, 0, 0 }), //  3 - здоровы как бык,   есть пистолет, врагов 2!! - атаковать!!!
-                new Example(new []{ 2, 1, 0, 2 }, new []{ 0, 0, 0, 1 }), //  4 - здоровы как бык,   есть нож,      врагов 2!! - прятаться...
-                new Example(new []{ 2, 1, 0, 1 }, new []{ 1, 0, 0, 0 }), //  5 - здоровы как бык,   есть нож,      враг 1
+                new Example(new []{ 2, 0, 0, 0 }, new []{ 0, 0, 1, 0 }), //  0 - здоров как бык,   оружия нет,    врагов нет - бродить
+                new Example(new []{ 2, 0, 0, 1 }, new []{ 0, 0, 1, 0 }), //  1 - здоров как бык,   оружия нет,    враг 1     - уворачиваться
+                new Example(new []{ 2, 0, 1, 1 }, new []{ 0, 0, 0, 0 }), //  2 - здоров как бык,   есть пистолет, врага нет  - уворачиваться
+                new Example(new []{ 2, 0, 1, 2 }, new []{ 1, 0, 0, 0 }), //  3 - здоров как бык,   есть пистолет, врагов 2!! - атаковать!!!
+                new Example(new []{ 2, 1, 0, 2 }, new []{ 0, 0, 0, 1 }), //  4 - здоров как бык,   есть нож,      врагов 2!! - прятаться...
+                new Example(new []{ 2, 1, 0, 1 }, new []{ 1, 0, 0, 0 }), //  5 - здоров как бык,   есть нож,      враг 1
                                                                               
                 new Example(new []{ 1, 0, 0, 0 }, new []{ 0, 0, 1, 0 }), //  6 - здоровье так себе, оружия нет,    врагов нет - бродить
                 new Example(new []{ 1, 0, 0, 1 }, new []{ 0, 0, 0, 1 }), //  7 - здоровье так себе, оружия нет,    враг 1     - прятаться...
@@ -516,7 +514,6 @@ namespace MathCore.AI.Tests.NeuralNetworks
 
             var first_errors = errors.Take(2).ToArray();
             var last_errors = errors.TakeLast(50).ToArray();
-
 
             CollectionAssert.That.Collection(first_errors).ElementsAreSatisfyCondition(v => v > 0.4);
             CollectionAssert.That.Collection(last_errors).ElementsAreSatisfyCondition(v => v < 0.095);
@@ -566,7 +563,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             Assert.That.Value(b).IsEqualTo(5).WithAccuracy(eps);
             Assert.That.Value(error)
                .Where(errors => errors.Length).Check(count => count.IsEqual(417))
-               .Where(errors => errors[^1]).Check(LastError => LastError.LessThan(error.First()).IsEqualTo(0).WithAccuracy(eps));
+               .Where(errors => errors[^1]).Check(LastError => LastError.LessThan(error[0]).IsEqualTo(0).WithAccuracy(eps));
         }
 
         [TestMethod]

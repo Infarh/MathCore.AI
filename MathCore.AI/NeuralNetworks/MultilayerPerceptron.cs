@@ -66,7 +66,7 @@ namespace MathCore.AI.NeuralNetworks
         /// <summary>Индекс матриц весовых коэффициентов слоёв</summary>
         /// <param name="layer">Номер слоя</param>
         /// <returns>Матрица весовых коэффициентов слоёв</returns>
-        [NotNull] public double[,] this[int layer] => _Layers[layer];
+        [NotNull] public ref readonly double[,] this[int layer] => ref _Layers[layer];
 
         /// <summary>Смещения слоёв</summary>
         [NotNull] public IReadOnlyList<double[]> Offests => _Offsets;

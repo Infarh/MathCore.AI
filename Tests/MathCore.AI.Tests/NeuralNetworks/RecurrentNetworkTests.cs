@@ -62,8 +62,8 @@ namespace MathCore.AI.Tests.NeuralNetworks
             var network = new RecurrentNetwork(weights, feedbacks);
 
             Assert.That.Value(network.LayersCount).IsEqual(weights.Length);
-            Assert.That.Value(network.InputsCount).IsEqual(weights.First().GetLength(1));
-            Assert.That.Value(network.OutputsCount).IsEqual(weights.Last().GetLength(0));
+            Assert.That.Value(network.InputsCount).IsEqual(weights[0].GetLength(1));
+            Assert.That.Value(network.OutputsCount).IsEqual(weights[^1].GetLength(0));
         }
 
         [TestMethod]

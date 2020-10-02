@@ -50,6 +50,10 @@ namespace MathCore.AI.NeuralNetworks
             return Teach(Teacher, (IEnumerable<Example>)Examples);
         }
 
+        /// <summary>Обучение нейронной сети на заданном перечислении примеров эпохи</summary>
+        /// <param name="Teacher">Учитель нейронной сети, по средствам которого осуществляется процесс обучения</param>
+        /// <param name="Examples">Перечисление примеров для одной эпохи обучения</param>
+        /// <returns>Результат обучения нейронной сети за эпоху</returns>
         [NotNull]
         private static Epoch Teach([NotNull] this INetworkTeacher Teacher, [NotNull, ItemNotNull] IEnumerable<Example> Examples)
         {
@@ -75,6 +79,10 @@ namespace MathCore.AI.NeuralNetworks
             return new Epoch(results, max_error, avg_error / examples.Length);
         }
 
+        /// <summary>Рассчитать отклик сети для входного воздействия</summary>
+        /// <param name="Network">Нейронная сеть, осуществляющая обработку данных</param>
+        /// <param name="Input">Вектор входного воздействия для сети</param>
+        /// <returns>Вновь созданный вектор отклика сети</returns>
         [NotNull]
         public static double[] Process([NotNull] this INeuralNetwork Network, [NotNull] double[] Input)
         {
