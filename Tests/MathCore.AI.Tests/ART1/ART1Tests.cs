@@ -13,32 +13,30 @@ namespace MathCore.AI.Tests.ART1
     public class ART1Tests
     {
         /// <summary>Сущность, подлежащая классификации</summary>
-        private class Item
+        private record Item
         {
             /// <summary>Молоток</summary>
-            public bool Hummer { get; set; }
+            public bool Hummer { get; init; }
             /// <summary>Бумага</summary>
-            public bool Paper { get; set; }
+            public bool Paper { get; init; }
             /// <summary>Шоколадка</summary>
-            public bool Snickers { get; set; }
+            public bool Snickers { get; init; }
             /// <summary>Отвёртка</summary>
-            public bool Screwdriver { get; set; }
+            public bool Screwdriver { get; init; }
             /// <summary>Ручка</summary>
-            public bool Pen { get; set; }
+            public bool Pen { get; init; }
             /// <summary>Шоколадка</summary>
-            public bool KitKat { get; set; }
+            public bool KitKat { get; init; }
             /// <summary>Гаечный ключ</summary>
-            public bool Wrench { get; set; }
+            public bool Wrench { get; init; }
             /// <summary>Карандаш</summary>
-            public bool Pencil { get; set; }
+            public bool Pencil { get; init; }
             /// <summary>Шоколадка</summary>
-            public bool ChocolateBar { get; set; }
+            public bool ChocolateBar { get; init; }
             /// <summary>Счётчик ленты</summary>
-            public bool TapeCounter { get; set; }
+            public bool TapeCounter { get; init; }
             /// <summary>Переплётная машина</summary>
-            public bool BindingMachine { get; set; }
-
-            public Item() { }
+            public bool BindingMachine { get; init; }
 
             public Item([NotNull] params int[] Values)
             {
@@ -145,16 +143,16 @@ namespace MathCore.AI.Tests.ART1
 
             Item[] items =
             {        //  Hm Pp Sn Sc Pn KK Wr Pc HB TC BM
-                new Item(0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0), //  0
-                new Item(0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1), //  1
-                new Item(0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0), //  2
-                new Item(0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1), //  3
-                new Item(1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0), //  4
-                new Item(0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1), //  5
-                new Item(1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0), //  6
-                new Item(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0), //  7
-                new Item(0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0), //  8
-                new Item(0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0), //  9
+                new(0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0), //  0
+                new(0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1), //  1
+                new(0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0), //  2
+                new(0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1), //  3
+                new(1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0), //  4
+                new(0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1), //  5
+                new(1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0), //  6
+                new(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0), //  7
+                new(0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0), //  8
+                new(0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0), //  9
             };
 
             Assert.That.Value(classificator.Clusters.Count).IsEqual(0);

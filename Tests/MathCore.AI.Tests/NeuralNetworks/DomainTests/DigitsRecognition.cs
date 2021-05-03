@@ -15,7 +15,7 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
     [TestClass]
     public class DigitsRecognition
     {
-        private static readonly Dictionary<char, int[]> __Symbols = new Dictionary<char, int[]>
+        private static readonly Dictionary<char, int[]> __Symbols = new()
         {
             ['\0'] = new[]
             {
@@ -129,7 +129,7 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
             },
         };
 
-        private static readonly Dictionary<char, int[]> __BoldSymbols = new Dictionary<char, int[]>
+        private static readonly Dictionary<char, int[]> __BoldSymbols = new()
         {
             ['\0'] = new[]
             {
@@ -246,7 +246,7 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
         [NotNull]
         private static int[] AddBinaryNoise([NotNull] int[] Data, [CanBeNull] Random rnd = null)
         {
-            if (rnd is null) rnd = new Random();
+            rnd ??= new Random();
             var result = Data.CloneObject();
             var index = rnd.Next(Data.Length);
             result[index] = Data[index] > 0 ? 0 : 1;
@@ -263,7 +263,7 @@ namespace MathCore.AI.Tests.NeuralNetworks.DomainTests
             }
 
             var result = Data.CloneObject();
-            if (rnd is null) rnd = new Random();
+            rnd ??= new Random();
 
             if (DistortionsCount < result.Length)
             {

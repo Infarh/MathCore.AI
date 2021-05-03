@@ -5,12 +5,14 @@ namespace MathCore.AI.NeuralNetworks.ActivationFunctions
     /// <summary>Гиперболический тангенс</summary>
     public class Th : DiffSimplifiedActivationFunction
     {
-        public override double Value(double x)
+        public static double Activation(double x)
         {
             var e = Math.Exp(x);
             var inv_e = 1 / e;
             return (e - inv_e) / (e + inv_e);
         }
+
+        public override double Value(double x) => Activation(x);
 
         public override double DiffValue(double x) => DiffFunc(Value(x));
 
