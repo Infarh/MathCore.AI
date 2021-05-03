@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
 using MathCore.AI.NeuralNetworks;
 using MathCore.AI.NeuralNetworks.ActivationFunctions;
 
