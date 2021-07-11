@@ -23,14 +23,14 @@ jobs:
         
       - name: Building
         run: |
-          dotnet build MathCore.AI/MathCore.AI.csproj --nologo
-          dotnet build Tests/MathCore.AI.Tests/MathCore.AI.Tests.csproj --nologo
+          dotnet build MathCore.AI --nologo
+          dotnet build Tests/MathCore.AI.Tests --nologo
         
       - name: Testing
-        run: dotnet test Tests/MathCore.AI.Tests/MathCore.AI.Tests.csproj --nologo --no-restore
+        run: dotnet test Tests/MathCore.AI.Tests --nologo --no-restore
         
       - name: Packing
-        run: dotnet pack MathCore.AI/MathCore.AI.csproj -c Release -v m          
+        run: dotnet pack MathCore.AI -c Release -v m          
       
       - name: Push package
         run: dotnet nuget push "**/*.nupkg" --skip-duplicate -s https://nuget.pkg.github.com/Infarh/index.json -k ${{secrets.GITHUB_TOKEN}}
