@@ -20,13 +20,13 @@ jobs:
           dotnet-version: 5.0.x
         
       - name: Building
-        run: dotnet build          
+        run: dotnet build -c Release
           
       - name: Testing
-        run: dotnet test
+        run: dotnet test -c Release --no-build
         
       - name: Packing
-        run: dotnet pack -c Release
+        run: dotnet pack -c Release --no-build
         
       - name: Publishing
         run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NuGetApiKey }} -n --skip-duplicate -s https://api.nuget.org/v3/index.json
