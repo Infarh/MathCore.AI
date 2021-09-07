@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <LangVersion>preview</LangVersion>
-    <Version>0.1.8.4</Version>
+    <Version>0.1.8.5</Version>
     <PackageReleaseNotes>
       Обновление пакетов
     </PackageReleaseNotes>
