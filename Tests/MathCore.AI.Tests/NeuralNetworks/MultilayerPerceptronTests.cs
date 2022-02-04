@@ -111,7 +111,6 @@ namespace MathCore.AI.Tests.NeuralNetworks
 
             // прямое распространение
 
-
             DirectDistribution(inputs, layers, Offsets, OffsetsW, outputs, network_output);
 
             CollectionAssert.That.Collection(outputs[0]).ValuesAreEqual(1.5, 3);
