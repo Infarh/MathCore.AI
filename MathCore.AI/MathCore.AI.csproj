@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MathCore" Version="0.0.61" />
+    <PackageReference Include="MathCore" Version="0.0.63" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
