@@ -52,14 +52,16 @@ internal static class VectorsEx
 
         var cols_count = A.GetLength(0);
         var rows_count = A.GetLength(1);
-        if (b.Length != rows_count) throw new InvalidOperationException("Число столбцов матрицы не совпадает с размерностью вектора");
+        if (b.Length != cols_count) 
+            throw new InvalidOperationException("Число столбцов матрицы не совпадает с размерностью вектора");
 
         var result = new double[cols_count];
         for (var i = 0; i < cols_count; i++)
         {
-            var s = 0d;
+            var s  = 0d;
+            var bi = b[i];
             for (var j = 0; j < rows_count; j++)
-                s += A[i, j] * b[j];
+                s += A[i, j] * bi;
 
             result[i] = s;
         }

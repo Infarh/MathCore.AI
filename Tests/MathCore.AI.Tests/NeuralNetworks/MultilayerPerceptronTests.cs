@@ -209,7 +209,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
                 error += (correct_output[i] - network_output[i]).Pow2();
             error *= 0.5;
 
-            Assert.That.Value(error).IsEqual(0.022, 8.8e-5);
+            error.AssertEquals(0.022, 8.8e-5);
 
             double[][,] layers2 = { (double[,])W0.Clone(), (double[,])W1.Clone() };
             var network = new MultilayerPerceptron(layers2);
@@ -218,7 +218,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             var teacher = network.CreateTeacher<IBackPropagationTeacher>();
             error = teacher.Teach(network_input, network_output2, correct_output);
             CollectionAssert.That.Collection(network_output2).IsEqualTo(new[] { 0.78139 }, 4.31e-7);
-            Assert.That.Value(error).IsEqual(0.023895, 7.19e-8);
+            error.AssertEquals(0.023895, 7.19e-8);
         }
 
         [TestMethod]
