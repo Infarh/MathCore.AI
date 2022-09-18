@@ -1,11 +1,14 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using MathCore.AI.NeuralNetworks;
 using MathCore.AI.NeuralNetworks.ActivationFunctions;
-using MathCore.Annotations;
+using MathCore.AI.Tests.Infrastructure;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Extensions;
 
 namespace MathCore.AI.Tests.NeuralNetworks
 {
@@ -13,11 +16,11 @@ namespace MathCore.AI.Tests.NeuralNetworks
     public class MultilayerPerceptronTests
     {
         private static void ProcessLayer(
-            [NotNull] double[] Input,
-            [NotNull] double[,] W,
-            [NotNull] double[] NeuronOffsets,
-            [NotNull] double[] OffsetsWeights,
-            [NotNull] double[] Output)
+            double[] Input,
+            double[,] W,
+            double[] NeuronOffsets,
+            double[] OffsetsWeights,
+            double[] Output)
         {
             for (var output_index = 0; output_index < Output.Length; output_index++)
             {
@@ -33,19 +36,19 @@ namespace MathCore.AI.Tests.NeuralNetworks
         private static double Activation(double x) => 1 / (1 + Math.Exp(-x));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void Activation([NotNull] double[] X, [NotNull] double[] FX)
+        private static void Activation(double[] X, double[] FX)
         {
             for (var i = 0; i < X.Length; i++)
                 FX[i] = Activation(X[i]);
         }
 
         private static void DirectDistribution(
-            [NotNull] double[][] Inputs,
-            [NotNull] double[][,] Layers,
-            [NotNull] double[][] Offsets,
-            [NotNull] double[][] OffsetsWeights,
-            [NotNull] double[][] Outputs,
-            [NotNull] double[] NetworkOutput)
+            double[][] Inputs,
+            double[][,] Layers,
+            double[][] Offsets,
+            double[][] OffsetsWeights,
+            double[][] Outputs,
+            double[] NetworkOutput)
         {
             var layer_index = -1;
             do
@@ -64,11 +67,13 @@ namespace MathCore.AI.Tests.NeuralNetworks
             Activation(Outputs[layer_index], NetworkOutput);
         }
 
+        private static double ActivationInverse(double u) => u * (1 - u);
+
+        private static double[] ActivationInverse(double[] u) => u.ToArray(ActivationInverse);
+
         [TestMethod]
         public void NeuralNetwork_Integral_Test()
         {
-            static double ActivationInverse(double x) => x * (1 - x);
-
             double[,] W0 =
             {
                 {  1.0, 0.5 },
@@ -113,25 +118,28 @@ namespace MathCore.AI.Tests.NeuralNetworks
 
             DirectDistribution(inputs, layers, Offsets, OffsetsW, outputs, network_output);
 
-            CollectionAssert.That.Collection(outputs[0]).ValuesAreEqual(1.5, 3);
-            CollectionAssert.That.Collection(inputs[1]).IsEqualTo(new[] { 0.81757, 0.952574 }, 4.48e-6);
-            CollectionAssert.That.Collection(outputs[1]).IsEqualTo(new[] { 1.2738 }, 1.25e-5);
-            CollectionAssert.That.Collection(network_output).IsEqualTo(new[] { 0.78139 }, 4.31e-7);
+            outputs[0].AssertEquals(1.5, 3);
+            inputs[01].AssertEquals(Accuracy.Eps(4.48e-6), 0.81757, 0.952574);
+            outputs[1].AssertEquals(Accuracy.Eps(1.25e-5), 1.2738);
+            network_output.AssertEquals(Accuracy.Eps(4.31e-7), 0.78139);
 
             double[] correct_output = { 1 };
 
             var error = correct_output.Zip(network_output, (c, v) => c - v).Sum(delta => delta.Pow2()) / 2;
 
-            Assert.That.Value(error).IsEqual(0.023895, 7.19e-8);
+            error.AssertEquals(0.023895, 7.19e-8);
 
-            var output_error = errors[^1];
-            for (var i = 0; i < output_error.Length; i++)
-                output_error[i] = (correct_output[i] - network_output[i]) * ActivationInverse(network_output[i]);
+            errors[^1] = correct_output.Sub(network_output).Mul(ActivationInverse(network_output));
+            //var output_error = errors[^1];
+            //for (var i = 0; i < output_error.Length; i++)
+            //    output_error[i] = (correct_output[i] - network_output[i]) * ActivationInverse(network_output[i]);
 
-            CollectionAssert.That.Collection(errors[^1]).IsEqualTo(new[] { 0.0373 }, 4.28e-5);
+            errors[^1].AssertEquals(Accuracy.Eps(4.28e-5), 0.0373);
 
             for (var level = errors.Length - 2; level >= 0; level--)
             {
+                //errors[level] = layers[level + 1].Mul(errors[level + 1]).Mul(ActivationInverse(inputs[level + 1]));
+
                 var error_level = errors[level];
                 var prev_error_level = errors[level + 1];
                 var w = layers[level + 1];
@@ -140,12 +148,14 @@ namespace MathCore.AI.Tests.NeuralNetworks
                 {
                     var err = 0d;
                     for (var j = 0; j < prev_error_level.Length; j++)
-                        err += prev_error_level[j] * w[j, i];
+                        err += w[j, i] * prev_error_level[j];
                     error_level[i] = err * ActivationInverse(level_inputs[i]);
                 }
+
+                var err123 = w.Mul(prev_error_level);
             }
 
-            CollectionAssert.That.Collection(errors[0]).IsEqualTo(new[] { 0.0083449, -0.0016851 }, 9.42e-6);
+            errors[0].AssertEquals(Accuracy.Eps(9.42e-6), 0.0083449, -0.0016851);
 
             var rho = 0.5;
             for (var level = 0; level < layers.Length; level++)
@@ -278,7 +288,7 @@ namespace MathCore.AI.Tests.NeuralNetworks
             Assert.That.Value(network.OutputsCount).IsEqual(outputs_count);
         }
 
-        private static void CheckNetwork([NotNull] MultilayerPerceptron Network, [NotNull] double[][,] W)
+        private static void CheckNetwork(MultilayerPerceptron Network, double[][,] W)
         {
             if (Network is null) throw new ArgumentNullException(nameof(Network));
             if (W is null) throw new ArgumentNullException(nameof(W));
@@ -322,7 +332,6 @@ namespace MathCore.AI.Tests.NeuralNetworks
         ///  f(x) = 1 / (1 + e^-x)
         ///  df(x)/dx = x * (1 - x)
         /// </remarks>
-        [NotNull]
         private static double[][,] GetNetworkStructure() => new[]
         {
             new[,] // Матрица коэффициентов передачи первого слоя
