@@ -3,8 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
-    <Version>0.1.8.8</Version>
+    <Version>0.1.8.9</Version>
     <PackageReleaseNotes>
       Обновление пакетов
     </PackageReleaseNotes>
@@ -19,14 +20,15 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>MathCoreAISign.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DocumentationFile>$(MSBuildProjectName.Replace(" ", "_")).xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MathCore" Version="0.0.81" />
+    <PackageReference Include="MathCore" Version="0.0.81.1" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />

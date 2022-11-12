@@ -14,23 +14,23 @@ jobs:
     steps:
       
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
         
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 7.0.x
         
       - name: Building
         run: |
-          dotnet build MathCore.AI -c Release
-          dotnet build Tests/MathCore.AI.Tests -c Release
+          dotnet build MathCore.AI -c Release --nologo
+          dotnet build Tests/MathCore.AI.Tests -c Release --nologo
         
       - name: Testing
-        run: dotnet test Tests/MathCore.AI.Tests -c Release --no-build
+        run: dotnet test Tests/MathCore.AI.Tests -c Release --no-build --nologo
         
       - name: Packing
-        run: dotnet pack MathCore.AI -c Release --no-build        
+        run: dotnet pack MathCore.AI -c Release --no-build --nologo   
       
       - name: Push package
         run: dotnet nuget push "**/*.nupkg" --skip-duplicate -s https://nuget.pkg.github.com/Infarh/index.json -k ${{secrets.GITHUB_TOKEN}}
