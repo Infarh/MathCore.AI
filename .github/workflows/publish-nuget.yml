@@ -12,21 +12,21 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
       
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 7.0.x
         
       - name: Building
-        run: dotnet build -c Release
+        run: dotnet build -c Release --nologo
           
       - name: Testing
-        run: dotnet test -c Release --no-build
+        run: dotnet test -c Release --no-build --nologo
         
       - name: Packing
-        run: dotnet pack -c Release --no-build
+        run: dotnet pack -c Release --no-build --nologo
         
       - name: Publishing
         run: dotnet nuget push "**/*.nupkg" -k ${{ secrets.NuGetApiKey }} -n --skip-duplicate -s https://api.nuget.org/v3/index.json
