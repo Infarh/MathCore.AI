@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29215.179
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathCore.AI", "MathCore.AI\MathCore.AI.csproj", "{7824C34D-EA22-4601-93C6-6B2AAEE9B9F4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{B785ED96-3D9A-4BAB-B350-37520A2734B5}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		..\BuildAndPublish.bat = ..\BuildAndPublish.bat
 		..\BuildAndTest.bat = ..\BuildAndTest.bat
 		..\BuildRelease.bat = ..\BuildRelease.bat
@@ -19,11 +20,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleTest", "Tests\ConsoleTest\ConsoleTest.csproj", "{B77887FD-F580-4FB8-9565-53E869A09507}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathCore.AI.Tests", "Tests\MathCore.AI.Tests\MathCore.AI.Tests.csproj", "{52D6CCB5-99F3-4B7C-A9ED-F03A1DCA5B12}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EACEE5AC-28E6-4CE5-8BB0-9F0F67E2FBD5}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,25 +1,15 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Xml.Linq;
-
 using MathCore;
 
-using static MathCore.Values.CSV;
 // ReSharper disable CheckNamespace
 namespace System.Diagnostics;
 
 internal static class DebugEx
 {
-
-    public static string ThrowIfNullOrEmpty(this string str, [CallerArgumentExpression("str")] string? StrName = null)
-    {
-        if (string.IsNullOrEmpty(str))
-            throw new ArgumentNullException(StrName, "String is null or empty");
-        return str;
-    }
+    public static string ThrowIfNullOrEmpty(this string str, [CallerArgumentExpression("str")] string? StrName = null) => str is not { Length: > 0 } ? throw new ArgumentNullException(StrName, "String is null or empty") : str;
 
     //public static T ToDebug<T>(this T value)
     //{
@@ -46,6 +36,7 @@ internal static class DebugEx
     {
         if (Name is { Length: > 0 })
             Debug.WriteLine("object[] {0} = {{", Name);
+
         var i = 0;
         var culture = CultureInfo.InvariantCulture;
         foreach (var item in items)
