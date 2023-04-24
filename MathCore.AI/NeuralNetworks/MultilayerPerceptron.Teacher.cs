@@ -141,18 +141,12 @@ public partial class MultilayerPerceptron
                             err += error_level[j] * w[j, i];          // i - номер нейрона в предыдущем слое
 
                         // Ошибка по нейрону = суммарная взвешенная ошибка всех связей умноженная на значение производной функции активации для выхода нейрона
-                        switch (prev_layer_activation)
+                        prev_layer_error[i] = prev_layer_activation switch
                         {
-                            case null:
-                                prev_layer_error[i] = err * Sigmoid.DiffActivation(prev_layer_output[i]);
-                                break;
-                            case DiffSimplifiedActivationFunction activation:
-                                prev_layer_error[i] = err * activation.DiffFunc(prev_layer_output[i]);
-                                break;
-                            default:
-                                prev_layer_error[i] = err * prev_layer_activation.DiffValue(layer_state[i]);
-                                break;
-                        }
+                            null => err * Sigmoid.DiffActivation(prev_layer_output[i]),
+                            DiffSimplifiedActivationFunction activation => err * activation.DiffFunc(prev_layer_output[i]),
+                            _ => err * prev_layer_activation.DiffValue(layer_state[i]),
+                        };
                     }
                 }
 
@@ -171,8 +165,7 @@ public partial class MultilayerPerceptron
                     var neuron_delta_w = rho * error * offset[neuron] * w_offset[neuron];
                     if (layer_dw_offset != null)
                     {
-                        neuron_delta_w = inertial_factor * layer_dw_offset[neuron]
-                            + (1 - inertial_factor) * neuron_delta_w;
+                        neuron_delta_w = inertial_factor * layer_dw_offset[neuron] + (1 - inertial_factor) * neuron_delta_w;
                         layer_dw_offset[neuron] = neuron_delta_w;
                     }
                     w_offset[neuron] += neuron_delta_w;

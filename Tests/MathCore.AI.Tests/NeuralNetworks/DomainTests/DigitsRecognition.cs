@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using MathCore.AI.NeuralNetworks;
 
 // ReSharper disable ArgumentsStyleAnonymousFunction
 // ReSharper disable ArgumentsStyleNamedExpression

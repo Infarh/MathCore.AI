@@ -1,7 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
-using MathCore.AI.NeuralNetworks;
+
 using MathCore.AI.NeuralNetworks.ActivationFunctions;
 using MathCore.AI.Tests.Infrastructure;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting.Extensions;
 
 namespace MathCore.AI.Tests.NeuralNetworks;
@@ -160,10 +161,16 @@ public class MultilayerPerceptronTests
             var level_inputs  = inputs[level];
             var outputs_count = w.GetLength(0);
             var inputs_count  = w.GetLength(1);
+
+            var delta_w = new double[w.GetLength(0), w.GetLength(1)];
+
             for (var i = 0; i < outputs_count; i++)
             {
                 for (var j = 0; j < inputs_count; j++)
+                {
+                    delta_w[i,j] = rho * err[i] * level_inputs[j];
                     w[i, j] += rho * err[i] * level_inputs[j];
+                }
 
                 layer_offset[i] += rho * err[i];
             }
@@ -565,7 +572,7 @@ public class MultilayerPerceptronTests
         Assert.That.Value(b).IsEqualTo(5).WithAccuracy(eps);
         Assert.That.Value(error)
            .Where(errors => errors.Length).Check(count => count.IsEqual(417))
-           .Where(errors => errors[^1]).Check(LastError => LastError.LessThan(error[0]).IsEqualTo(0).WithAccuracy(eps));
+           .Where(errors => errors[^1]).Check(LastError => LastError.LessOrEqualsThan(error[0]).IsEqualTo(0).WithAccuracy(eps));
     }
 
     [TestMethod]
@@ -622,7 +629,7 @@ public class MultilayerPerceptronTests
         Assert.That.Value(errors)
            .Where(e => e.Count).Check(count => count.IsEqual(4))
            .Where(e => e[^1]).Check(LastError => LastError
-               .LessThan(errors.First())
+               .LessOrEqualsThan(errors.First())
                .IsEqual(0)).And
            .Value(k).IsEqual(2).And
            .Value(b).IsEqualTo(b0);

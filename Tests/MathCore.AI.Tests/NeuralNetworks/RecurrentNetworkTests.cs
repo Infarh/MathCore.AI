@@ -1,6 +1,4 @@
-﻿using MathCore.AI.NeuralNetworks;
-
-namespace MathCore.AI.Tests.NeuralNetworks;
+﻿namespace MathCore.AI.Tests.NeuralNetworks;
 
 [TestClass]
 public class RecurrentNetworkTests
