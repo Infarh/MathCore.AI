@@ -1,9 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
 using MathCore.AI.NeuralNetworks.ActivationFunctions;
-using MathCore.AI.Tests.Infrastructure;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting.Extensions;
 
 namespace MathCore.AI.Tests.NeuralNetworks;
 
