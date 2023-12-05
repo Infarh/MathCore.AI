@@ -17,7 +17,7 @@ public partial class MultilayerPerceptron
     public sealed class LayerManager
     {
         /// <summary>Функции активации слоёв</summary>
-        private readonly ActivationFunction[] _Activations;
+        private readonly ActivationFunction?[] _Activations;
 
         private readonly double[][] _Offsets;
         private readonly double[][] _OffsetWeights;

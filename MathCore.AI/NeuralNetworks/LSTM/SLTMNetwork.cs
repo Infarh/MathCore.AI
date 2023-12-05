@@ -2,22 +2,13 @@
 
 namespace MathCore.AI.NeuralNetworks.LSTM;
 
-public class SLTMNetwork
+public class SLTMNetwork(int Inputs, int Outputs, int State)
 {
-    private readonly double[] _Input;
-    private readonly double[] _State;
-    private readonly double[] _Outputs;
+    private readonly double[] _Input = new double[Inputs];
+    private readonly double[] _State = new double[State];
+    private readonly double[] _Outputs = new double[Outputs];
 
-    private readonly double[,] _StateGate;
-
-    public SLTMNetwork(int Inputs, int Outputs, int State)
-    {
-        _Input   = new double[Inputs];
-        _State   = new double[State];
-        _Outputs = new double[Outputs];
-
-        _StateGate = new double[State, Inputs + Outputs];
-    }
+    private readonly double[,] _StateGate = new double[State, Inputs + Outputs];
 
     /// <summary>Обработка итерации сети</summary>
     /// <param name="InputOutput">Массив объединённого входа-выхода</param>
