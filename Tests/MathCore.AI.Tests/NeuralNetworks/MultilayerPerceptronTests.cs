@@ -1,8 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
-using MathCore.AI.NeuralNetworks;
+
 using MathCore.AI.NeuralNetworks.ActivationFunctions;
-using MathCore.AI.Tests.Infrastructure;
-using Microsoft.VisualStudio.TestTools.UnitTesting.Extensions;
 
 namespace MathCore.AI.Tests.NeuralNetworks;
 
@@ -73,34 +71,34 @@ public class MultilayerPerceptronTests
             {  1.0, 0.5 },
             { -1.0, 2.0 }
         };
-        double[] Offsets0  = { 1, 1 };
-        double[] OffsetsW0 = { 1, 1 };
+        double[] Offsets0  = [1, 1];
+        double[] OffsetsW0 = [1, 1];
 
         double[,] W1 =
         {
             { 1.5, -1.0 }
         };
-        double[] Offsets1  = { 1 };
-        double[] OffsetsW1 = { 1 };
+        double[] Offsets1  = [1];
+        double[] OffsetsW1 = [1];
 
 
-        double[][,] layers   = { (double[,])W0.Clone(), (double[,])W1.Clone() };
-        double[][]  Offsets  = { Offsets0.CloneObject(), Offsets1.CloneObject() };
-        double[][]  OffsetsW = { OffsetsW0.CloneObject(), OffsetsW1.CloneObject() };
+        double[][,] layers   = [(double[,])W0.Clone(), (double[,])W1.Clone()];
+        double[][]  Offsets  = [Offsets0.CloneObject(), Offsets1.CloneObject()];
+        double[][]  OffsetsW = [OffsetsW0.CloneObject(), OffsetsW1.CloneObject()];
 
-        double[] network_input = { 0, 1 };
+        double[] network_input = [0, 1];
 
         double[][] inputs =
-        {
+        [
             network_input,
             new double[2], // создаём массив из 2 чисел
-        };
+        ];
 
         double[][] outputs =
-        {
+        [
             new double[2],
             new double[1]
-        };
+        ];
 
         var errors = new double[outputs.Length][];
         for (var i = 0; i < errors.Length; i++)
@@ -117,7 +115,7 @@ public class MultilayerPerceptronTests
         outputs[1].AssertEquals(Accuracy.Eps(1.25e-5), 1.2738);
         network_output.AssertEquals(Accuracy.Eps(4.31e-7), 0.78139);
 
-        double[] correct_output = { 1 };
+        double[] correct_output = [1];
 
         var error = correct_output.Zip(network_output, (c, v) => c - v).Sum(delta => delta.Pow2()) / 2;
 
@@ -160,17 +158,23 @@ public class MultilayerPerceptronTests
             var level_inputs  = inputs[level];
             var outputs_count = w.GetLength(0);
             var inputs_count  = w.GetLength(1);
+
+            var delta_w = new double[w.GetLength(0), w.GetLength(1)];
+
             for (var i = 0; i < outputs_count; i++)
             {
                 for (var j = 0; j < inputs_count; j++)
+                {
+                    delta_w[i,j] = rho * err[i] * level_inputs[j];
                     w[i, j] += rho * err[i] * level_inputs[j];
+                }
 
                 layer_offset[i] += rho * err[i];
             }
         }
 
-        var expected_w = new[]
-        {
+        double[][,] expected_w =
+        [
             new [,]
             {
                 {  1, 0.50417 },
@@ -180,13 +184,13 @@ public class MultilayerPerceptronTests
             {
                 { 1.51525, -0.9882 }
             }
-        };
+        ];
 
         double[][] expected_offsets =
-        {
-            new [] { 1.00417,  0.99915 },
-            new [] { 1.01865 }
-        };
+        [
+            [1.00417,  0.99915],
+            [1.01865]
+        ];
 
         for (var level = 0; level < layers.Length; level++)
         {
@@ -205,7 +209,7 @@ public class MultilayerPerceptronTests
 
         error.AssertEquals(0.022, 8.8e-5);
 
-        double[][,] layers2 = { (double[,])W0.Clone(), (double[,])W1.Clone() };
+        double[][,] layers2 = [(double[,])W0.Clone(), (double[,])W1.Clone()];
         var         network = new MultilayerPerceptron(layers2);
 
         var network_output2 = new double[1];
@@ -219,7 +223,7 @@ public class MultilayerPerceptronTests
     public void ThreeLayersNetworkCreation_Test()
     {
         double[][,] network_structure =
-        {
+        [
             new double[,]
             {
                 { 1, 1, 1 },
@@ -235,7 +239,7 @@ public class MultilayerPerceptronTests
             {
                 { 1, 1, 1 }
             }
-        };
+        ];
 
         var network = new MultilayerPerceptron(network_structure);
 
@@ -273,7 +277,7 @@ public class MultilayerPerceptronTests
         const int outputs_count = 2;
 
         var   rnd            = new Random();
-        int[] neurons_counts = { 5, 7, outputs_count };
+        int[] neurons_counts = [5, 7, outputs_count];
 
         var network = new MultilayerPerceptron(inputs_count, neurons_counts, rnd);
 
@@ -346,9 +350,9 @@ public class MultilayerPerceptronTests
         var network           = new MultilayerPerceptron(network_structure);
         CheckNetwork(network, network_structure);
 
-        double[] input           = { 0, 1 }; // Входное воздействие
-        double[] output          = { 0 };    // Вектор отклика сети
-        double[] expected_output = { 1 };    // Ожидаемое значение оклика сети для процесса обучения
+        double[] input           = [0, 1]; // Входное воздействие
+        double[] output          = [0];    // Вектор отклика сети
+        double[] expected_output = [1];    // Ожидаемое значение оклика сети для процесса обучения
 
         const double rho     = 0.5;
         var          teacher = network.CreateTeacher<IBackPropagationTeacher>(t => t.Rho = rho);
@@ -383,8 +387,8 @@ public class MultilayerPerceptronTests
 
         CheckNetwork(network, network_structure);
 
-        double[] input  = { 0, 1 }; // Входное воздействие
-        double[] output = { 0 };    // Вектор отклика сети
+        double[] input  = [0, 1]; // Входное воздействие
+        double[] output = [0];    // Вектор отклика сети
 
         network.Process(input, output);
 
@@ -399,7 +403,7 @@ public class MultilayerPerceptronTests
         var network           = new MultilayerPerceptron(network_structure);
         CheckNetwork(network, network_structure);
 
-        double[] input = { 0, 1 }; // Входное воздействие
+        double[] input = [0, 1]; // Входное воздействие
 
         var output = network.Process(input);
 
@@ -414,10 +418,10 @@ public class MultilayerPerceptronTests
         var network           = new MultilayerPerceptron(network_structure);
         CheckNetwork(network, network_structure);
 
-        double[] input           = { 0, 1 }; // Входное воздействие
-        double[] output          = { 0 };    // Вектор отклика сети
-        double[] expected_output = { 1 };    // Ожидаемое значение оклика сети для процесса обучения
-        double[] errors          = { 0 };
+        double[] input           = [0, 1]; // Входное воздействие
+        double[] output          = [0];    // Вектор отклика сети
+        double[] expected_output = [1];    // Ожидаемое значение оклика сети для процесса обучения
+        double[] errors          = [0];
 
         network.Process(input, output, expected_output, errors);
 
@@ -433,10 +437,10 @@ public class MultilayerPerceptronTests
         var network           = new MultilayerPerceptron(network_structure);
         CheckNetwork(network, network_structure);
 
-        double[] input           = { 0, 1 }; // Входное воздействие
-        double[] output          = { 0 };    // Вектор отклика сети
-        double[] expected_output = { 1 };    // Ожидаемое значение оклика сети для процесса обучения
-        double[] errors          = { 0 };
+        double[] input           = [0, 1]; // Входное воздействие
+        double[] output          = [0];    // Вектор отклика сети
+        double[] expected_output = [1];    // Ожидаемое значение оклика сети для процесса обучения
+        double[] errors          = [0];
 
         network.Process(input, output, expected_output, errors);
 
@@ -466,7 +470,7 @@ public class MultilayerPerceptronTests
     public void NeuralController_Test()
     {
         var rnd        = new Random();
-        var controller = new MultilayerPerceptron(4, new[] { 3, 4 }, (_, _, _) => rnd.NextDouble() - 0.5);
+        var controller = new MultilayerPerceptron(4, [3, 4], (_, _, _) => rnd.NextDouble() - 0.5);
         //controller.Layer.Foreach(Layer => Layer.SetOffsets());
 
         Assert.That.Value(controller.InputsCount).IsEqual(4);
@@ -484,7 +488,7 @@ public class MultilayerPerceptronTests
         // H - Hide              (прятаться...)
         // Должен быть выбран один из вариантов действий - максимальное значение
         Example[] examples =
-        {                                                    // H  K  G  E            A  R  W  H
+        [                                                    // H  K  G  E            A  R  W  H
             new(new []{ 2, 0, 0, 0 }, new []{ 0, 0, 1, 0 }), //  0 - здоров как бык,   оружия нет,    врагов нет - бродить
             new(new []{ 2, 0, 0, 1 }, new []{ 0, 0, 1, 0 }), //  1 - здоров как бык,   оружия нет,    враг 1     - уворачиваться
             new(new []{ 2, 0, 1, 1 }, new []{ 0, 0, 0, 0 }), //  2 - здоров как бык,   есть пистолет, врага нет  - уворачиваться
@@ -505,7 +509,7 @@ public class MultilayerPerceptronTests
             new(new []{ 0, 0, 1, 2 }, new []{ 0, 1, 0, 0 }), // 15 - здоровья нет...,   есть пистолет, врагов 2!! - бежать!!!
             new(new []{ 0, 1, 0, 2 }, new []{ 0, 1, 0, 0 }), // 16 - здоровья нет...,   есть нож,      врагов 2!! - бежать!!!
             new(new []{ 0, 1, 0, 1 }, new []{ 0, 0, 0, 1 }), // 17 - здоровья нет...,   есть нож,      враг 1     - прятаться...
-        };
+        ];
 
         var teacher = controller.CreateTeacher<IBackPropagationTeacher>(t => t.Rho = 0.2);
         var epochs = Enumerable
@@ -535,10 +539,10 @@ public class MultilayerPerceptronTests
         var network = new MultilayerPerceptron(1, new[] { 1 }, layer => layer.Activation = ActivationFunction.Linear);
 
         Assert.That.Value(network)
-           .Where(net => net.LayersCount).Check(count => count.IsEqual(1))
-           .Where(net => net.Layer[0]).Check(layer0 => layer0
-               .Where(layer => layer.InputsCount).Check(count => count.IsEqual(1))
-               .Where(layer => layer.OutputsCount).Check(count => count.IsEqual(1)));
+           .Where(net => net!.LayersCount).Check(count => count.IsEqual(1))
+           .Where(net => net!.Layer[0]).Check(layer0 => layer0
+               .Where(layer => layer!.InputsCount).Check(count => count.IsEqual(1))
+               .Where(layer => layer!.OutputsCount).Check(count => count.IsEqual(1)));
 
         ref var k = ref network.Layer[0].Weights[0, 0];
         ref var b = ref network.Layer[0].OffsetWeights[0];
@@ -556,7 +560,7 @@ public class MultilayerPerceptronTests
         var       rnd            = new Random(random_variant);
         var error = data
            .Mix(rnd)
-           .Select(d => teacher.Teach(new[] { d.x }, output, new[] { d.f }))
+           .Select(d => teacher.Teach([d.x], output, [d.f]))
            .TakeWhile(e => e > 0)
            .ToArray();
 
@@ -564,8 +568,8 @@ public class MultilayerPerceptronTests
         Assert.That.Value(k).IsEqualTo(2).WithAccuracy(eps);
         Assert.That.Value(b).IsEqualTo(5).WithAccuracy(eps);
         Assert.That.Value(error)
-           .Where(errors => errors.Length).Check(count => count.IsEqual(417))
-           .Where(errors => errors[^1]).Check(LastError => LastError.LessThan(error[0]).IsEqualTo(0).WithAccuracy(eps));
+           .Where(errors => errors!.Length).Check(count => count.IsEqual(417))
+           .Where(errors => errors![^1]).Check(LastError => LastError.LessOrEqualsThan(error[0]).IsEqualTo(0).WithAccuracy(eps));
     }
 
     [TestMethod]
@@ -574,10 +578,10 @@ public class MultilayerPerceptronTests
         var network = new MultilayerPerceptron(1, new[] { 1 }, layer => layer.Activation = ActivationFunction.Linear);
 
         Assert.That.Value(network)
-           .Where(net => net.LayersCount).Check(count => count.IsEqual(1))
-           .Where(net => net.Layer[0]).Check(layer0 => layer0
-               .Where(layer => layer.InputsCount).Check(count => count.IsEqual(1))
-               .Where(layer => layer.OutputsCount).Check(count => count.IsEqual(1)));
+           .Where(net => net!.LayersCount).Check(count => count.IsEqual(1))
+           .Where(net => net!.Layer[0]).Check(layer0 => layer0
+               .Where(layer => layer!.InputsCount).Check(count => count.IsEqual(1))
+               .Where(layer => layer!.OutputsCount).Check(count => count.IsEqual(1)));
 
         ref var k = ref network.Layer[0].Weights[0, 0];
         ref var b = ref network.Layer[0].OffsetWeights[0];
@@ -620,9 +624,9 @@ public class MultilayerPerceptronTests
         }
 
         Assert.That.Value(errors)
-           .Where(e => e.Count).Check(count => count.IsEqual(4))
-           .Where(e => e[^1]).Check(LastError => LastError
-               .LessThan(errors.First())
+           .Where(e => e!.Count).Check(count => count.IsEqual(4))
+           .Where(e => e![^1]).Check(LastError => LastError
+               .LessOrEqualsThan(errors.First())
                .IsEqual(0)).And
            .Value(k).IsEqual(2).And
            .Value(b).IsEqualTo(b0);

@@ -2,27 +2,21 @@
 namespace MathCore.AI.NeuralNetworks;
 
 /// <summary>Образец для обучения нейронной сети</summary>
-public class Example
+public class Example(double[] Input, double[] ExpectedOutput)
 {
     private static double[] IntToDouble(IEnumerable<int> v) => v.NotNull().Select(i => (double)i).ToArray();
 
     /// <summary>Входное воздействие</summary>
-    public double[] Input { get; }
+    public double[] Input { get; } = Input.NotNull();
 
     /// <summary>Ожидаемый результат</summary>
-    public double[] ExpectedOutput { get; }
+    public double[] ExpectedOutput { get; } = ExpectedOutput.NotNull();
 
     public Example(double[] Input, int[] ExpectedOutput) : this(Input, IntToDouble(ExpectedOutput)) { }
 
     public Example(int[] Input, double[] ExpectedOutput) : this(IntToDouble(Input), ExpectedOutput) { }
 
     public Example(int[] Input, int[] ExpectedOutput) : this(IntToDouble(Input), IntToDouble(ExpectedOutput)) { }
-
-    public Example(double[] Input, double[] ExpectedOutput)
-    {
-        this.Input          = Input.NotNull();
-        this.ExpectedOutput = ExpectedOutput.NotNull();
-    }
 
     #region Overrides of Object
 
@@ -36,15 +30,9 @@ public class Example
     #endregion
 }
 
-public class Example<TInput, TOutput>
+public class Example<TInput, TOutput>(TInput Input, TOutput ExpectedOutput)
 {
-    public TInput Input { get; }
+    public TInput Input { get; } = Input;
 
-    public TOutput ExpectedOutput { get; }
-
-    public Example(TInput Input, TOutput ExpectedOutput)
-    {
-        this.Input          = Input;
-        this.ExpectedOutput = ExpectedOutput;
-    }
+    public TOutput ExpectedOutput { get; } = ExpectedOutput;
 }

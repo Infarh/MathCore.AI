@@ -2,17 +2,15 @@
 
 /// <summary>Критерий классификации</summary>
 /// <typeparam name="T">Тип объектов классификации</typeparam>
-public sealed class ClassificationCriteria<T>: IEquatable<ClassificationCriteria<T>>, IEquatable<Func<T, double>>
+/// <remarks>Инициализация нового критерия классификации</remarks>
+/// <param name="Criteria">Функция критерия, сопоставляющая объект с числовым значением</param>
+public sealed class ClassificationCriteria<T>(Func<T, double> Criteria) : IEquatable<ClassificationCriteria<T>>, IEquatable<Func<T, double>>
 {
     /// <summary>Функция оценки критерия</summary>
-    private readonly Func<T, double> _Criteria;
+    private readonly Func<T, double> _Criteria = Criteria.NotNull();
 
     /// <summary>Название критерия</summary>
     public string? Name { get; }
-
-    /// <summary>Инициализация нового критерия классификации</summary>
-    /// <param name="Criteria">Функция критерия, сопоставляющая объект с числовым значением</param>
-    public ClassificationCriteria(Func<T, double> Criteria) => _Criteria = Criteria.NotNull();
 
     /// <summary>Инициализация нового критерия классификации</summary>
     /// <param name="Name">Имя критерия</param>

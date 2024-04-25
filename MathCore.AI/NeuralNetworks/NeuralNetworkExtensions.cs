@@ -23,11 +23,7 @@ public static class NeuralNetworkExtensions
         var outputs_count = Teacher.Network.OutputsCount;
         for (var i = 0; i < Examples.Length; i++)
         {
-            var example = Examples[i];
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (example is null)
-                // ReSharper disable once HeuristicUnreachableCode
-                throw new InvalidOperationException($"Обучающий пример с индексом {i} отсутствует");
+            var example = Examples[i] ?? throw new InvalidOperationException($"Обучающий пример с индексом {i} отсутствует");
             if (example.Input.Length != inputs_count)
                 throw new InvalidOperationException($"Длина входного вектора примера №{i} ({example.Input.Length}) не равна количеству входов сети ({inputs_count})");
             if (example.ExpectedOutput.Length != outputs_count)

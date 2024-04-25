@@ -93,9 +93,9 @@ public class ART1Tests
     [TestMethod]
     public void Algorithm_Base_Logic()
     {           
-        int[] p0 = { 1, 1, 1, 0, 0, 1, 0 };
-        int[] p1 = { 1, 0, 0, 1, 1, 0, 1 };
-        int[] p2 = { 1, 1, 0, 0, 0, 1, 0 };
+        int[] p0 = [1, 1, 1, 0, 0, 1, 0];
+        int[] p1 = [1, 0, 0, 1, 1, 0, 1];
+        int[] p2 = [1, 1, 0, 0, 0, 1, 0];
 
         var classificator = new Classificator<int[]>
         {
@@ -148,7 +148,7 @@ public class ART1Tests
         };
 
         Item[] items =
-        {                                         //  Hm Pp Sn Sc Pn KK Wr Pc HB TC BM
+        [                                         //  Hm Pp Sn Sc Pn KK Wr Pc HB TC BM
             new(0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0), //  0
             new(0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1), //  1
             new(0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0), //  2
@@ -159,7 +159,7 @@ public class ART1Tests
             new(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0), //  7
             new(0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0), //  8
             new(0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0), //  9
-        };
+        ];
 
         Assert.That.Value(classificator.Clusters.Count).IsEqual(0);
 

@@ -1,6 +1,4 @@
-﻿using MathCore.AI.NeuralNetworks;
-
-namespace MathCore.AI.Tests.NeuralNetworks;
+﻿namespace MathCore.AI.Tests.NeuralNetworks;
 
 [TestClass]
 public class RecurrentNetworkTests
@@ -8,7 +6,7 @@ public class RecurrentNetworkTests
     private static (double[][,] Weights, double[][,] Feedbacks) GetTestNetworkStructure()
     {
         double[][,] weights =
-        {
+        [
             new [,]
             {
                 { -2.386, 0, 0 },
@@ -27,10 +25,10 @@ public class RecurrentNetworkTests
                 { -1, -2 },
                 { 1.643823935199817698, -3 }
             }
-        };
+        ];
 
         double[][,] feedbacks =
-        {
+        [
             new [,]
             {
                 { 0.01, 0.02, 0.03, 0.04 },
@@ -49,7 +47,7 @@ public class RecurrentNetworkTests
                 { -.06, -.05, 0.04 },
                 { -.01, -.02, -.03 }
             }
-        };
+        ];
         return (weights, feedbacks);
     }
 
@@ -75,6 +73,6 @@ public class RecurrentNetworkTests
 
         network.Process(input, output);
 
-        CollectionAssert.That.Collection(output).IsEqualTo(new[] { 0.2, 0.5, 0.8 }, 5.505e-006);
+        CollectionAssert.That.Collection(output).IsEqualTo([0.2, 0.5, 0.8], 5.505e-006);
     }
 }
