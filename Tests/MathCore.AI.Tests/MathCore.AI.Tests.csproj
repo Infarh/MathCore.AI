@@ -34,4 +34,10 @@
     <ProjectReference Include="..\..\MathCore.AI\MathCore.AI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="NeuralNetworks\DomainTests\Data\InterpolatorNDData.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
