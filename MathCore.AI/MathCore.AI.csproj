@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
-    <Version>0.1.8.10</Version>
+    <Version>0.1.9</Version>
     <PackageReleaseNotes>
       Обновление пакетов
     </PackageReleaseNotes>
@@ -28,10 +28,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MathCore" Version="0.0.90" />
-    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="MathCore" Version="0.0.93" />
+    <PackageReference Include="System.Memory" Version="4.6.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
   </ItemGroup>
 
 </Project>
