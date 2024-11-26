@@ -1,7 +1,13 @@
 {
     "customizations": {
         "vscode": {
-            "extensions": ["ms-python.python", "ms-toolsai.jupyter", "mechatroner.rainbow-csv", "github.copilot"],
+            "extensions": [
+                "ms-python.python", 
+                "ms-toolsai.jupyter", 
+                "mechatroner.rainbow-csv", 
+                "ms-dotnettools.csdevkit", 
+                "github.copilot"
+            ],
             "settings": {
                 "terminal.integrated.shellIntegration.enabled": true,
                 "workbench.sideBar.location": "right",
@@ -12,5 +18,5 @@
             }
         }
     },
-    "postCreateCommand": "sudo apt update && sudo apt upgrade -y"
+    "postCreateCommand": "sudo apt update && sudo apt upgrade -y && sudo apt install dotnet-sdk-9.0 -y"
 }
