@@ -11,5 +11,6 @@
                 "keyboard.layout": "00000419"
             }
         }
-    }
+    },
+    "postCreateCommand": "sudo apt update && sudo apt upgrade -y"
 }
