@@ -1,7 +1,7 @@
 {
     "customizations": {
         "vscode": {
-            "extensions": ["ms-python.python", "ms-toolsai.jupyter", "mechatroner.rainbow-csv"],
+            "extensions": ["ms-python.python", "ms-toolsai.jupyter", "mechatroner.rainbow-csv", "github.copilot"],
             "settings": {
                 "terminal.integrated.shellIntegration.enabled": true,
                 "workbench.sideBar.location": "right",
