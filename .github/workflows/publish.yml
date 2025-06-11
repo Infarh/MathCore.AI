@@ -26,7 +26,7 @@ jobs:
           dotnet-version: 9.0.x
           
       - name: Cache NuGet  
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -43,7 +43,7 @@ jobs:
         run: dotnet pack -c Release --no-build -v q -o ${{ github.workspace }}/ReleasePack --include-symbols
       
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: Release
           path: ${{ github.workspace }}/ReleasePack
@@ -56,7 +56,7 @@ jobs:
     
     steps:    
       - name: Get artifact
-        uses: actions/download-artifact@v3.0.2
+        uses: actions/download-artifact@v4.1.8
         id: download
         with:
             name: Release
@@ -72,7 +72,7 @@ jobs:
     
     steps:    
       - name: Get artifact
-        uses: actions/download-artifact@v3.0.2
+        uses: actions/download-artifact@v4.1.8
         id: download
         with:
             name: Release
@@ -88,6 +88,6 @@ jobs:
     
     steps:
       - name: Delete artefact
-        uses: geekyeggo/delete-artifact@v2
+        uses: geekyeggo/delete-artifact@v5
         with:
             name: Release
