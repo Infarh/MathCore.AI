@@ -19,7 +19,7 @@ public sealed class Cluster<T> : IEnumerable<T>
     private readonly string[] _FeatureNames;
 
     /// <summary>Элементы кластера</summary>
-    private readonly HashSet<T> _Items = new(new LambdaEqualityComparer<T>((v1, v2) => ReferenceEquals(v1, v2), v => ((object)v).GetHashCode()));
+    private readonly HashSet<T> _Items = new(new LambdaEqualityComparer<T>((v1, v2) => ReferenceEquals(v1, v2), v => v!.GetHashCode()));
 
     /// <summary>Число элементов в кластере</summary>
     public int ItemsCount => _Items.Count;

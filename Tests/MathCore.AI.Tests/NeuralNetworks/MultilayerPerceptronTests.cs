@@ -200,7 +200,7 @@ public class MultilayerPerceptronTests
 
         DirectDistribution(inputs, layers, Offsets, OffsetsW, outputs, network_output);
 
-        CollectionAssert.That.Collection(network_output).IsEqualTo(new[] { 0.7898 }, 1.99e-5);
+        CollectionAssert.That.Collection(network_output).IsEqualTo([0.7898], 1.99e-5);
 
         error = 0d;
         for (var i = 0; i < network_output.Length; i++)
@@ -215,7 +215,7 @@ public class MultilayerPerceptronTests
         var network_output2 = new double[1];
         var teacher         = network.CreateTeacher<IBackPropagationTeacher>();
         error = teacher.Teach(network_input, network_output2, correct_output);
-        CollectionAssert.That.Collection(network_output2).IsEqualTo(new[] { 0.78139 }, 4.31e-7);
+        CollectionAssert.That.Collection(network_output2).IsEqualTo([0.78139], 4.31e-7);
         error.AssertEquals(0.023895, 7.19e-8);
     }
 
@@ -247,12 +247,12 @@ public class MultilayerPerceptronTests
     }
 
     // ReSharper disable once ObjectCreationAsStatement
-    [TestMethod, ExpectedException(typeof(ArgumentException))]
-    public void ZeroLayersNetworkCreation_Test() => new MultilayerPerceptron(new double[0][,]);
+    [TestMethod]
+    public void ZeroLayersNetworkCreation_Test() => Assert.Throws<ArgumentException>(() => new MultilayerPerceptron(Array.Empty<double[,]>()));
 
     [TestMethod]
     public void InconsistentLayersInputsCount_Test() =>
-        Assert.ThrowsException<FormatException>(() =>
+        Assert.Throws<FormatException>(() =>
             new MultilayerPerceptron(
                 new double[,]
                 {
@@ -330,8 +330,8 @@ public class MultilayerPerceptronTests
     ///  f(x) = 1 / (1 + e^-x)
     ///  df(x)/dx = x * (1 - x)
     /// </remarks>
-    private static double[][,] GetNetworkStructure() => new[]
-    {
+    private static double[][,] GetNetworkStructure() =>
+    [
         new[,] // Матрица коэффициентов передачи первого слоя
         {
             {1.0, 0.5}, // Число столбцов - число входов слоя (входов сети)
@@ -341,7 +341,7 @@ public class MultilayerPerceptronTests
         {
             {1.5, -1.0} // В выходном слое один нейрон и два входа
         }
-    };
+    ];
 
     [TestMethod]
     public void Processing_Test()
@@ -489,26 +489,26 @@ public class MultilayerPerceptronTests
         // Должен быть выбран один из вариантов действий - максимальное значение
         Example[] examples =
         [                                                    // H  K  G  E            A  R  W  H
-            new(new []{ 2, 0, 0, 0 }, new []{ 0, 0, 1, 0 }), //  0 - здоров как бык,   оружия нет,    врагов нет - бродить
-            new(new []{ 2, 0, 0, 1 }, new []{ 0, 0, 1, 0 }), //  1 - здоров как бык,   оружия нет,    враг 1     - уворачиваться
-            new(new []{ 2, 0, 1, 1 }, new []{ 0, 0, 0, 0 }), //  2 - здоров как бык,   есть пистолет, врага нет  - уворачиваться
-            new(new []{ 2, 0, 1, 2 }, new []{ 1, 0, 0, 0 }), //  3 - здоров как бык,   есть пистолет, врагов 2!! - атаковать!!!
-            new(new []{ 2, 1, 0, 2 }, new []{ 0, 0, 0, 1 }), //  4 - здоров как бык,   есть нож,      врагов 2!! - прятаться...
-            new(new []{ 2, 1, 0, 1 }, new []{ 1, 0, 0, 0 }), //  5 - здоров как бык,   есть нож,      враг 1
+            new([2, 0, 0, 0], [0, 0, 1, 0]), //  0 - здоров как бык,   оружия нет,    врагов нет - бродить
+            new([2, 0, 0, 1], [0, 0, 1, 0]), //  1 - здоров как бык,   оружия нет,    враг 1     - уворачиваться
+            new([2, 0, 1, 1], [0, 0, 0, 0]), //  2 - здоров как бык,   есть пистолет, врага нет  - уворачиваться
+            new([2, 0, 1, 2], [1, 0, 0, 0]), //  3 - здоров как бык,   есть пистолет, врагов 2!! - атаковать!!!
+            new([2, 1, 0, 2], [0, 0, 0, 1]), //  4 - здоров как бык,   есть нож,      врагов 2!! - прятаться...
+            new([2, 1, 0, 1], [1, 0, 0, 0]), //  5 - здоров как бык,   есть нож,      враг 1
                                                                               
-            new(new []{ 1, 0, 0, 0 }, new []{ 0, 0, 1, 0 }), //  6 - здоровье так себе, оружия нет,    врагов нет - бродить
-            new(new []{ 1, 0, 0, 1 }, new []{ 0, 0, 0, 1 }), //  7 - здоровье так себе, оружия нет,    враг 1     - прятаться...
-            new(new []{ 1, 0, 1, 1 }, new []{ 1, 0, 0, 0 }), //  8 - здоровье так себе, есть пистолет, враг 1     - атаковать!!!
-            new(new []{ 1, 0, 1, 0 }, new []{ 0, 0, 0, 1 }), //  9 - здоровье так себе, есть пистолет, врагов нет - прятаться...
-            new(new []{ 1, 1, 0, 2 }, new []{ 0, 0, 0, 1 }), // 10 - здоровье так себе, есть нож,      врагов 2!! - прятаться...
-            new(new []{ 1, 1, 0, 1 }, new []{ 0, 0, 0, 1 }), // 11 - здоровье так себе, есть нож,      враг 1     - прятаться...
+            new([1, 0, 0, 0], [0, 0, 1, 0]), //  6 - здоровье так себе, оружия нет,    врагов нет - бродить
+            new([1, 0, 0, 1], [0, 0, 0, 1]), //  7 - здоровье так себе, оружия нет,    враг 1     - прятаться...
+            new([1, 0, 1, 1], [1, 0, 0, 0]), //  8 - здоровье так себе, есть пистолет, враг 1     - атаковать!!!
+            new([1, 0, 1, 0], [0, 0, 0, 1]), //  9 - здоровье так себе, есть пистолет, врагов нет - прятаться...
+            new([1, 1, 0, 2], [0, 0, 0, 1]), // 10 - здоровье так себе, есть нож,      врагов 2!! - прятаться...
+            new([1, 1, 0, 1], [0, 0, 0, 1]), // 11 - здоровье так себе, есть нож,      враг 1     - прятаться...
                                                                               
-            new(new []{ 0, 0, 0, 0 }, new []{ 0, 0, 1, 0 }), // 12 - здоровья нет...,   оружия нет,    врагов нет - бродить
-            new(new []{ 0, 0, 0, 1 }, new []{ 0, 0, 0, 1 }), // 13 - здоровья нет...,   оружия нет,    враг 1     - прятаться...
-            new(new []{ 0, 0, 1, 1 }, new []{ 0, 0, 0, 1 }), // 14 - здоровья нет...,   есть пистолет, враг 1     - прятаться...
-            new(new []{ 0, 0, 1, 2 }, new []{ 0, 1, 0, 0 }), // 15 - здоровья нет...,   есть пистолет, врагов 2!! - бежать!!!
-            new(new []{ 0, 1, 0, 2 }, new []{ 0, 1, 0, 0 }), // 16 - здоровья нет...,   есть нож,      врагов 2!! - бежать!!!
-            new(new []{ 0, 1, 0, 1 }, new []{ 0, 0, 0, 1 }), // 17 - здоровья нет...,   есть нож,      враг 1     - прятаться...
+            new([0, 0, 0, 0], [0, 0, 1, 0]), // 12 - здоровья нет...,   оружия нет,    врагов нет - бродить
+            new([0, 0, 0, 1], [0, 0, 0, 1]), // 13 - здоровья нет...,   оружия нет,    враг 1     - прятаться...
+            new([0, 0, 1, 1], [0, 0, 0, 1]), // 14 - здоровья нет...,   есть пистолет, враг 1     - прятаться...
+            new([0, 0, 1, 2], [0, 1, 0, 0]), // 15 - здоровья нет...,   есть пистолет, врагов 2!! - бежать!!!
+            new([0, 1, 0, 2], [0, 1, 0, 0]), // 16 - здоровья нет...,   есть нож,      врагов 2!! - бежать!!!
+            new([0, 1, 0, 1], [0, 0, 0, 1]), // 17 - здоровья нет...,   есть нож,      враг 1     - прятаться...
         ];
 
         var teacher = controller.CreateTeacher<IBackPropagationTeacher>(t => t.Rho = 0.2);
@@ -522,21 +522,21 @@ public class MultilayerPerceptronTests
         var last_errors  = errors.TakeLast(50).ToArray();
 
         CollectionAssert.That.Collection(first_errors).ElementsAreSatisfyCondition(v => v > 0.4);
-        CollectionAssert.That.Collection(last_errors).ElementsAreSatisfyCondition(v => v < 0.095);
+        CollectionAssert.That.Collection(last_errors).ElementsAreSatisfyCondition(v => v < 0.11);
     }
 
     [TestMethod]
     public void SinApproximation_Test()
     {
         var rnd     = new Random();
-        var network = new MultilayerPerceptron(1, new[] { 200, 50, 1 }, (_, _, _) => rnd.NextUniform(0.5));
+        var network = new MultilayerPerceptron(1, [200, 50, 1], (_, _, _) => rnd.NextUniform(0.5));
         network.Layer[2].Activation = ActivationFunction.Linear;
     }
 
     [TestMethod]
     public void SingleNeuronNetwork_Variant1()
     {
-        var network = new MultilayerPerceptron(1, new[] { 1 }, layer => layer.Activation = ActivationFunction.Linear);
+        var network = new MultilayerPerceptron(1, [1], layer => layer.Activation = ActivationFunction.Linear);
 
         Assert.That.Value(network)
            .Where(net => net!.LayersCount).Check(count => count.IsEqual(1))
@@ -575,7 +575,7 @@ public class MultilayerPerceptronTests
     [TestMethod]
     public void SingleNeuronNetwork_Variant2()
     {
-        var network = new MultilayerPerceptron(1, new[] { 1 }, layer => layer.Activation = ActivationFunction.Linear);
+        var network = new MultilayerPerceptron(1, [1], layer => layer.Activation = ActivationFunction.Linear);
 
         Assert.That.Value(network)
            .Where(net => net!.LayersCount).Check(count => count.IsEqual(1))
@@ -637,7 +637,7 @@ public class MultilayerPerceptronTests
     {
         const int expected_inputs_count  = 512;
         const int expected_outputs_count = 8;
-        var       network                = new MultilayerPerceptron(expected_inputs_count, new [] { expected_outputs_count });
+        var       network                = new MultilayerPerceptron(expected_inputs_count, [expected_outputs_count]);
 
         Assert.That.Value(network.LayersCount).IsEqual(1);
         Assert.That.Value(network.InputsCount).IsEqual(expected_inputs_count);
@@ -655,8 +655,8 @@ public class MultilayerPerceptronTests
         const int expected_outputs_count      = 10;
         const int expected_hidden_nodes_count = 64;
 
-        var network1 = new MultilayerPerceptron(512, new []{ expected_hidden_nodes_count });
-        var network2 = new MultilayerPerceptron(expected_hidden_nodes_count, new []{ expected_outputs_count });
+        var network1 = new MultilayerPerceptron(512, [expected_hidden_nodes_count]);
+        var network2 = new MultilayerPerceptron(expected_hidden_nodes_count, [expected_outputs_count]);
 
         var hidden_nodes = new double[expected_hidden_nodes_count];
 

@@ -28,13 +28,13 @@ public class RecurrentNetwork : MultilayerPerceptron
         }
     }
 
-    public delegate double NetworkFeddbackCoefficientInitializer(int Layer, int Input, int Output);
+    public delegate double NetworkFeedbackCoefficientInitializer(int Layer, int Input, int Output);
 
     public RecurrentNetwork(
         int InputsCount,
         IEnumerable<int> NeuronsCount,
         LayerInitializer LayerInitializer,
-        NetworkFeddbackCoefficientInitializer? FeedbackInitializer)
+        NetworkFeedbackCoefficientInitializer? FeedbackInitializer)
         : this(
             InputsCount,
             (NeuronsCount.NotNull()).ToArray(),
@@ -144,7 +144,7 @@ public class RecurrentNetwork : MultilayerPerceptron
 
         for (var output_index = 0; output_index < outputs_count; output_index++)
             output_layer_error[output_index] =
-                (Expected[output_index] - Output[output_index]) * (layer_activation_inverse[layers_count - 1]
+                (Expected[output_index] - Output[output_index]) * (layer_activation_inverse?[layers_count - 1]
                       ?.DiffValue(Output[output_index])
                     ?? Sigmoid.DiffActivation(Output[output_index]));
 
@@ -167,7 +167,7 @@ public class RecurrentNetwork : MultilayerPerceptron
                 // Создаём вектор значений для ошибки предыдущего слоя
                 var prev_error_level = errors[layer_index - 1] = new double[prev_layer_outputs_count];
                 // Извлекаем производную функции активации предыдущего слоя
-                var prev_layer_activation_inverse = layer_activation_inverse[layer_index - 1];
+                var prev_layer_activation_inverse = layer_activation_inverse?[layer_index - 1];
                 // Вектор выхода предыдущего слоя
                 var prev_layer_output = outputs[layer_index - 1];
                 // Для каждого нейрона (выхода) предыдущего слоя
@@ -198,11 +198,14 @@ public class RecurrentNetwork : MultilayerPerceptron
             for (var neuron_index = 0; neuron_index < layer_outputs_count; neuron_index++)
             {
                 var error = error_level[neuron_index]; // Ошибка для нейрона в слое
+
                 // Корректируем вес смещения
                 w_offset[neuron_index] += Rho * error * offset[neuron_index] * w_offset[neuron_index];
+
                 // Для каждого входа нейрона корректируем вес связи
                 for (var input_index = 0; input_index < layer_inputs_count; input_index++)
                     w[neuron_index, input_index] += Rho * error * layer_inputs[input_index];
+
                 // Для каждого входа обратной связи нейрона корректируем вес связи
                 for (var output_index = 0; output_index < layer_outputs_count; output_index++)
                     feedback_w[neuron_index, output_index] += Rho * error * layer_last_output[output_index];

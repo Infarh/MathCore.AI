@@ -568,7 +568,7 @@ using var file = File.OpenText(FileName);
         Reader.ReadStartElement("Network");
 
         var activation_functions_pool = new Dictionary<string, ActivationFunction>();
-        var activation_functions      = new List<ActivationFunction>();
+        var activation_functions      = new List<ActivationFunction?>();
         var weights                   = new List<double[,]>();
         var offsets                   = new List<IList<double>>();
         var offset_weights            = new List<IList<double>>();
@@ -618,7 +618,7 @@ using var file = File.OpenText(FileName);
         await Reader.Async(r => r.ReadStartElement("Network")).ConfigureAwait(false);
 
         var activation_functions_pool = new Dictionary<string, ActivationFunction>();
-        var activation_functions      = new List<ActivationFunction>();
+        var activation_functions      = new List<ActivationFunction?>();
         var weights                   = new List<double[,]>();
         var offsets                   = new List<IList<double>>();
         var offset_weights            = new List<IList<double>>();
@@ -672,12 +672,12 @@ using var file = File.OpenText(FileName);
         ICollection<IList<double>> Outputs)
     {
         Reader.ReadStartElement("Layer");
-        var  neurons_weights     = new List<double[]>();
-        var  layer_offsets       = new List<double>();
-        var  layer_offet_weights = new List<double>();
-        var  layer_outputs       = new List<double>();
-        int? inputs_count        = null;
-        var  index               = 0;
+        var  neurons_weights      = new List<double[]>();
+        var  layer_offsets        = new List<double>();
+        var  layer_offset_weights = new List<double>();
+        var  layer_outputs        = new List<double>();
+        int? inputs_count         = null;
+        var  index                = 0;
         while (!Reader.EOF)
         {
             if (Reader.NodeType == XmlNodeType.Whitespace)
@@ -696,7 +696,7 @@ using var file = File.OpenText(FileName);
             }
 
             layer_offsets.Add(Reader.GetAttributeDouble("Offset") ?? 0);
-            layer_offet_weights.Add(Reader.GetAttributeDouble("OffsetWeight") ?? 0);
+            layer_offset_weights.Add(Reader.GetAttributeDouble("OffsetWeight") ?? 0);
             layer_outputs.Add(Reader.GetAttributeDouble("Out") ?? 0);
             var content = Reader.ReadElementContentAsString();
             var values  = content.Split(';').Select(S => double.Parse(S.Trim(), NumberFormatInfo.InvariantInfo)).ToArray();
@@ -721,7 +721,7 @@ using var file = File.OpenText(FileName);
 
         Weights.Add(layer_weights);
         Offsets.Add(layer_offsets);
-        OffsetWeights.Add(layer_offet_weights);
+        OffsetWeights.Add(layer_offset_weights);
         Outputs.Add(layer_outputs);
     }
 
@@ -739,12 +739,12 @@ using var file = File.OpenText(FileName);
         ICollection<IList<double>> Outputs)
     {
         await Reader.Async(r => r.ReadStartElement("Layer")).ConfigureAwait(false);
-        var  neurons_weights     = new List<double[]>();
-        var  layer_offsets       = new List<double>();
-        var  layer_offet_weights = new List<double>();
-        var  layer_outputs       = new List<double>();
-        int? inputs_count        = null;
-        var  index               = 0;
+        var  neurons_weights      = new List<double[]>();
+        var  layer_offsets        = new List<double>();
+        var  layer_offset_weights = new List<double>();
+        var  layer_outputs        = new List<double>();
+        int? inputs_count         = null;
+        var  index                = 0;
         while (!Reader.EOF)
         {
             if (Reader.NodeType == XmlNodeType.Whitespace)
@@ -762,7 +762,7 @@ using var file = File.OpenText(FileName);
             }
 
             layer_offsets.Add(Reader.GetAttributeDouble("Offset") ?? 0);
-            layer_offet_weights.Add(Reader.GetAttributeDouble("OffsetWeight") ?? 0);
+            layer_offset_weights.Add(Reader.GetAttributeDouble("OffsetWeight") ?? 0);
             layer_outputs.Add(Reader.GetAttributeDouble("Out") ?? 0);
             var content = await Reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
             var values  = content.Split(';').Select(S => double.Parse(S.Trim(), NumberFormatInfo.InvariantInfo)).ToArray();
@@ -787,7 +787,7 @@ using var file = File.OpenText(FileName);
 
         Weights.Add(layer_weights);
         Offsets.Add(layer_offsets);
-        OffsetWeights.Add(layer_offet_weights);
+        OffsetWeights.Add(layer_offset_weights);
         Outputs.Add(layer_outputs);
     }
 
@@ -796,13 +796,15 @@ using var file = File.OpenText(FileName);
     /// <returns>Активационная функция с указанным именем</returns>
     private static ActivationFunction ActivationFunctionCreator(string FunctionTypeName)
     {
-        if (string.IsNullOrWhiteSpace(FunctionTypeName)) throw new InvalidOperationException("Некорректный тип функции активации");
-        if (!FunctionTypeName.Contains("."))
+        if (string.IsNullOrWhiteSpace(FunctionTypeName)) 
+            throw new InvalidOperationException("Некорректный тип функции активации");
+
+        if (!FunctionTypeName.Contains('.'))
             FunctionTypeName = $"{typeof(ActivationFunction).Namespace}.{FunctionTypeName}";
 
         var type = Type.GetType(FunctionTypeName);
         if (type is null) throw new InvalidOperationException($"Тип активационной функции {FunctionTypeName} не найден");
-        return (ActivationFunction)Activator.CreateInstance(type);
+        return (ActivationFunction)Activator.CreateInstance(type)!;
     }
 
     #endregion

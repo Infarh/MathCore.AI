@@ -57,7 +57,7 @@ public partial class MultilayerPerceptron
             : new LayerManager(LayerIndex + 1, _Layers, _Offsets, _OffsetWeights, _Outputs, _Activations);
 
         /// <summary>Инициализация нового установщика активационной функции слоя</summary>
-        /// <param name="LayerIndex">номер слоя</param>
+        /// <param name="LayerIndex">Номер слоя</param>
         /// <param name="Layers">Матрицы коэффициентов слоёв</param>
         /// <param name="Offsets">Смещения слоёв</param>
         /// <param name="OffsetWeights">Веса смещений слоёв</param>
@@ -69,7 +69,7 @@ public partial class MultilayerPerceptron
             double[][] Offsets,
             double[][] OffsetWeights,
             double[][] Outputs,
-            ActivationFunction[] Activations)
+            ActivationFunction?[] Activations)
         {
             #region Проверка входных переменных
 

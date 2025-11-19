@@ -15,7 +15,7 @@ public class ComplexMultilayerPerceptron : IComplexNeuralNetwork
     public sealed class LayerManager
     {
         /// <summary>Функции активации слоёв</summary>
-        private readonly ComplexActivationFunction[] _Activations;
+        private readonly ComplexActivationFunction?[] _Activations;
 
         private readonly Complex[][] _Offsets;
         private readonly Complex[][] _OffsetWeights;
