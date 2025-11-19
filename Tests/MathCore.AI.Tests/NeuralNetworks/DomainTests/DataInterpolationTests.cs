@@ -3,7 +3,7 @@
 [TestClass]
 public class DataInterpolationTests
 {
-    private static string __DataFilePath = @"NeuralNetworks/DomainTests/Data/InterpolatorNDData.zip";
+    private const string __DataFilePath = @"NeuralNetworks/DomainTests/Data/InterpolatorNDData.zip";
 
     private static FileInfo DataFile => new(__DataFilePath);
 
