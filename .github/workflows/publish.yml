@@ -1,9 +1,15 @@
-name: Publish NuGet.org
+﻿name: Publish NuGet.org
 
 on:
   push:
     branches: 
       - master
+    paths-ignore: 
+      - '.github/workflows/**'
+      - '**.md'
+      - '**.docx'
+      - '**.bat'
+      - '**.vssettings'
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
@@ -16,17 +22,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: Install .NET Core
-        uses: actions/setup-dotnet@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
           
       - name: Cache NuGet  
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -36,14 +42,14 @@ jobs:
       - name: Building
         run: dotnet build -c Release
           
-      - name: Testing
+      - name: Test
         run: dotnet test -c Release --no-build
         
       - name: Packing
-        run: dotnet pack -c Release --no-build -v q -o ${{ github.workspace }}/ReleasePack --include-symbols
+        run: dotnet pack MathCore.AI -c Release --no-build -v q -o ${{ github.workspace }}/ReleasePack --include-symbols
       
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v6.0.0
         with:
           name: Release
           path: ${{ github.workspace }}/ReleasePack
@@ -56,7 +62,7 @@ jobs:
     
     steps:    
       - name: Get artifact
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v7
         id: download
         with:
             name: Release
@@ -72,7 +78,7 @@ jobs:
     
     steps:    
       - name: Get artifact
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v7
         id: download
         with:
             name: Release
