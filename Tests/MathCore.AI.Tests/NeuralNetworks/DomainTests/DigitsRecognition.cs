@@ -291,7 +291,8 @@ public class DigitsRecognition
         var       chars_count         = chars.Length;
         const int hidden_layer_length = 15;
         var processor = new NeuralProcessor<int[], int>(
-            Network: new MultilayerPerceptron(InputsCount: char_length, NeuronsCount: new[] { hidden_layer_length, chars_count }),
+            Network: new MultilayerPerceptron(InputsCount: char_length, NeuronsCount: [hidden_layer_length, chars_count
+            ]),
             InputFormatter: (vv, inputs) => vv.Foreach((v, i) => inputs[i] = v),
             OutputFormatter: outputs => outputs.GetMaxIndex());
 
@@ -327,7 +328,7 @@ public class DigitsRecognition
     private static int[] GetDiffIndexes(int[] V1, int[] V2)
     {
         if (V1.NotNull().Length != V2.NotNull().Length) throw new InvalidOperationException("Размеры массивов не совпадают");
-        if (V1.Length == 0) return Array.Empty<int>();
+        if (V1.Length == 0) return [];
 
         var result = new List<int>(V1.Length);
 
@@ -362,7 +363,7 @@ public class DigitsRecognition
         Assert.That.Value(average_error).LessThan(error_threshold);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(2, 0.25)]
     [DataRow(3, 0.35)]
     public void DigitsRecognition_With_Distortions_Test(int DistortionsCount, double ErrorThreshold)
