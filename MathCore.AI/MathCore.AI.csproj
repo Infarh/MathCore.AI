@@ -10,9 +10,9 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
-    <Version>0.1.10</Version>
+    <Version>0.1.11</Version>
     <PackageReleaseNotes>
-      Миграция на .NET10
+      Обновление пакетов
     </PackageReleaseNotes>
   </PropertyGroup>
 
@@ -33,7 +33,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MathCore" Version="0.0.94.1" />
+    <PackageReference Include="MathCore" Version="0.1.0" />
     <PackageReference Include="System.Memory" Version="4.6.3" />
   </ItemGroup>
 
