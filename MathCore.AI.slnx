@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/.Service/">
+    <File Path="../BuildAndPublish.bat" />
+    <File Path="../BuildAndTest.bat" />
+    <File Path="../BuildRelease.bat" />
+    <File Path=".editorconfig" />
+    <File Path="license.txt" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/.Service/.github/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path=".github/dependabot.yml" />
+  </Folder>
+  <Folder Name="/.Service/.github/workflows/">
+    <File Path=".github/workflows/publish.yml" />
+    <File Path=".github/workflows/testing.yml" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/ConsoleTest/ConsoleTest.csproj" />
+    <Project Path="Tests/MathCore.AI.Tests/MathCore.AI.Tests.csproj" />
+  </Folder>
+  <Project Path="MathCore.AI/MathCore.AI.csproj" />
+</Solution>
