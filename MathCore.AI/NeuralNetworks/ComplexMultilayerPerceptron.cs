@@ -301,7 +301,7 @@ public class ComplexMultilayerPerceptron : IComplexNeuralNetwork
     public int InputsCount => _Layers[0].GetLength(1);
 
     /// <inheritdoc />
-    public int OutputsCount => _Layers[_Layers.Length - 1].GetLength(0);
+    public int OutputsCount => _Layers[^1].GetLength(0);
 
     /// <summary>Число слоёв</summary>
     public int LayersCount => _Layers.Length;

@@ -1,7 +1,8 @@
-﻿using MathCore.AI.NeuralNetworks.ActivationFunctions;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using System.Xml;
+
+using MathCore.AI.NeuralNetworks.ActivationFunctions;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 namespace MathCore.AI.NeuralNetworks;
@@ -47,7 +48,7 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
     public int InputsCount => _Layers[0].GetLength(1);
 
     /// <inheritdoc />
-    public int OutputsCount => _Layers[_Layers.Length - 1].GetLength(0);
+    public int OutputsCount => _Layers[^1].GetLength(0);
 
     /// <summary>Число слоёв</summary>
     public int LayersCount => _Layers.Length;
@@ -80,8 +81,8 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
         if (Layers.Length == 0) throw new ArgumentException("Число слоёв должно быть больше 0", nameof(Layers));
 
         var layers_count = Layers.Length;
-        _Outputs        = new double[layers_count - 1][];
-        _Offsets        = new double[layers_count][];
+        _Outputs = new double[layers_count - 1][];
+        _Offsets = new double[layers_count][];
         _OffsetsWeights = new double[layers_count][];
 
         _Activations = new ActivationFunction[layers_count];
@@ -131,8 +132,8 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
         NetworkCoefficientInitializer Initialize)
     {
         var neurons_count = NeuronsCount.ToArray();
-        var layers_count  = neurons_count.Length;
-        var weights       = new double[layers_count][,];
+        var layers_count = neurons_count.Length;
+        var weights = new double[layers_count][,];
 
         var w = new double[neurons_count[0], InputsCount];
         weights[0] = w;
@@ -140,7 +141,7 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
 
         for (var layer = 1; layer < layers_count; layer++)
         {
-            w              = new double[neurons_count[layer], neurons_count[layer - 1]];
+            w = new double[neurons_count[layer], neurons_count[layer - 1]];
             weights[layer] = w;
             InitializeLayerWeightsMatrix(w, layer, Initialize);
         }
@@ -172,7 +173,7 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
     private static int[] CheckNeuronsCounts(int[] Counts)
     {
         if (Counts is null) throw new ArgumentNullException(nameof(Counts));
-        if(Counts.Length == 0) throw new ArgumentException("Длина массива не может быть равен 0", nameof(Counts));
+        if (Counts.Length == 0) throw new ArgumentException("Длина массива не может быть равен 0", nameof(Counts));
         return Counts;
     }
 
@@ -257,16 +258,16 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
         if (Outputs is null) throw new ArgumentNullException(nameof(Outputs));
 
         if (Input.Length != Layers[0].GetLength(1)) throw new ArgumentException($"Размер входного вектора ({Input.Length}) не равен количествоу входов сети ({Layers[0].GetLength(1)})", nameof(Input));
-        if (Output.Length != Layers[Layers.Length - 1].GetLength(0)) throw new ArgumentException($"Размер выходного вектора ({Output.Length}) не соответвтует количеству выходов сети ({Layers[Layers.Length - 1].GetLength(0)})", nameof(Output));
+        if (Output.Length != Layers[^1].GetLength(0)) throw new ArgumentException($"Размер выходного вектора ({Output.Length}) не соответвтует количеству выходов сети ({Layers[^1].GetLength(0)})", nameof(Output));
         if (Activations.Length != Layers.Length) throw new InvalidOperationException("Размер массива функций активации не соответствует количеству слоёв сети");
 
-        var layer                = Layers;         // Матрицы коэффициентов передачи слоёв
-        var layers_count         = layer.Length;   // Количество слоёв
-        var layer_activation     = Activations;    // Активационные функции слоёв
-        var layer_offsets        = Offsets;        // Смещения слоёв
+        var layer = Layers;         // Матрицы коэффициентов передачи слоёв
+        var layers_count = layer.Length;   // Количество слоёв
+        var layer_activation = Activations;    // Активационные функции слоёв
+        var layer_offsets = Offsets;        // Смещения слоёв
         var layer_offset_weights = OffsetsWeights; // Весовые коэффициенты весов слоёв <= 0
 
-        var state   = State;
+        var state = State;
         var outputs = Outputs;
 
         for (var layer_index = 0; layer_index < layers_count; layer_index++)
@@ -285,7 +286,7 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
                 ?? new double[current_layer_weights.GetLength(0)]; // Если выходного вектора нет, то создаём его!
 
             // Определяем вектор входа функции активации Net
-            double[]? current_state          = null;
+            double[]? current_state = null;
             if (state != null) current_state = state[layer_index] ?? new double[current_output.Length];
 
             // Определяем вектор смещения O (Offset)
@@ -323,13 +324,13 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
     {
         // Вычисляем X_next = f(Net = W * X + Wo*O)
         var layer_outputs_count = LayerWeights.GetLength(0);
-        var layer_inputs_count  = LayerWeights.GetLength(1);
+        var layer_inputs_count = LayerWeights.GetLength(1);
         for (var output_index = 0; output_index < layer_outputs_count; output_index++)
         {
             var output = Offset[output_index] * OffsetWeight[output_index];
             for (var input_index = 0; input_index < layer_inputs_count; input_index++)
                 output += LayerWeights[output_index, input_index] * Input[input_index];
-            if (State != null) State[output_index] = output;
+            State?[output_index] = output;
             Output[output_index] = Activation?.Value(output) ?? Sigmoid.Activation(output);
         }
     }
@@ -437,7 +438,7 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
     /// <param name="LayerIndex">Индекс слоя</param>
     private void WriteNeurons(XmlWriter Writer, int LayerIndex)
     {
-        var layer         = _Layers[LayerIndex];
+        var layer = _Layers[LayerIndex];
         var neurons_count = layer.GetLength(0);
         for (var neuron_index = 0; neuron_index < neurons_count; neuron_index++)
             WriteNeuron(Writer, LayerIndex, neuron_index, layer);
@@ -448,7 +449,7 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
     /// <param name="LayerIndex">Индекс слоя</param>
     private async Task WriteNeuronsAsync(XmlWriter Writer, int LayerIndex)
     {
-        var layer         = _Layers[LayerIndex];
+        var layer = _Layers[LayerIndex];
         var neurons_count = layer.GetLength(0);
         for (var neuron_index = 0; neuron_index < neurons_count; neuron_index++)
             await WriteNeuronAsync(Writer, LayerIndex, neuron_index, layer).ConfigureAwait(false);
@@ -471,7 +472,7 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
             Writer.WriteAttributeString("Out", layer_out[NeuronIndex].ToString(__NumberFormat, culture));
 
         var weights_buffer = new StringBuilder();
-        var inputs_count   = LayerWeights.GetLength(1);
+        var inputs_count = LayerWeights.GetLength(1);
         for (var input_index = 0; input_index < inputs_count - 1; input_index++)
             weights_buffer.AppendFormat("{0}; ", LayerWeights[NeuronIndex, input_index].ToString(__NumberFormat, culture));
         weights_buffer.Append(LayerWeights[NeuronIndex, inputs_count - 1].ToString(__NumberFormat, culture));
@@ -489,9 +490,9 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
     {
         var create_buffer_task = LayerWeights.Async(NeuronIndex, (layers, index) =>
         {
-            var weights_buffer    = new StringBuilder();
+            var weights_buffer = new StringBuilder();
             var invariant_culture = CultureInfo.InvariantCulture;
-            var inputs_count      = layers.GetLength(1);
+            var inputs_count = layers.GetLength(1);
             for (var input_index = 0; input_index < inputs_count - 1; input_index++)
                 weights_buffer.AppendFormat("{0}; ", layers[index, input_index].ToString(__NumberFormat, invariant_culture));
             weights_buffer.Append(layers[index, inputs_count - 1].ToString(__NumberFormat, invariant_culture));
@@ -523,7 +524,7 @@ public partial class MultilayerPerceptron : ITeachableNeuralNetwork, IEquatable<
     {
         if (FileName is null) throw new ArgumentNullException(nameof(FileName));
         if (!File.Exists(FileName)) throw new FileNotFoundException($"Файл {FileName} не найден", FileName);
-using var file = File.OpenText(FileName);
+        using var file = File.OpenText(FileName);
         return LoadXmlFrom(file);
     }
 
@@ -534,7 +535,7 @@ using var file = File.OpenText(FileName);
     {
         if (FileName is null) throw new ArgumentNullException(nameof(FileName));
         if (!File.Exists(FileName)) throw new FileNotFoundException($"Файл {FileName} не найден", FileName);
-using var file = File.OpenText(FileName);
+        using var file = File.OpenText(FileName);
         return await LoadXmlFromAsync(file);
     }
 
@@ -568,11 +569,11 @@ using var file = File.OpenText(FileName);
         Reader.ReadStartElement("Network");
 
         var activation_functions_pool = new Dictionary<string, ActivationFunction>();
-        var activation_functions      = new List<ActivationFunction?>();
-        var weights                   = new List<double[,]>();
-        var offsets                   = new List<IList<double>>();
-        var offset_weights            = new List<IList<double>>();
-        var outputs                   = new List<IList<double>>();
+        var activation_functions = new List<ActivationFunction?>();
+        var weights = new List<double[,]>();
+        var offsets = new List<IList<double>>();
+        var offset_weights = new List<IList<double>>();
+        var outputs = new List<IList<double>>();
 
         while (!Reader.EOF)
         {
@@ -593,7 +594,7 @@ using var file = File.OpenText(FileName);
             ReadLayer(Reader, weights, offsets, offset_weights, outputs);
         }
 
-        var network      = new MultilayerPerceptron(weights.ToArray());
+        var network = new MultilayerPerceptron(weights.ToArray());
         var layers_count = network.LayersCount;
         foreach (var layer in network.Layer)
         {
@@ -618,11 +619,11 @@ using var file = File.OpenText(FileName);
         await Reader.Async(r => r.ReadStartElement("Network")).ConfigureAwait(false);
 
         var activation_functions_pool = new Dictionary<string, ActivationFunction>();
-        var activation_functions      = new List<ActivationFunction?>();
-        var weights                   = new List<double[,]>();
-        var offsets                   = new List<IList<double>>();
-        var offset_weights            = new List<IList<double>>();
-        var outputs                   = new List<IList<double>>();
+        var activation_functions = new List<ActivationFunction?>();
+        var weights = new List<double[,]>();
+        var offsets = new List<IList<double>>();
+        var offset_weights = new List<IList<double>>();
+        var outputs = new List<IList<double>>();
 
         while (!Reader.EOF)
         {
@@ -643,7 +644,7 @@ using var file = File.OpenText(FileName);
             await ReadLayerAsync(Reader, weights, offsets, offset_weights, outputs).ConfigureAwait(false);
         }
 
-        var network      = new MultilayerPerceptron(weights.ToArray());
+        var network = new MultilayerPerceptron(weights.ToArray());
         var layers_count = network.LayersCount;
         foreach (var layer in network.Layer)
         {
@@ -672,12 +673,12 @@ using var file = File.OpenText(FileName);
         ICollection<IList<double>> Outputs)
     {
         Reader.ReadStartElement("Layer");
-        var  neurons_weights      = new List<double[]>();
-        var  layer_offsets        = new List<double>();
-        var  layer_offset_weights = new List<double>();
-        var  layer_outputs        = new List<double>();
-        int? inputs_count         = null;
-        var  index                = 0;
+        var neurons_weights = new List<double[]>();
+        var layer_offsets = new List<double>();
+        var layer_offset_weights = new List<double>();
+        var layer_outputs = new List<double>();
+        int? inputs_count = null;
+        var index = 0;
         while (!Reader.EOF)
         {
             if (Reader.NodeType == XmlNodeType.Whitespace)
@@ -699,7 +700,7 @@ using var file = File.OpenText(FileName);
             layer_offset_weights.Add(Reader.GetAttributeDouble("OffsetWeight") ?? 0);
             layer_outputs.Add(Reader.GetAttributeDouble("Out") ?? 0);
             var content = Reader.ReadElementContentAsString();
-            var values  = content.Split(';').Select(S => double.Parse(S.Trim(), NumberFormatInfo.InvariantInfo)).ToArray();
+            var values = content.Split(';').Select(S => double.Parse(S.Trim(), NumberFormatInfo.InvariantInfo)).ToArray();
             if (inputs_count is null)
                 inputs_count = values.Length;
             else if (values.Length != inputs_count)
@@ -733,18 +734,18 @@ using var file = File.OpenText(FileName);
     /// <param name="Outputs">Коллекция значений выходов слоёв</param>
     private static async Task ReadLayerAsync(
         XmlReader Reader,
-        ICollection<double[,]> Weights,
-        ICollection<IList<double>> Offsets,
-        ICollection<IList<double>> OffsetWeights,
-        ICollection<IList<double>> Outputs)
+        List<double[,]> Weights,
+        List<IList<double>> Offsets,
+        List<IList<double>> OffsetWeights,
+        List<IList<double>> Outputs)
     {
         await Reader.Async(r => r.ReadStartElement("Layer")).ConfigureAwait(false);
-        var  neurons_weights      = new List<double[]>();
-        var  layer_offsets        = new List<double>();
-        var  layer_offset_weights = new List<double>();
-        var  layer_outputs        = new List<double>();
-        int? inputs_count         = null;
-        var  index                = 0;
+        var neurons_weights = new List<double[]>();
+        var layer_offsets = new List<double>();
+        var layer_offset_weights = new List<double>();
+        var layer_outputs = new List<double>();
+        int? inputs_count = null;
+        var index = 0;
         while (!Reader.EOF)
         {
             if (Reader.NodeType == XmlNodeType.Whitespace)
@@ -765,7 +766,7 @@ using var file = File.OpenText(FileName);
             layer_offset_weights.Add(Reader.GetAttributeDouble("OffsetWeight") ?? 0);
             layer_outputs.Add(Reader.GetAttributeDouble("Out") ?? 0);
             var content = await Reader.ReadElementContentAsStringAsync().ConfigureAwait(false);
-            var values  = content.Split(';').Select(S => double.Parse(S.Trim(), NumberFormatInfo.InvariantInfo)).ToArray();
+            var values = content.Split(';').Select(S => double.Parse(S.Trim(), NumberFormatInfo.InvariantInfo)).ToArray();
             if (inputs_count is null)
                 inputs_count = values.Length;
             else if (values.Length != inputs_count)
@@ -796,14 +797,14 @@ using var file = File.OpenText(FileName);
     /// <returns>Активационная функция с указанным именем</returns>
     private static ActivationFunction ActivationFunctionCreator(string FunctionTypeName)
     {
-        if (string.IsNullOrWhiteSpace(FunctionTypeName)) 
+        if (string.IsNullOrWhiteSpace(FunctionTypeName))
             throw new InvalidOperationException("Некорректный тип функции активации");
 
         if (!FunctionTypeName.Contains('.'))
             FunctionTypeName = $"{typeof(ActivationFunction).Namespace}.{FunctionTypeName}";
 
-        var type = Type.GetType(FunctionTypeName);
-        if (type is null) throw new InvalidOperationException($"Тип активационной функции {FunctionTypeName} не найден");
+        var type = Type.GetType(FunctionTypeName)
+            ?? throw new InvalidOperationException($"Тип активационной функции {FunctionTypeName} не найден");
         return (ActivationFunction)Activator.CreateInstance(type)!;
     }
 
@@ -824,23 +825,23 @@ using var file = File.OpenText(FileName);
         for (var layer_index = 0; layer_index < layers_count; layer_index++)
         {
             var current_layer = Layer[layer_index];
-            var other_layer   = other.Layer[layer_index];
-            var inputs_count  = current_layer.InputsCount;
+            var other_layer = other.Layer[layer_index];
+            var inputs_count = current_layer.InputsCount;
             if (inputs_count != other_layer.InputsCount) return false;
             var outputs_count = current_layer.OutputsCount;
             if (outputs_count != other_layer.OutputsCount) return false;
             var current_offsets = current_layer.Offsets;
-            var other_offsets   = other_layer.Offsets;
+            var other_offsets = other_layer.Offsets;
             for (var i = 0; i < current_offsets.Length; i++)
                 if (!double_equality.Equals(current_offsets[i], other_offsets[i]))
                     return false;
             var current_offset_weights = current_layer.OffsetWeights;
-            var other_offset_weights   = other_layer.OffsetWeights;
+            var other_offset_weights = other_layer.OffsetWeights;
             for (var i = 0; i < current_offset_weights.Length; i++)
                 if (!double_equality.Equals(current_offset_weights[i], other_offset_weights[i]))
                     return false;
             var current_weights = current_layer.Weights;
-            var other_weights   = other_layer.Weights;
+            var other_weights = other_layer.Weights;
             for (var neuron = 0; neuron < outputs_count; neuron++)
                 for (var input = 0; input < inputs_count; input++)
                     if (!double_equality.Equals(current_weights[neuron, input], other_weights[neuron, input]))
@@ -859,7 +860,7 @@ using var file = File.OpenText(FileName);
     public override int GetHashCode()
     {
         const int hash_base = 0x18d;
-        var       hash      = Consts.BigPrime_int;
+        var hash = Consts.BigPrime_int;
         foreach (var layer in Layer)
             unchecked
             {
